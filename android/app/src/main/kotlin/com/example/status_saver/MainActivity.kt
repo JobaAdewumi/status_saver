@@ -1,4 +1,4 @@
-package com.example.status_saver
+package com.jobaadewumi.all.status.saver
 
 import io.flutter.embedding.android.FlutterActivity
 
