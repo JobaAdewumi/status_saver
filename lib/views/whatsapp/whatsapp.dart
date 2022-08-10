@@ -11,6 +11,8 @@ import 'package:all_status_saver/views/whatsappb/whatsappb.dart';
 
 import 'package:all_status_saver/views/home/viewer.dart';
 
+import 'package:all_status_saver/views/home/home.dart';
+
 class WhatsappPage extends StatefulWidget {
   const WhatsappPage({super.key});
 
@@ -23,9 +25,9 @@ class WhatsappPageState extends State<WhatsappPage> {
   final PageController _pageController = PageController(initialPage: 0);
   final int _selectedIndex = 0;
 
-  late List<FileType> gImages;
-  late List<FileType> gVideos;
-  late List<FileType> gImagesVideo;
+  // late List<FileType> gImages;
+  // late List<FileType> gVideos;
+  // late List<FileType> gImagesVideo;
   // @override
   // void initState() {
   //   super.initState();
@@ -39,89 +41,6 @@ class WhatsappPageState extends State<WhatsappPage> {
   }
 
   // static const List<Widget> _widgetOptions
-
-  Future<void> shareFile(String path) async {
-    await Share.shareFiles([path]);
-  }
-
-  Future saveStatus(String newPath, String oldPath, String filePath) async {
-    Directory directory = Directory(newPath);
-    late File savedFile;
-
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
-    }
-
-    if (await directory.exists()) {
-      File path = File(oldPath);
-      savedFile = path.copySync(filePath);
-    }
-    return savedFile;
-  }
-
-  Future<Map<String, List<FileType>>> _getFileTypes(String path) async {
-    List<FileType> mapVideoFiles = [];
-    List<FileType> mapImageFiles = [];
-    List<FileType> mapAllFiles = [];
-
-    if (await Directory(path).exists()) {
-      final dirFiles = Directory(path)
-          .listSync(recursive: false, followLinks: false)
-          .toList();
-
-      List<FileSystemEntity> videoFiles =
-          dirFiles.where((f) => f.path.contains('.mp4')).toList();
-
-      List<FileSystemEntity> imageFiles = dirFiles
-          .where((f) =>
-              f.path.contains('.jpg') ||
-              f.path.contains('.jpeg') ||
-              f.path.contains('.png'))
-          .toList();
-
-      for (FileSystemEntity fv in videoFiles) {
-        if (mapVideoFiles.isEmpty) {
-          mapVideoFiles.clear();
-        }
-        mapVideoFiles.add(FileType(
-          file: File(fv.path),
-          dateTime: (await fv.stat()).modified,
-        ));
-      }
-
-      for (FileSystemEntity fv in imageFiles) {
-        if (mapImageFiles.isEmpty) {
-          mapImageFiles.clear();
-        }
-        mapImageFiles.add(FileType(
-          file: File(fv.path),
-          dateTime: (await fv.stat()).modified,
-          isImage: true,
-        ));
-      }
-      mapAllFiles = mapImageFiles + mapVideoFiles;
-
-      mapImageFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
-      mapVideoFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
-      mapAllFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
-    }
-
-    return {
-      'images': mapImageFiles,
-      'videos': mapVideoFiles,
-      'all': mapAllFiles
-    };
-  }
-
-  Future generateVideoThumbnail(File file) async {
-    final unit8list = await VideoThumbnail.thumbnailData(
-      video: file.path,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: 128,
-      quality: 100,
-    );
-    return unit8list;
-  }
 
   Widget AllStatuses(List<FileType> allStatuses) {
     Widget ImagesVideos;
@@ -172,7 +91,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                             fixedSize: const Size(60.0, 53.0),
                             primary: Colors.red),
                         onPressed: () async {
-                          await shareFile(statuses.path);
+                          await const HomePage().shareFile(statuses.path);
                         },
                         child: Column(
                           children: const [Icon(Icons.share), Text('SHARE')],
@@ -186,7 +105,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                             fixedSize: const Size(60.0, 53.0),
                             primary: Colors.green),
                         onPressed: () async {
-                          await shareFile(statuses.path);
+                          await const HomePage().shareFile(statuses.path);
                         },
                         child: Column(
                           children: const [Icon(Icons.cached), Text('REPOST')],
@@ -199,7 +118,8 @@ class WhatsappPageState extends State<WhatsappPage> {
                           style: TextButton.styleFrom(
                               fixedSize: const Size(60.0, 53.0)),
                           onPressed: () async {
-                            await saveStatus(newPath, statuses.path, copyPath)
+                            await const HomePage()
+                                .saveStatus(newPath, statuses.path, copyPath)
                                 .then((value) {
                               return showDialog(
                                   context: context,
@@ -225,7 +145,7 @@ class WhatsappPageState extends State<WhatsappPage> {
             );
           }
           return FutureBuilder(
-              future: generateVideoThumbnail(statuses),
+              future: const HomePage().generateVideoThumbnail(statuses),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Image video = Image.memory(snapshot.data as dynamic,
@@ -268,7 +188,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                   primary: Colors.red),
                               onPressed: () async {
-                                await shareFile(statuses.path);
+                                await const HomePage().shareFile(statuses.path);
                               },
                               child: Column(
                                 children: const [
@@ -285,7 +205,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                   primary: Colors.green),
                               onPressed: () async {
-                                await shareFile(statuses.path);
+                                await const HomePage().shareFile(statuses.path);
                               },
                               child: Column(
                                 children: const [
@@ -302,7 +222,8 @@ class WhatsappPageState extends State<WhatsappPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                 ),
                                 onPressed: () async {
-                                  await saveStatus(
+                                  await const HomePage()
+                                      .saveStatus(
                                           newPath, statuses.path, copyPath)
                                       .then((value) {
                                     return showDialog(
@@ -365,7 +286,7 @@ class WhatsappPageState extends State<WhatsappPage> {
           }
 
           return FutureBuilder(
-              future: generateVideoThumbnail(statuses),
+              future: const HomePage().generateVideoThumbnail(statuses),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Image video = Image.memory(snapshot.data as dynamic,
@@ -408,7 +329,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                   primary: Colors.red),
                               onPressed: () async {
-                                await shareFile(statuses.path);
+                                await const HomePage().shareFile(statuses.path);
                               },
                               child: Column(
                                 children: const [
@@ -425,7 +346,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                   primary: Colors.green),
                               onPressed: () async {
-                                await shareFile(statuses.path);
+                                await const HomePage().shareFile(statuses.path);
                               },
                               child: Column(
                                 children: const [
@@ -442,7 +363,8 @@ class WhatsappPageState extends State<WhatsappPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                 ),
                                 onPressed: () async {
-                                  await saveStatus(
+                                  await const HomePage()
+                                      .saveStatus(
                                           newPath, statuses.path, copyPath)
                                       .then((value) {
                                     return showDialog(
@@ -529,7 +451,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                           fixedSize: const Size(60.0, 53.0),
                           primary: Colors.red),
                       onPressed: () async {
-                        await shareFile(statuses.path);
+                        await const HomePage().shareFile(statuses.path);
                       },
                       child: Column(
                         children: const [Icon(Icons.share), Text('SHARE')],
@@ -543,7 +465,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                           fixedSize: const Size(60.0, 53.0),
                           primary: Colors.green),
                       onPressed: () async {
-                        await shareFile(statuses.path);
+                        await const HomePage().shareFile(statuses.path);
                       },
                       child: Column(
                         children: const [Icon(Icons.cached), Text('REPOST')],
@@ -556,7 +478,8 @@ class WhatsappPageState extends State<WhatsappPage> {
                         style: TextButton.styleFrom(
                             fixedSize: const Size(60.0, 53.0)),
                         onPressed: () async {
-                          await saveStatus(newPath, statuses.path, copyPath)
+                          await const HomePage()
+                              .saveStatus(newPath, statuses.path, copyPath)
                               .then((value) {
                             return showDialog(
                                 context: context,
@@ -629,7 +552,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                   f.path.contains('.png')).toList();
 
             return FutureBuilder(
-              future: _getFileTypes(newPath),
+              future: const HomePage().getFileTypes(newPath),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Map<String, List<FileType>> allFiles =

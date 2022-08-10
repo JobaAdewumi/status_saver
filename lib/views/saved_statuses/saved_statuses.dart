@@ -6,9 +6,9 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:all_status_saver/routes/routes.dart' as route;
-import 'package:all_status_saver/views/whatsappb/whatsappb.dart';
 
 import 'package:all_status_saver/views/home/viewer.dart';
+import 'package:all_status_saver/views/home/home.dart';
 
 class SavedStatusPage extends StatefulWidget {
   const SavedStatusPage({super.key});
@@ -40,7 +40,8 @@ class SavedStatusPageState extends State<SavedStatusPage> {
   // static const List<Widget> _widgetOptions
 
   Future<void> shareFile(String path) async {
-    await Share.shareFiles([path]);
+    await Share.shareFiles([path],
+        text: 'how are you doing', subject: 'i hope you are doing fine');
   }
 
   Future saveStatus(String newPath, String oldPath, String filePath) async {
@@ -156,81 +157,78 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                   height: 100, width: 100, fit: BoxFit.cover),
             );
             return Card(
-              child: Column(children: [
-                SizedBox(
-                  width: 350,
-                  height: 134,
-                  child: image,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0),
-                            primary: Colors.red),
-                        onPressed: () async {
-                          await shareFile(statuses.path);
-                        },
-                        child: Column(
-                          children: const [Icon(Icons.share), Text('SHARE')],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0),
-                            primary: Colors.green),
-                        onPressed: () async {
-                          await shareFile(statuses.path);
-                        },
-                        child: Column(
-                          children: const [Icon(Icons.cached), Text('REPOST')],
-                        ),
-                      ),
-                    ),
-                    Expanded(
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 350,
+                    height: 134,
+                    child: image,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
                         flex: 1,
                         child: TextButton(
                           style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0)),
+                              fixedSize: const Size(60.0, 53.0),
+                              primary: Colors.blue),
                           onPressed: () async {
-                            await saveStatus(newPath, statuses.path, copyPath)
-                                .then((value) {
-                              return showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) {
-                                    return const AlertDialog(
-                                      title:
-                                          Text('Status was saved successfully'),
-                                    );
-                                  });
-                            });
+                            await shareFile(statuses.path);
+                          },
+                          child: Column(
+                            children: const [Icon(Icons.share), Text('SHARE')],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              fixedSize: const Size(60.0, 53.0),
+                              primary: Colors.green),
+                          onPressed: () async {
+                            await shareFile(statuses.path);
                           },
                           child: Column(
                             children: const [
-                              Icon(Icons.save_alt),
-                              Text('SAVE')
+                              Icon(Icons.cached),
+                              Text('REPOST')
                             ],
                           ),
-                        )),
-                  ],
-                )
-              ]),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              fixedSize: const Size(60.0, 53.0),
+                              primary: Colors.red),
+                          onPressed: () async {
+                            await entit.file.delete();
+                          },
+                          child: Column(
+                            children: const [
+                              Icon(Icons.delete_forever_rounded),
+                              Text('DELETE')
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             );
           }
           return FutureBuilder(
-              future: generateVideoThumbnail(statuses),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Image video = Image.memory(snapshot.data as dynamic,
-                      height: 100, width: 100, fit: BoxFit.cover);
-                  return Card(
-                    child: Column(children: [
+            future: generateVideoThumbnail(statuses),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Image video = Image.memory(snapshot.data as dynamic,
+                    height: 100, width: 100, fit: BoxFit.cover);
+                return Card(
+                  child: Column(
+                    children: [
                       Stack(
                         children: [
                           SizedBox(
@@ -265,7 +263,7 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             child: TextButton(
                               style: TextButton.styleFrom(
                                   fixedSize: const Size(60.0, 53.0),
-                                  primary: Colors.red),
+                                  primary: Colors.blue),
                               onPressed: () async {
                                 await shareFile(statuses.path);
                               },
@@ -295,42 +293,33 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
                                   fixedSize: const Size(60.0, 53.0),
-                                ),
-                                onPressed: () async {
-                                  await saveStatus(
-                                          newPath, statuses.path, copyPath)
-                                      .then((value) {
-                                    return showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (context) {
-                                          return const AlertDialog(
-                                            title: Text(
-                                                'Status was saved successfully'),
-                                          );
-                                        });
-                                  });
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text('SAVE')
-                                  ],
-                                ),
-                              )),
+                                  primary: Colors.red),
+                              onPressed: () async {
+                                await entit.file.delete();
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.delete_forever_rounded),
+                                  Text('DELETE')
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       )
-                    ]),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
+                    ],
+                  ),
                 );
-              });
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
         },
       );
     } else {
@@ -364,13 +353,14 @@ class SavedStatusPageState extends State<SavedStatusPage> {
           }
 
           return FutureBuilder(
-              future: generateVideoThumbnail(statuses),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Image video = Image.memory(snapshot.data as dynamic,
-                      height: 100, width: 100, fit: BoxFit.cover);
-                  return Card(
-                    child: Column(children: [
+            future: generateVideoThumbnail(statuses),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Image video = Image.memory(snapshot.data as dynamic,
+                    height: 100, width: 100, fit: BoxFit.cover);
+                return Card(
+                  child: Column(
+                    children: [
                       Stack(
                         children: [
                           SizedBox(
@@ -405,7 +395,7 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             child: TextButton(
                               style: TextButton.styleFrom(
                                   fixedSize: const Size(60.0, 53.0),
-                                  primary: Colors.red),
+                                  primary: Colors.blue),
                               onPressed: () async {
                                 await shareFile(statuses.path);
                               },
@@ -435,42 +425,33 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
                                   fixedSize: const Size(60.0, 53.0),
-                                ),
-                                onPressed: () async {
-                                  await saveStatus(
-                                          newPath, statuses.path, copyPath)
-                                      .then((value) {
-                                    return showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (context) {
-                                          return const AlertDialog(
-                                            title: Text(
-                                                'Status was saved successfully'),
-                                          );
-                                        });
-                                  });
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text('SAVE')
-                                  ],
-                                ),
-                              )),
+                                  primary: Colors.red),
+                              onPressed: () async {
+                                await entit.file.delete();
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.delete_forever_rounded),
+                                  Text('DELETE')
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       )
-                    ]),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
+                    ],
+                  ),
                 );
-              });
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
         },
       );
     } else {
@@ -513,68 +494,70 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                 height: 100, width: 100, fit: BoxFit.cover),
           );
           return Card(
-            child: Column(children: [
-              SizedBox(
-                width: 350,
-                height: 134,
-                child: image,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          fixedSize: const Size(60.0, 53.0),
-                          primary: Colors.red),
-                      onPressed: () async {
-                        await shareFile(statuses.path);
-                      },
-                      child: Column(
-                        children: const [Icon(Icons.share), Text('SHARE')],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          fixedSize: const Size(60.0, 53.0),
-                          primary: Colors.green),
-                      onPressed: () async {
-                        await shareFile(statuses.path);
-                      },
-                      child: Column(
-                        children: const [Icon(Icons.cached), Text('REPOST')],
-                      ),
-                    ),
-                  ),
-                  Expanded(
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 350,
+                  height: 134,
+                  child: image,
+                ),
+                Row(
+                  children: [
+                    Expanded(
                       flex: 1,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0)),
+                            fixedSize: const Size(60.0, 53.0),
+                            primary: Colors.blue),
                         onPressed: () async {
-                          await saveStatus(newPath, statuses.path, copyPath)
-                              .then((value) {
-                            return showDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (context) {
-                                  return const AlertDialog(
-                                    title:
-                                        Text('Status was saved successfully'),
-                                  );
-                                });
-                          });
+                          await shareFile(statuses.path);
                         },
                         child: Column(
-                          children: const [Icon(Icons.save_alt), Text('SAVE')],
+                          children: const [
+                            Icon(Icons.share),
+                            Text('SHARE'),
+                          ],
                         ),
-                      )),
-                ],
-              )
-            ]),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            fixedSize: const Size(60.0, 53.0),
+                            primary: Colors.green),
+                        onPressed: () async {
+                          await shareFile(statuses.path);
+                        },
+                        child: Column(
+                          children: const [
+                            Icon(Icons.cached),
+                            Text('REPOST'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            fixedSize: const Size(60.0, 53.0),
+                            primary: Colors.red),
+                        onPressed: () async {
+                          await entit.file.delete();
+                        },
+                        child: Column(
+                          children: const [
+                            Icon(Icons.delete_forever_rounded),
+                            Text('DELETE')
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           );
         },
       );

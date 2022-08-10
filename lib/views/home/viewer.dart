@@ -5,6 +5,8 @@ import 'package:video_player/video_player.dart';
 
 import 'package:all_status_saver/views/whatsapp/whatsapp.dart';
 
+import 'package:all_status_saver/views/home/home.dart';
+
 class MultimediaViewer {
   final bool isImage;
   final File file;
@@ -69,7 +71,7 @@ class _ViewerState extends State<Viewer> {
                             ),
                             child: InteractiveViewer(
                               panEnabled: true,
-                              boundaryMargin: EdgeInsets.zero,
+                              boundaryMargin: const EdgeInsets.all(20),
                               minScale: 0.5,
                               maxScale: 2,
                               child: Image.file(
@@ -83,25 +85,37 @@ class _ViewerState extends State<Viewer> {
                     ),
                   )
                 : _controller.value.isInitialized
-                    ? Column(
-                        children: [
-                          ConstrainedBox(
-                            constraints: BoxConstraints.loose(Size.fromHeight(
-                                MediaQuery.of(context).size.height * 0.7)),
-                            child: AspectRatio(
-                              aspectRatio: _controller.value.aspectRatio,
-                              child: VideoPlayer(_controller),
-                            ),
+                    ? Container(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints.loose(
+                            Size.fromHeight(
+                                MediaQuery.of(context).size.height * 0.6),
                           ),
-                          Column(
-                            children: [
-                              Row(
+                          child: AspectRatio(
+                            aspectRatio: _controller.value.aspectRatio,
+                            child: VideoPlayer(_controller),
+                          ),
+                        ),
+                      )
+                    : Container(),
+            !widget.multimediaViewer.isImage && _controller.value.isInitialized
+                ? Expanded(
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 20, right: 20, top: 20),
+                                      left: 20,
+                                      right: 20,
+                                    ),
                                     child:
                                         _controller.value.position.inSeconds > 9
                                             ? Text(
@@ -117,7 +131,9 @@ class _ViewerState extends State<Viewer> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        right: 20, left: 20, top: 20),
+                                      right: 20,
+                                      left: 20,
+                                    ),
                                     child:
                                         _controller.value.duration.inSeconds > 9
                                             ? Text(
@@ -133,149 +149,208 @@ class _ViewerState extends State<Viewer> {
                                   ),
                                 ],
                               ),
-                              Container(
-                                child: VideoProgressIndicator(
-                                  _controller,
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0, left: 7.0, right: 7.0),
-                                  allowScrubbing: true,
-                                  colors: const VideoProgressColors(
-                                      backgroundColor: Colors.blue,
-                                      playedColor: Colors.green,
-                                      bufferedColor: Colors.grey),
-                                ),
+                            ),
+                            VideoProgressIndicator(
+                              _controller,
+                              padding: const EdgeInsets.only(
+                                  top: 10.0, left: 7.0, right: 7.0),
+                              allowScrubbing: true,
+                              colors: const VideoProgressColors(
+                                  backgroundColor: Colors.blue,
+                                  playedColor: Colors.green,
+                                  bufferedColor: Colors.grey),
+                            ),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      int seconds =
+                                          _controller.value.position.inSeconds -
+                                              5;
+                                      setState(
+                                        () {
+                                          _controller.seekTo(
+                                              Duration(seconds: seconds));
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.fast_rewind_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(
+                                        () {
+                                          _controller.value.isPlaying
+                                              ? _controller.pause()
+                                              : _controller.play();
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(
+                                      _controller.value.isPlaying
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      int seconds =
+                                          _controller.value.position.inSeconds +
+                                              5;
+                                      setState(
+                                        () {
+                                          _controller.seekTo(
+                                              Duration(seconds: seconds));
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.fast_forward_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Container(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        int seconds = _controller
-                                                .value.position.inSeconds -
-                                            5;
-                                        setState(
-                                          () {
-                                            _controller.seekTo(
-                                                Duration(seconds: seconds));
-                                            setState(() {});
-                                          },
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.fast_rewind_rounded,
-                                        color: Colors.white,
-                                      ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      await const HomePage().shareFile(
+                                          widget.multimediaViewer.file.path);
+                                    },
+                                    iconSize: 54,
+                                    padding: const EdgeInsets.all(15.0),
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.white,
                                     ),
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(
-                                          () {
-                                            _controller.value.isPlaying
-                                                ? _controller.pause()
-                                                : _controller.play();
-                                          },
-                                        );
-                                      },
-                                      icon: Icon(
-                                        _controller.value.isPlaying
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                      ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      await const HomePage().shareFile(
+                                          widget.multimediaViewer.file.path);
+                                    },
+                                    iconSize: 54,
+                                    padding: const EdgeInsets.all(15.0),
+                                    icon: const Icon(
+                                      Icons.cached,
+                                      color: Colors.white,
                                     ),
-                                    IconButton(
-                                      onPressed: () {
-                                        int seconds = _controller
-                                                .value.position.inSeconds +
-                                            5;
-                                        setState(
-                                          () {
-                                            _controller.seekTo(
-                                                Duration(seconds: seconds));
-                                            setState(() {});
-                                          },
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.fast_forward_rounded,
-                                        color: Colors.white,
-                                      ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      await const HomePage()
+                                          .saveStatus(
+                                              newPath,
+                                              widget.multimediaViewer.file.path,
+                                              widget.multimediaViewer.copyPath)
+                                          .then(
+                                        (value) {
+                                          return showDialog(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                title: Text(
+                                                    'Status was saved successfully'),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    iconSize: 54,
+                                    padding: const EdgeInsets.all(15.0),
+                                    icon: const Icon(
+                                      Icons.save_alt,
+                                      color: Colors.white,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
-                      )
-                    : Container(),
-            Expanded(
-              child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () async {
-                          await WhatsappPageState()
-                              .shareFile(widget.multimediaViewer.file.path);
-                        },
-                        iconSize: 54,
-                        padding: const EdgeInsets.all(15.0),
-                        icon: const Icon(
-                          Icons.share,
-                          color: Colors.white,
+                            ),
+                          ],
                         ),
                       ),
-                      IconButton(
-                        onPressed: () async {
-                          await WhatsappPageState()
-                              .shareFile(widget.multimediaViewer.file.path);
-                        },
-                        iconSize: 54,
-                        padding: const EdgeInsets.all(15.0),
-                        icon: const Icon(
-                          Icons.cached,
-                          color: Colors.white,
+                    ),
+                  )
+                : Expanded(
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                await const HomePage().shareFile(
+                                    widget.multimediaViewer.file.path);
+                              },
+                              iconSize: 54,
+                              padding: const EdgeInsets.all(15.0),
+                              icon: const Icon(
+                                Icons.share,
+                                color: Colors.white,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                await const HomePage().shareFile(
+                                    widget.multimediaViewer.file.path);
+                              },
+                              iconSize: 54,
+                              padding: const EdgeInsets.all(15.0),
+                              icon: const Icon(
+                                Icons.cached,
+                                color: Colors.white,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () async {
+                                await const HomePage()
+                                    .saveStatus(
+                                        newPath,
+                                        widget.multimediaViewer.file.path,
+                                        widget.multimediaViewer.copyPath)
+                                    .then(
+                                  (value) {
+                                    return showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (context) {
+                                        return const AlertDialog(
+                                          title: Text(
+                                              'Status was saved successfully'),
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              iconSize: 54,
+                              padding: const EdgeInsets.all(15.0),
+                              icon: const Icon(
+                                Icons.save_alt,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      IconButton(
-                        onPressed: () async {
-                          await WhatsappPageState()
-                              .saveStatus(
-                                  newPath,
-                                  widget.multimediaViewer.file.path,
-                                  widget.multimediaViewer.copyPath)
-                              .then(
-                            (value) {
-                              return showDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (context) {
-                                  return const AlertDialog(
-                                    title:
-                                        Text('Status was saved successfully'),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                        iconSize: 54,
-                        padding: const EdgeInsets.all(15.0),
-                        icon: const Icon(
-                          Icons.save_alt,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
