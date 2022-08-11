@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:all_status_saver/views/whatsapp/whatsapp.dart';
-
 import 'package:all_status_saver/views/home/home.dart';
 
 class MultimediaViewer {
@@ -28,6 +26,8 @@ class Viewer extends StatefulWidget {
 
 class _ViewerState extends State<Viewer> {
   late VideoPlayerController _controller;
+  final _transformationController = TransformationController();
+  late TapDownDetails _doubleTapDetails;
 
   @override
   void initState() {
@@ -37,6 +37,26 @@ class _ViewerState extends State<Viewer> {
         _controller.play();
         setState(() {});
       });
+  }
+
+  void _handleDoubleTapDown(TapDownDetails details) {
+    _doubleTapDetails = details;
+  }
+
+  void _handleDoubleTap() {
+    if (_transformationController.value != Matrix4.identity()) {
+      _transformationController.value = Matrix4.identity();
+    } else {
+      final position = _doubleTapDetails.localPosition;
+
+      // _transformationController.value = Matrix4.identity()
+      //   ..translate(-position.dx * 2, -position.dy * 2)
+      //   ..scale(3.0);
+      // For a 2x zoom
+      _transformationController.value = Matrix4.identity()
+        ..translate(-position.dx, -position.dy)
+        ..scale(2.0);
+    }
   }
 
   @override
@@ -69,14 +89,20 @@ class _ViewerState extends State<Viewer> {
                               Size.fromHeight(
                                   MediaQuery.of(context).size.height * 0.7),
                             ),
-                            child: InteractiveViewer(
-                              panEnabled: true,
-                              boundaryMargin: const EdgeInsets.all(20),
-                              minScale: 0.5,
-                              maxScale: 2,
-                              child: Image.file(
-                                widget.multimediaViewer.file,
-                                fit: BoxFit.cover,
+                            child: GestureDetector(
+                              onDoubleTapDown: _handleDoubleTapDown,
+                              onDoubleTap: _handleDoubleTap,
+                              child: InteractiveViewer(
+                                transformationController:
+                                    _transformationController,
+                                panEnabled: true,
+                                boundaryMargin: const EdgeInsets.all(20),
+                                minScale: 0.5,
+                                maxScale: 3,
+                                child: Image.file(
+                                  widget.multimediaViewer.file,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
