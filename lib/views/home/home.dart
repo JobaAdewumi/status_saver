@@ -115,13 +115,15 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () async {
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: GestureDetector(
+                    onTap: () async {
                       if (await requestPermission(Permission.storage)) {
                         Navigator.pushNamed(context, route.whatsAppPage);
                       } else {
@@ -129,18 +131,24 @@ class HomePage extends StatelessWidget {
                       }
                     },
                     child: Card(
-                      child: Column(
-                        children: const [
-                          FlutterLogo(
-                            size: 60.0,
-                          ),
-                          Text('WhatsApp'),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: const [
+                            FlutterLogo(
+                              size: 60.0,
+                            ),
+                            Text('WA STATUS'),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () async {
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: GestureDetector(
+                    onTap: () async {
                       if (await requestPermission(Permission.storage)) {
                         Navigator.pushNamed(context, route.whatsappBPage);
                       } else {
@@ -148,35 +156,40 @@ class HomePage extends StatelessWidget {
                       }
                     },
                     child: Card(
-                      child: Column(
-                        children: const [
-                          FlutterLogo(
-                            size: 60.0,
-                          ),
-                          Text('WhatsApp Business'),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: const [
+                            FlutterLogo(
+                              size: 60.0,
+                            ),
+                            Text('WB STATUS'),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.save_alt_outlined),
-                    onPressed: () async {
-                      if (await requestPermission(Permission.storage)) {
-                        Navigator.pushNamed(context, route.savedStatusPage);
-                      } else {
-                        return;
-                      }
-                    },
-                    label: const Text('Saved Statuses'),
-                  ),
-                ],
-              )
-            ]),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.save_alt_outlined),
+                  onPressed: () async {
+                    if (await requestPermission(Permission.storage)) {
+                      Navigator.pushNamed(context, route.savedStatusPage);
+                    } else {
+                      return;
+                    }
+                  },
+                  label: const Text('Saved Statuses'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
