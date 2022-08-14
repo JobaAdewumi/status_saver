@@ -9,6 +9,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:all_status_saver/views/permission.dart';
 
+import 'package:all_status_saver/widgets/exit-popup.dart';
+
 class FileType {
   final bool isImage;
   final File file;
@@ -113,149 +115,152 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Status Saver'),
-      ),
-      drawer: Drawer(
-        width: 280.0,
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Drawer header'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.call),
-              title: const Text(' WA Status'),
-              onTap: () async {
-                if (await requestPermission(Permission.storage)) {
-                  Navigator.pushNamed(context, route.whatsAppPage);
-                } else {
-                  return;
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.business),
-              title: const Text('WB Status'),
-              onTap: () async {
-                if (await requestPermission(Permission.storage)) {
-                  Navigator.pushNamed(context, route.whatsappBPage);
-                } else {
-                  return;
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.list),
-              title: const Text('Saved Statuses'),
-              onTap: () async {
-                if (await requestPermission(Permission.storage)) {
-                  Navigator.pushNamed(context, route.savedStatusPage);
-                } else {
-                  return;
-                }
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pushNamed(context, route.settingsP);
-              },
-            ),
-          ],
+    return WillPopScope(
+      onWillPop: () => showExitPopup(context),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Status Saver'),
         ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: GestureDetector(
-                    onTap: () async {
-                      if (await requestPermission(Permission.storage)) {
-                        Navigator.pushNamed(context, route.whatsAppPage);
-                      } else {
-                        return;
-                      }
-                    },
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: const [
-                            FlutterLogo(
-                              size: 60.0,
-                            ),
-                            Text('WA STATUS'),
-                          ],
+        drawer: Drawer(
+          width: 280.0,
+          child: ListView(
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Text('Drawer header'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.call),
+                title: const Text(' WA Status'),
+                onTap: () async {
+                  if (await requestPermission(Permission.storage)) {
+                    Navigator.pushNamed(context, route.whatsAppPage);
+                  } else {
+                    return;
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.business),
+                title: const Text('WB Status'),
+                onTap: () async {
+                  if (await requestPermission(Permission.storage)) {
+                    Navigator.pushNamed(context, route.whatsappBPage);
+                  } else {
+                    return;
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.list),
+                title: const Text('Saved Statuses'),
+                onTap: () async {
+                  if (await requestPermission(Permission.storage)) {
+                    Navigator.pushNamed(context, route.savedStatusPage);
+                  } else {
+                    return;
+                  }
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Settings'),
+                onTap: () {
+                  Navigator.pushNamed(context, route.settingsP);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (await requestPermission(Permission.storage)) {
+                          Navigator.pushNamed(context, route.whatsAppPage);
+                        } else {
+                          return;
+                        }
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: const [
+                              FlutterLogo(
+                                size: 60.0,
+                              ),
+                              Text('WA STATUS'),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: GestureDetector(
-                    onTap: () async {
-                      if (await requestPermission(Permission.storage)) {
-                        Navigator.pushNamed(context, route.whatsappBPage);
-                      } else {
-                        return;
-                      }
-                    },
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: const [
-                            FlutterLogo(
-                              size: 60.0,
-                            ),
-                            Text('WB STATUS'),
-                          ],
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (await requestPermission(Permission.storage)) {
+                          Navigator.pushNamed(context, route.whatsappBPage);
+                        } else {
+                          return;
+                        }
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: const [
+                              FlutterLogo(
+                                size: 60.0,
+                              ),
+                              Text('WB STATUS'),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.save_alt_outlined),
-                  onPressed: () async {
-                    if (await requestPermission(Permission.storage)) {
-                      Navigator.pushNamed(context, route.savedStatusPage);
-                    } else {
-                      return;
-                    }
-                  },
-                  label: const Text('Saved Statuses'),
-                ),
-                // ElevatedButton.icon(
-                //   icon: const Icon(Icons.bug_report),
-                //   onPressed: () async {
-                //     if (await requestPermission(Permission.storage)) {
-                //       Navigator.pushNamed(context, route.introScreen);
-                //     } else {
-                //       return;
-                //     }
-                //   },
-                //   label: const Text('Intro Screen debug'),
-                // ),
-              ],
-            ),
-          ],
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.save_alt_outlined),
+                    onPressed: () async {
+                      if (await requestPermission(Permission.storage)) {
+                        Navigator.pushNamed(context, route.savedStatusPage);
+                      } else {
+                        return;
+                      }
+                    },
+                    label: const Text('Saved Statuses'),
+                  ),
+                  // ElevatedButton.icon(
+                  //   icon: const Icon(Icons.bug_report),
+                  //   onPressed: () async {
+                  //     if (await requestPermission(Permission.storage)) {
+                  //       Navigator.pushNamed(context, route.introScreen);
+                  //     } else {
+                  //       return;
+                  //     }
+                  //   },
+                  //   label: const Text('Intro Screen debug'),
+                  // ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
