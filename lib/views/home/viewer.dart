@@ -9,11 +9,13 @@ class MultimediaViewer {
   final bool isImage;
   final File file;
   final String copyPath;
+  final bool isStatusPage;
 
   MultimediaViewer({
     this.isImage = false,
     required this.file,
     required this.copyPath,
+    this.isStatusPage = false,
   });
 }
 
@@ -274,35 +276,97 @@ class _ViewerState extends State<Viewer> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      await const HomePage()
-                                          .saveStatus(
-                                              newPath,
-                                              widget.multimediaViewer.file.path,
-                                              widget.multimediaViewer.copyPath)
-                                          .then(
-                                        (value) {
-                                          return showDialog(
-                                            context: context,
-                                            barrierDismissible: true,
-                                            builder: (context) {
-                                              return const AlertDialog(
-                                                title: Text(
-                                                    'Status was saved successfully'),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                    iconSize: 54,
-                                    padding: const EdgeInsets.all(15.0),
-                                    icon: const Icon(
-                                      Icons.save_alt,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                  widget.multimediaViewer.isStatusPage
+                                      ? IconButton(
+                                          onPressed: () async {
+                                            return showDialog(
+                                              context: context,
+                                              barrierDismissible: true,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Delete Permanently?'),
+                                                  content: const Text(
+                                                      'Are you sure you want to delete this file permanently?'),
+                                                  contentPadding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          24.0,
+                                                          20.0,
+                                                          24.0,
+                                                          17.0),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        await const HomePage()
+                                                            .deleteItem(widget
+                                                                .multimediaViewer
+                                                                .file);
+                                                      },
+                                                      child:
+                                                          const Text('Delete'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          iconSize: 54,
+                                          padding: const EdgeInsets.all(15.0),
+                                          icon: const Icon(
+                                            Icons.delete_forever_rounded,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : IconButton(
+                                          onPressed: () async {
+                                            await const HomePage()
+                                                .saveStatus(
+                                                    newPath,
+                                                    widget.multimediaViewer.file
+                                                        .path,
+                                                    widget.multimediaViewer
+                                                        .copyPath)
+                                                .then(
+                                              (value) {
+                                                return showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Status was saved successfully'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child:
+                                                              const Text('Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                          iconSize: 54,
+                                          padding: const EdgeInsets.all(15.0),
+                                          icon: const Icon(
+                                            Icons.save_alt,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                 ],
                               ),
                             ),
@@ -343,35 +407,87 @@ class _ViewerState extends State<Viewer> {
                                 color: Colors.white,
                               ),
                             ),
-                            IconButton(
-                              onPressed: () async {
-                                await const HomePage()
-                                    .saveStatus(
-                                        newPath,
-                                        widget.multimediaViewer.file.path,
-                                        widget.multimediaViewer.copyPath)
-                                    .then(
-                                  (value) {
-                                    return showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      builder: (context) {
-                                        return const AlertDialog(
-                                          title: Text(
-                                              'Status was saved successfully'),
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                              iconSize: 54,
-                              padding: const EdgeInsets.all(15.0),
-                              icon: const Icon(
-                                Icons.save_alt,
-                                color: Colors.white,
-                              ),
-                            ),
+                            widget.multimediaViewer.isStatusPage
+                                ? IconButton(
+                                    onPressed: () async {
+                                      return showDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Delete Permanently?'),
+                                            content: const Text(
+                                                'Are you sure you want to delete this file permanently?'),
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    24.0, 20.0, 24.0, 17.0),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  await const HomePage()
+                                                      .deleteItem(widget
+                                                          .multimediaViewer
+                                                          .file);
+                                                },
+                                                child: const Text('Delete'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    iconSize: 54,
+                                    padding: const EdgeInsets.all(15.0),
+                                    icon: const Icon(
+                                      Icons.delete_forever_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : IconButton(
+                                    onPressed: () async {
+                                      await const HomePage()
+                                          .saveStatus(
+                                              newPath,
+                                              widget.multimediaViewer.file.path,
+                                              widget.multimediaViewer.copyPath)
+                                          .then(
+                                        (value) {
+                                          return showDialog(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Status was saved successfully'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Ok'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    iconSize: 54,
+                                    padding: const EdgeInsets.all(15.0),
+                                    icon: const Icon(
+                                      Icons.save_alt,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                           ],
                         ),
                       ),
