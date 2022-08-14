@@ -107,11 +107,67 @@ class HomePage extends StatelessWidget {
     return unit8list;
   }
 
+  Future deleteItem(File file) async {
+    await file.delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Status Saver'),
+      ),
+      drawer: Drawer(
+        width: 280.0,
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text('Drawer header'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.call),
+              title: const Text(' WA Status'),
+              onTap: () async {
+                if (await requestPermission(Permission.storage)) {
+                  Navigator.pushNamed(context, route.whatsAppPage);
+                } else {
+                  return;
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.business),
+              title: const Text('WB Status'),
+              onTap: () async {
+                if (await requestPermission(Permission.storage)) {
+                  Navigator.pushNamed(context, route.whatsappBPage);
+                } else {
+                  return;
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.list),
+              title: const Text('Saved Statuses'),
+              onTap: () async {
+                if (await requestPermission(Permission.storage)) {
+                  Navigator.pushNamed(context, route.savedStatusPage);
+                } else {
+                  return;
+                }
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pushNamed(context, route.settingsP);
+              },
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: Column(
@@ -186,6 +242,17 @@ class HomePage extends StatelessWidget {
                   },
                   label: const Text('Saved Statuses'),
                 ),
+                // ElevatedButton.icon(
+                //   icon: const Icon(Icons.bug_report),
+                //   onPressed: () async {
+                //     if (await requestPermission(Permission.storage)) {
+                //       Navigator.pushNamed(context, route.introScreen);
+                //     } else {
+                //       return;
+                //     }
+                //   },
+                //   label: const Text('Intro Screen debug'),
+                // ),
               ],
             ),
           ],
