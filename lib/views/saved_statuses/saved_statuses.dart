@@ -114,6 +114,10 @@ class SavedStatusPageState extends State<SavedStatusPage> {
   }
 
   Future generateVideoThumbnail(File file) async {
+    if (!await file.exists()) {
+      return;
+    }
+
     final unit8list = await VideoThumbnail.thumbnailData(
       video: file.path,
       imageFormat: ImageFormat.JPEG,
@@ -149,9 +153,15 @@ class SavedStatusPageState extends State<SavedStatusPage> {
               entit.file.path.contains('.png')) {
             Widget image = InkWell(
               onTap: () {
-                Navigator.pushNamed(context, route.viewer,
-                    arguments: MultimediaViewer(
-                        isImage: true, file: statuses, copyPath: copyPath));
+                Navigator.pushNamed(
+                  context,
+                  route.viewer,
+                  arguments: MultimediaViewer(
+                      isImage: true,
+                      file: statuses,
+                      copyPath: copyPath,
+                      isStatusPage: true),
+                );
               },
               child: Image.file(statuses,
                   height: 100, width: 100, fit: BoxFit.cover),
@@ -204,7 +214,36 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                               fixedSize: const Size(60.0, 53.0),
                               primary: Colors.red),
                           onPressed: () async {
-                            await entit.file.delete();
+                            return showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Delete Permanently?'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this file permanently?'),
+                                  contentPadding: const EdgeInsets.fromLTRB(
+                                      24.0, 20.0, 24.0, 17.0),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        setState(() {
+                                          entit.file.deleteSync();
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                           child: Column(
                             children: const [
@@ -241,9 +280,14 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             left: 60,
                             child: IconButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, route.viewer,
-                                    arguments: MultimediaViewer(
-                                        file: statuses, copyPath: copyPath));
+                                Navigator.pushNamed(
+                                  context,
+                                  route.viewer,
+                                  arguments: MultimediaViewer(
+                                      file: statuses,
+                                      copyPath: copyPath,
+                                      isStatusPage: true),
+                                );
                               },
                               icon: const Icon(
                                 Icons.play_circle_outline,
@@ -299,7 +343,38 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                   primary: Colors.red),
                               onPressed: () async {
-                                await entit.file.delete();
+                                return showDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Delete Permanently?'),
+                                      content: const Text(
+                                          'Are you sure you want to delete this file permanently?'),
+                                      contentPadding: const EdgeInsets.fromLTRB(
+                                          24.0, 20.0, 24.0, 17.0),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            setState(() {
+                                              allStatuses[index]
+                                                  .file
+                                                  .deleteSync();
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               },
                               child: Column(
                                 children: const [
@@ -373,9 +448,14 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             left: 60,
                             child: IconButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, route.viewer,
-                                    arguments: MultimediaViewer(
-                                        file: statuses, copyPath: copyPath));
+                                Navigator.pushNamed(
+                                  context,
+                                  route.viewer,
+                                  arguments: MultimediaViewer(
+                                      file: statuses,
+                                      copyPath: copyPath,
+                                      isStatusPage: true),
+                                );
                               },
                               icon: const Icon(
                                 Icons.play_circle_outline,
@@ -431,7 +511,39 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                                   fixedSize: const Size(60.0, 53.0),
                                   primary: Colors.red),
                               onPressed: () async {
-                                await entit.file.delete();
+                                return showDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Delete Permanently?'),
+                                      content: const Text(
+                                          'Are you sure you want to delete this file permanently?'),
+                                      contentPadding: const EdgeInsets.fromLTRB(
+                                          24.0, 20.0, 24.0, 17.0),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            setState(() {
+                                              allVideos[index]
+                                                  .file
+                                                  .deleteSync();
+                                              // entit.file.deleteSync();
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               },
                               child: Column(
                                 children: const [
@@ -486,9 +598,15 @@ class SavedStatusPageState extends State<SavedStatusPage> {
 
           Widget image = InkWell(
             onTap: () {
-              Navigator.pushNamed(context, route.viewer,
-                  arguments: MultimediaViewer(
-                      isImage: true, file: statuses, copyPath: copyPath));
+              Navigator.pushNamed(
+                context,
+                route.viewer,
+                arguments: MultimediaViewer(
+                    isImage: true,
+                    file: statuses,
+                    copyPath: copyPath,
+                    isStatusPage: true),
+              );
             },
             child: Image.file(statuses,
                 height: 100, width: 100, fit: BoxFit.cover),
@@ -544,7 +662,36 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                             fixedSize: const Size(60.0, 53.0),
                             primary: Colors.red),
                         onPressed: () async {
-                          await entit.file.delete();
+                          return showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Delete Permanently?'),
+                                content: const Text(
+                                    'Are you sure you want to delete this file permanently?'),
+                                contentPadding: const EdgeInsets.fromLTRB(
+                                    24.0, 20.0, 24.0, 17.0),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        entit.file.deleteSync();
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
                         child: Column(
                           children: const [
