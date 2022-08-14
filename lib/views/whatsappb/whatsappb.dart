@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:file_manager/file_manager.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:share_plus/share_plus.dart';
 
 import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:all_status_saver/views/home/viewer.dart';
@@ -65,51 +63,61 @@ class WhatsappBPageState extends State<WhatsappBPage> {
               entit.file.path.contains('.png')) {
             Widget image = InkWell(
               onTap: () {
-                Navigator.pushNamed(context, route.viewer,
-                    arguments: MultimediaViewer(
-                        isImage: true, file: statuses, copyPath: copyPath));
+                Navigator.pushNamed(
+                  context,
+                  route.viewer,
+                  arguments: MultimediaViewer(
+                      isImage: true, file: statuses, copyPath: copyPath),
+                );
               },
               child: Image.file(statuses,
                   height: 100, width: 100, fit: BoxFit.cover),
             );
             return Card(
-              child: Column(children: [
-                SizedBox(
-                  width: 350,
-                  height: 134,
-                  child: image,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0),
-                            primary: Colors.red),
-                        onPressed: () async {
-                          await const HomePage().shareFile(statuses.path);
-                        },
-                        child: Column(
-                          children: const [Icon(Icons.share), Text('SHARE')],
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 350,
+                    height: 134,
+                    child: image,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              fixedSize: const Size(60.0, 53.0),
+                              primary: Colors.red),
+                          onPressed: () async {
+                            await const HomePage().shareFile(statuses.path);
+                          },
+                          child: Column(
+                            children: const [
+                              Icon(Icons.share),
+                              Text('SHARE'),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0),
-                            primary: Colors.green),
-                        onPressed: () async {
-                          await const HomePage().shareFile(statuses.path);
-                        },
-                        child: Column(
-                          children: const [Icon(Icons.cached), Text('REPOST')],
+                      Expanded(
+                        flex: 1,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              fixedSize: const Size(60.0, 53.0),
+                              primary: Colors.green),
+                          onPressed: () async {
+                            await const HomePage().shareFile(statuses.path);
+                          },
+                          child: Column(
+                            children: const [
+                              Icon(Icons.cached),
+                              Text('REPOST'),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
+                      Expanded(
                         flex: 1,
                         child: TextButton(
                           style: TextButton.styleFrom(
@@ -117,17 +125,28 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                           onPressed: () async {
                             await const HomePage()
                                 .saveStatus(newPath, statuses.path, copyPath)
-                                .then((value) {
-                              return showDialog(
+                                .then(
+                              (value) {
+                                return showDialog(
                                   context: context,
                                   barrierDismissible: true,
                                   builder: (context) {
-                                    return const AlertDialog(
-                                      title:
-                                          Text('Status was saved successfully'),
+                                    return AlertDialog(
+                                      title: const Text(
+                                          'Status was saved successfully'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Ok'),
+                                        ),
+                                      ],
                                     );
-                                  });
-                            });
+                                  },
+                                );
+                              },
+                            );
                           },
                           child: Column(
                             children: const [
@@ -135,20 +154,23 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                               Text('SAVE')
                             ],
                           ),
-                        )),
-                  ],
-                )
-              ]),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             );
           }
           return FutureBuilder(
-              future: const HomePage().generateVideoThumbnail(statuses),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Image video = Image.memory(snapshot.data as dynamic,
-                      height: 100, width: 100, fit: BoxFit.cover);
-                  return Card(
-                    child: Column(children: [
+            future: const HomePage().generateVideoThumbnail(statuses),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Image video = Image.memory(snapshot.data as dynamic,
+                    height: 100, width: 100, fit: BoxFit.cover);
+                return Card(
+                  child: Column(
+                    children: [
                       Stack(
                         children: [
                           SizedBox(
@@ -161,9 +183,12 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                             left: 60,
                             child: IconButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, route.viewer,
-                                    arguments: MultimediaViewer(
-                                        file: statuses, copyPath: copyPath));
+                                Navigator.pushNamed(
+                                  context,
+                                  route.viewer,
+                                  arguments: MultimediaViewer(
+                                      file: statuses, copyPath: copyPath),
+                                );
                               },
                               icon: const Icon(
                                 Icons.play_circle_outline,
@@ -213,43 +238,57 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                ),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .saveStatus(
-                                          newPath, statuses.path, copyPath)
-                                      .then((value) {
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                fixedSize: const Size(60.0, 53.0),
+                              ),
+                              onPressed: () async {
+                                await const HomePage()
+                                    .saveStatus(
+                                        newPath, statuses.path, copyPath)
+                                    .then(
+                                  (value) {
                                     return showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (context) {
-                                          return const AlertDialog(
-                                            title: Text(
-                                                'Status was saved successfully'),
-                                          );
-                                        });
-                                  });
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text('SAVE')
-                                  ],
-                                ),
-                              )),
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                              'Status was saved successfully'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Ok'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.save_alt),
+                                  Text('SAVE')
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       )
-                    ]),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
+                    ],
+                  ),
                 );
-              });
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
         },
       );
     } else {
@@ -283,13 +322,14 @@ class WhatsappBPageState extends State<WhatsappBPage> {
           }
 
           return FutureBuilder(
-              future: const HomePage().generateVideoThumbnail(statuses),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Image video = Image.memory(snapshot.data as dynamic,
-                      height: 100, width: 100, fit: BoxFit.cover);
-                  return Card(
-                    child: Column(children: [
+            future: const HomePage().generateVideoThumbnail(statuses),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Image video = Image.memory(snapshot.data as dynamic,
+                    height: 100, width: 100, fit: BoxFit.cover);
+                return Card(
+                  child: Column(
+                    children: [
                       Stack(
                         children: [
                           SizedBox(
@@ -302,9 +342,12 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                             left: 60,
                             child: IconButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, route.viewer,
-                                    arguments: MultimediaViewer(
-                                        file: statuses, copyPath: copyPath));
+                                Navigator.pushNamed(
+                                  context,
+                                  route.viewer,
+                                  arguments: MultimediaViewer(
+                                      file: statuses, copyPath: copyPath),
+                                );
                               },
                               icon: const Icon(
                                 Icons.play_circle_outline,
@@ -354,43 +397,57 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                ),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .saveStatus(
-                                          newPath, statuses.path, copyPath)
-                                      .then((value) {
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                fixedSize: const Size(60.0, 53.0),
+                              ),
+                              onPressed: () async {
+                                await const HomePage()
+                                    .saveStatus(
+                                        newPath, statuses.path, copyPath)
+                                    .then(
+                                  (value) {
                                     return showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (context) {
-                                          return const AlertDialog(
-                                            title: Text(
-                                                'Status was saved successfully'),
-                                          );
-                                        });
-                                  });
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text('SAVE')
-                                  ],
-                                ),
-                              )),
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                              'Status was saved successfully'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Ok'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.save_alt),
+                                  Text('SAVE')
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       )
-                    ]),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
+                    ],
+                  ),
                 );
-              });
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
         },
       );
     } else {
@@ -425,77 +482,104 @@ class WhatsappBPageState extends State<WhatsappBPage> {
 
           Widget image = InkWell(
             onTap: () {
-              Navigator.pushNamed(context, route.viewer,
-                  arguments: MultimediaViewer(
-                      isImage: true, file: statuses, copyPath: copyPath));
+              Navigator.pushNamed(
+                context,
+                route.viewer,
+                arguments: MultimediaViewer(
+                    isImage: true, file: statuses, copyPath: copyPath),
+              );
             },
             child: Image.file(statuses,
                 height: 100, width: 100, fit: BoxFit.cover),
           );
           return Card(
-            child: Column(children: [
-              SizedBox(
-                width: 350,
-                height: 134,
-                child: image,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          fixedSize: const Size(60.0, 53.0),
-                          primary: Colors.red),
-                      onPressed: () async {
-                        await const HomePage().shareFile(statuses.path);
-                      },
-                      child: Column(
-                        children: const [Icon(Icons.share), Text('SHARE')],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          fixedSize: const Size(60.0, 53.0),
-                          primary: Colors.green),
-                      onPressed: () async {
-                        await const HomePage().shareFile(statuses.path);
-                      },
-                      child: Column(
-                        children: const [Icon(Icons.cached), Text('REPOST')],
-                      ),
-                    ),
-                  ),
-                  Expanded(
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 350,
+                  height: 134,
+                  child: image,
+                ),
+                Row(
+                  children: [
+                    Expanded(
                       flex: 1,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0)),
+                            fixedSize: const Size(60.0, 53.0),
+                            primary: Colors.red),
+                        onPressed: () async {
+                          await const HomePage().shareFile(statuses.path);
+                        },
+                        child: Column(
+                          children: const [
+                            Icon(Icons.share),
+                            Text('SHARE'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            fixedSize: const Size(60.0, 53.0),
+                            primary: Colors.green),
+                        onPressed: () async {
+                          await const HomePage().shareFile(statuses.path);
+                        },
+                        child: Column(
+                          children: const [
+                            Icon(Icons.cached),
+                            Text('REPOST'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          fixedSize: const Size(60.0, 53.0),
+                        ),
                         onPressed: () async {
                           await const HomePage()
                               .saveStatus(newPath, statuses.path, copyPath)
-                              .then((value) {
-                            return showDialog(
+                              .then(
+                            (value) {
+                              return showDialog(
                                 context: context,
                                 barrierDismissible: true,
                                 builder: (context) {
-                                  return const AlertDialog(
-                                    title:
-                                        Text('Status was saved successfully'),
+                                  return AlertDialog(
+                                    title: const Text(
+                                        'Status was saved successfully'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Ok'),
+                                      ),
+                                    ],
                                   );
-                                });
-                          });
+                                },
+                              );
+                            },
+                          );
                         },
                         child: Column(
-                          children: const [Icon(Icons.save_alt), Text('SAVE')],
+                          children: const [
+                            Icon(Icons.save_alt),
+                            Text('SAVE'),
+                          ],
                         ),
-                      )),
-                ],
-              )
-            ]),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           );
         },
       );
