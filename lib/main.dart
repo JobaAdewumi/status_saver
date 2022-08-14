@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import './helpers/ThemeManager.dart';
 
 import 'routes/routes.dart' as route;
 
 void main() {
-  runApp(const MyApp());
+  return runApp(
+    ChangeNotifierProvider<ThemeNotifier>(
+      create: (_) => ThemeNotifier(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,32 +20,28 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Status Saver',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.cyan,
-      ),
-      onGenerateRoute: route.controller,
-      initialRoute: route.homePage,
-      // initialRoute: '/',
-      // routes: {
-      //   // When navigating to the "/" route, build the FirstScreen widget.
-      //   '/': (context) => HomePage(),
-      //   // When navigating to the "/second" route, build the SecondScreen widget.
-      //   '/whatsapp': (context) => const WhatsappPage(),
-      //   '/whatsappb': (context) => const WhatsappBPage(),
-      //   '/savedstatus': (context) => const SavedStatusPage(),
-      // },
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, _) {
+        SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
+        );
+        return MaterialApp(
+          title: 'Status Saver',
+          theme: theme.getTheme(),
+          onGenerateRoute: route.controller,
+          initialRoute: route.introScreen,
+          // initialRoute: '/',
+          // routes: {
+          //   // When navigating to the "/" route, build the FirstScreen widget.
+          //   '/': (context) => HomePage(),
+          //   // When navigating to the "/second" route, build the SecondScreen widget.
+          //   '/whatsapp': (context) => const WhatsappPage(),
+          //   '/whatsappb': (context) => const WhatsappBPage(),
+          //   '/savedstatus': (context) => const SavedStatusPage(),
+          // },
+          // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        );
+      },
     );
   }
 }
