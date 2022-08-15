@@ -313,9 +313,18 @@ class WhatsappPageState extends State<WhatsappPage> {
         ),
       );
     } else {
-      ImagesVideos = const Center(
-        child: Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here'),
+      ImagesVideos = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+              textAlign: TextAlign.center),
+          ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.send_time_extension_sharp),
+            label: const Text('OPEN WHATSAPP'),
+          ),
+        ],
       );
     }
     return ImagesVideos;
@@ -475,9 +484,18 @@ class WhatsappPageState extends State<WhatsappPage> {
         ),
       );
     } else {
-      Videos = const Center(
-        child: Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here'),
+      Videos = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+              textAlign: TextAlign.center),
+          ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.send_time_extension_sharp),
+            label: const Text('OPEN WHATSAPP'),
+          ),
+        ],
       );
     }
     return Videos;
@@ -605,9 +623,18 @@ class WhatsappPageState extends State<WhatsappPage> {
         ),
       );
     } else {
-      Images = const Center(
-        child: Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here'),
+      Images = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+              textAlign: TextAlign.center),
+          ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.send_time_extension_sharp),
+            label: const Text('OPEN WHATSAPP'),
+          ),
+        ],
       );
     }
     return Images;

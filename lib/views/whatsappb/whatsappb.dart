@@ -295,7 +295,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                                 child: Column(
                                   children: const [
                                     Icon(Icons.save_alt),
-                                    Text('SAVE')
+                                    Text('SAVE'),
                                   ],
                                 ),
                               ),
@@ -315,9 +315,18 @@ class WhatsappBPageState extends State<WhatsappBPage> {
         ),
       );
     } else {
-      ImagesVideos = const Center(
-        child: Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here'),
+      ImagesVideos = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+              textAlign: TextAlign.center),
+          ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.send_time_extension_sharp),
+            label: const Text('OPEN WHATSAPP BUSINESS'),
+          ),
+        ],
       );
     }
     return ImagesVideos;
@@ -466,7 +475,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   );
@@ -480,9 +489,18 @@ class WhatsappBPageState extends State<WhatsappBPage> {
         ),
       );
     } else {
-      Videos = const Center(
-        child: Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here'),
+      Videos = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+              textAlign: TextAlign.center),
+          ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.send_time_extension_sharp),
+            label: const Text('OPEN WHATSAPP BUSINESS'),
+          ),
+        ],
       );
     }
     return Videos;
@@ -609,7 +627,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             );
@@ -617,9 +635,18 @@ class WhatsappBPageState extends State<WhatsappBPage> {
         ),
       );
     } else {
-      Images = const Center(
-        child: Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here'),
+      Images = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+              textAlign: TextAlign.center),
+          ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.send_time_extension_sharp),
+            label: const Text('OPEN WHATSAPP BUSINESS'),
+          ),
+        ],
       );
     }
     return Images;
