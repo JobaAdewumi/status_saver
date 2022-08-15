@@ -110,7 +110,10 @@ class HomePage extends StatelessWidget {
   }
 
   Future deleteItem(File file) async {
-    await file.delete();
+    if (!await file.exists()) {
+      await file.delete();
+    }
+    return;
   }
 
   @override
