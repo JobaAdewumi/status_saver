@@ -20,9 +20,9 @@ const String settingsP = 'settings';
 Route<dynamic> controller(RouteSettings settings) {
   switch (settings.name) {
     case introScreen:
-      return MaterialPageRoute(builder: (context) => IntroScreen());
+      return MaterialPageRoute(builder: (context) => const IntroScreen());
     case homePage:
-      return MaterialPageRoute(builder: (context) => const HomePage());
+      return MaterialPageRoute(builder: (context) => HomePage());
     case whatsAppPage:
       return MaterialPageRoute(builder: (context) => const WhatsappPage());
     case whatsappBPage:
