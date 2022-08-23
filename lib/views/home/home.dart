@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:saf/saf.dart';
 
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:share_plus/share_plus.dart';
@@ -24,33 +26,139 @@ class FileType {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
 
   Future<void> shareFile(String path) async {
     await Share.shareFiles([path]);
   }
 
-  Future saveStatus(String newPath, String oldPath, String filePath) async {
-    Directory directory = Directory(newPath);
-    late File savedFile;
+  Saf safBusiness = Saf(
+      '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses');
 
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
+  List<Permission> permissionsNeeded = [
+    Permission.storage,
+    Permission.manageExternalStorage
+  ];
+
+  Future saveStatus(String oldPath) async {
+    bool? savedFile;
+    if (oldPath.contains('.jpg') ||
+        oldPath.contains('.jpeg') ||
+        oldPath.contains('.png')) {
+      await GallerySaver.saveImage(oldPath,
+              toDcim: true, albumName: 'All Status Saver')
+          .then(
+        (value) {
+          savedFile = value;
+        },
+      );
     }
 
-    if (await directory.exists()) {
-      File path = File(oldPath);
-      savedFile = path.copySync(filePath);
+    if (oldPath.contains('.mp4')) {
+      await GallerySaver.saveVideo(oldPath,
+              toDcim: true, albumName: 'All Status Saver')
+          .then(
+        (value) {
+          savedFile = value;
+        },
+      );
+      return savedFile;
     }
-    return savedFile;
+
+    // if (!await directory.exists()) {
+    //   await directory.create(recursive: true);
+    // }
+
+    // if (await directory.exists()) {
+    //   File path = File(oldPath);
+    //   savedFile = path.copySync(filePath);
+    // }
+    // return savedFile;
   }
 
-  Future<Map<String, List<FileType>>> getFileTypes(String path) async {
+  // Future saveStatus(String newPath, String oldPath, String filePath) async {
+  //   Directory directory = Directory(newPath);
+  //   late File savedFile;
+  //   if (oldPath.contains('.jpg') ||
+  //       oldPath.contains('.jpeg') ||
+  //       oldPath.contains('.png')) {
+  //     GallerySaver.saveImage(oldPath);
+  //   }
+
+  //   if (!await directory.exists()) {
+  //     await directory.create(recursive: true);
+  //   }
+
+  //   if (await directory.exists()) {
+  //     File path = File(oldPath);
+  //     savedFile = path.copySync(filePath);
+  //   }
+  //   return savedFile;
+  // }
+
+  Future<Map<String, List<FileType>>> getFileTypes(
+      String path, String secondaryPath) async {
+    // String paths =
+    //     '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
+    // List<String>? paths = await safBusiness.getFilesPath();
     List<FileType> mapVideoFiles = [];
     List<FileType> mapImageFiles = [];
     List<FileType> mapAllFiles = [];
 
     if (await Directory(path).exists()) {
+      // List<String>? paths = await safBusiness.getFilesPath();
+      // //  List<FileSystemEntity> dirFiless = [];
+      // List<FileSystemEntity> dirFiles = [];
+
+      // for (var path in paths!) {
+      //   dirFiles.add(Directory(path));
+      // }
+
+      final dirFiles = Directory(path)
+          .listSync(recursive: false, followLinks: false)
+          .toList();
+      // final dirFiles = Directory(path)
+      //     .listSync(recursive: false, followLinks: false)
+      //     .toList();
+
+      List<FileSystemEntity> videoFiles =
+          dirFiles.where((f) => f.path.contains('.mp4')).toList();
+
+      List<FileSystemEntity> imageFiles = dirFiles
+          .where((f) =>
+              f.path.contains('.jpg') ||
+              f.path.contains('.jpeg') ||
+              f.path.contains('.png'))
+          .toList();
+
+      for (FileSystemEntity fv in videoFiles) {
+        if (mapVideoFiles.isEmpty) {
+          mapVideoFiles.clear();
+        }
+        mapVideoFiles.add(FileType(
+          file: File(fv.path),
+          dateTime: (await fv.stat()).modified,
+        ));
+      }
+
+      for (FileSystemEntity fv in imageFiles) {
+        if (mapImageFiles.isEmpty) {
+          mapImageFiles.clear();
+        }
+        mapImageFiles.add(FileType(
+          file: File(fv.path),
+          dateTime: (await fv.stat()).modified,
+          isImage: true,
+        ));
+      }
+      mapAllFiles = mapImageFiles + mapVideoFiles;
+
+      mapImageFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
+      mapVideoFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
+      mapAllFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
+    }
+
+    if (await Directory(secondaryPath).exists()) {
       final dirFiles = Directory(path)
           .listSync(recursive: false, followLinks: false)
           .toList();
@@ -128,15 +236,16 @@ class HomePage extends StatelessWidget {
           width: 280.0,
           child: ListView(
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.blue),
-                child: Text('Drawer header'),
+              DrawerHeader(
+                decoration:
+                    BoxDecoration(color: Theme.of(context).colorScheme.primary),
+                child: const FlutterLogo(),
               ),
               ListTile(
-                leading: const Icon(Icons.call),
+                leading: const Icon(Icons.whatsapp_rounded),
                 title: const Text(' WA Status'),
                 onTap: () async {
-                  if (await requestPermission(Permission.storage)) {
+                  if (await requestPermission([Permission.storage])) {
                     Navigator.pushNamed(context, route.whatsAppPage);
                   } else {
                     return;
@@ -147,7 +256,7 @@ class HomePage extends StatelessWidget {
                 leading: const Icon(Icons.business),
                 title: const Text('WB Status'),
                 onTap: () async {
-                  if (await requestPermission(Permission.storage)) {
+                  if (await requestPermission([Permission.storage])) {
                     Navigator.pushNamed(context, route.whatsappBPage);
                   } else {
                     return;
@@ -158,7 +267,7 @@ class HomePage extends StatelessWidget {
                 leading: const Icon(Icons.list),
                 title: const Text('Saved Statuses'),
                 onTap: () async {
-                  if (await requestPermission(Permission.storage)) {
+                  if (await requestPermission([Permission.storage])) {
                     Navigator.pushNamed(context, route.savedStatusPage);
                   } else {
                     return;
@@ -187,7 +296,7 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.all(5),
                     child: GestureDetector(
                       onTap: () async {
-                        if (await requestPermission(Permission.storage)) {
+                        if (await requestPermission([Permission.storage])) {
                           Navigator.pushNamed(context, route.whatsAppPage);
                         } else {
                           return;
@@ -212,7 +321,7 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.all(5),
                     child: GestureDetector(
                       onTap: () async {
-                        if (await requestPermission(Permission.storage)) {
+                        if (await requestPermission([Permission.storage])) {
                           Navigator.pushNamed(context, route.whatsappBPage);
                         } else {
                           return;
@@ -241,7 +350,7 @@ class HomePage extends StatelessWidget {
                   ElevatedButton.icon(
                     icon: const Icon(Icons.save_alt_outlined),
                     onPressed: () async {
-                      if (await requestPermission(Permission.storage)) {
+                      if (await requestPermission([Permission.storage])) {
                         Navigator.pushNamed(context, route.savedStatusPage);
                       } else {
                         return;
