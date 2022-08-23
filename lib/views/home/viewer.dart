@@ -72,6 +72,16 @@ class _ViewerState extends State<Viewer> {
       });
   }
 
+  // void hello() {
+  //   // if (_controller.value.)
+  // }
+
+  // @override
+  // void setState(VoidCallback fn) {
+  //   // TODO: implement setState
+  //   super.setState(fn);
+  // }
+
   void _handleDoubleTapDown(TapDownDetails details) {
     _doubleTapDetails = details;
   }
@@ -94,7 +104,6 @@ class _ViewerState extends State<Viewer> {
 
   @override
   Widget build(BuildContext context) {
-    String newPath = '/storage/emulated/0/All Status Saver/';
     // final args = ModalRoute.of(context)!.settings.arguments as MultimediaViewer;
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -145,7 +154,7 @@ class _ViewerState extends State<Viewer> {
                                   children: [
                                     IconButton(
                                       onPressed: () async {
-                                        await const HomePage().shareFile(
+                                        await HomePage().shareFile(
                                             widget.multimediaViewer.file.path);
                                       },
                                       iconSize: 54,
@@ -157,7 +166,7 @@ class _ViewerState extends State<Viewer> {
                                     ),
                                     IconButton(
                                       onPressed: () async {
-                                        await const HomePage().shareFile(
+                                        await HomePage().shareFile(
                                             widget.multimediaViewer.file.path);
                                       },
                                       iconSize: 54,
@@ -194,7 +203,7 @@ class _ViewerState extends State<Viewer> {
                                                       ),
                                                       TextButton(
                                                         onPressed: () async {
-                                                          await const HomePage()
+                                                          await HomePage()
                                                               .deleteItem(widget
                                                                   .multimediaViewer
                                                                   .file);
@@ -222,36 +231,60 @@ class _ViewerState extends State<Viewer> {
                                           )
                                         : IconButton(
                                             onPressed: () async {
-                                              await const HomePage()
+                                              await HomePage()
                                                   .saveStatus(
-                                                      newPath,
-                                                      widget.multimediaViewer
-                                                          .file.path,
-                                                      widget.multimediaViewer
-                                                          .copyPath)
+                                                widget
+                                                    .multimediaViewer.file.path,
+                                              )
                                                   .then(
                                                 (value) {
-                                                  return showDialog(
-                                                    context: context,
-                                                    barrierDismissible: true,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Status was saved successfully'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: const Text(
-                                                                'Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
+                                                  if (value) {
+                                                    return ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Status was saved successfully',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                        behavior:
+                                                            SnackBarBehavior
+                                                                .floating,
+                                                        elevation: 1,
+                                                        dismissDirection:
+                                                            DismissDirection
+                                                                .horizontal,
+                                                        duration: Duration(
+                                                            seconds: 1),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    return ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Error Saving Status',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                        behavior:
+                                                            SnackBarBehavior
+                                                                .floating,
+                                                        backgroundColor:
+                                                            Colors.redAccent,
+                                                        elevation: 1,
+                                                        dismissDirection:
+                                                            DismissDirection
+                                                                .horizontal,
+                                                        duration: Duration(
+                                                            seconds: 1),
+                                                      ),
+                                                    );
+                                                  }
                                                 },
                                               );
                                             },
@@ -493,7 +526,7 @@ class _ViewerState extends State<Viewer> {
                                                 children: [
                                                   IconButton(
                                                     onPressed: () async {
-                                                      await const HomePage()
+                                                      await HomePage()
                                                           .shareFile(widget
                                                               .multimediaViewer
                                                               .file
@@ -510,7 +543,7 @@ class _ViewerState extends State<Viewer> {
                                                   ),
                                                   IconButton(
                                                     onPressed: () async {
-                                                      await const HomePage()
+                                                      await HomePage()
                                                           .shareFile(widget
                                                               .multimediaViewer
                                                               .file
@@ -561,7 +594,7 @@ class _ViewerState extends State<Viewer> {
                                                                     TextButton(
                                                                       onPressed:
                                                                           () async {
-                                                                        await const HomePage().deleteItem(widget
+                                                                        await HomePage().deleteItem(widget
                                                                             .multimediaViewer
                                                                             .file);
                                                                         Navigator.of(
@@ -592,41 +625,69 @@ class _ViewerState extends State<Viewer> {
                                                         )
                                                       : IconButton(
                                                           onPressed: () async {
-                                                            await const HomePage()
+                                                            await HomePage()
                                                                 .saveStatus(
-                                                                    newPath,
-                                                                    widget
-                                                                        .multimediaViewer
-                                                                        .file
-                                                                        .path,
-                                                                    widget
-                                                                        .multimediaViewer
-                                                                        .copyPath)
+                                                              widget
+                                                                  .multimediaViewer
+                                                                  .file
+                                                                  .path,
+                                                            )
                                                                 .then(
                                                               (value) {
-                                                                return showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  barrierDismissible:
-                                                                      true,
-                                                                  builder:
-                                                                      (context) {
-                                                                    return AlertDialog(
-                                                                      title: const Text(
-                                                                          'Status was saved successfully'),
-                                                                      actions: [
-                                                                        TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(context).pop();
-                                                                          },
-                                                                          child:
-                                                                              const Text('Ok'),
-                                                                        ),
-                                                                      ],
-                                                                    );
-                                                                  },
-                                                                );
+                                                                if (value) {
+                                                                  return ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    const SnackBar(
+                                                                      content:
+                                                                          Text(
+                                                                        'Status was saved successfully',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.white),
+                                                                      ),
+                                                                      behavior:
+                                                                          SnackBarBehavior
+                                                                              .floating,
+                                                                      elevation:
+                                                                          1,
+                                                                      dismissDirection:
+                                                                          DismissDirection
+                                                                              .horizontal,
+                                                                      duration: Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  return ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    const SnackBar(
+                                                                      content:
+                                                                          Text(
+                                                                        'Error Saving Status',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.white),
+                                                                      ),
+                                                                      behavior:
+                                                                          SnackBarBehavior
+                                                                              .floating,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .redAccent,
+                                                                      elevation:
+                                                                          1,
+                                                                      dismissDirection:
+                                                                          DismissDirection
+                                                                              .horizontal,
+                                                                      duration: Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                    ),
+                                                                  );
+                                                                }
                                                               },
                                                             );
                                                           },
@@ -780,7 +841,7 @@ class _ViewerState extends State<Viewer> {
             //                     children: [
             //                       IconButton(
             //                         onPressed: () async {
-            //                           await const HomePage().shareFile(
+            //                           await HomePage().shareFile(
             //                               widget.multimediaViewer.file.path);
             //                         },
             //                         iconSize: 54,
@@ -792,7 +853,7 @@ class _ViewerState extends State<Viewer> {
             //                       ),
             //                       IconButton(
             //                         onPressed: () async {
-            //                           await const HomePage().shareFile(
+            //                           await HomePage().shareFile(
             //                               widget.multimediaViewer.file.path);
             //                         },
             //                         iconSize: 54,
@@ -831,7 +892,7 @@ class _ViewerState extends State<Viewer> {
             //                                         ),
             //                                         TextButton(
             //                                           onPressed: () async {
-            //                                             await const HomePage()
+            //                                             await HomePage()
             //                                                 .deleteItem(widget
             //                                                     .multimediaViewer
             //                                                     .file);
@@ -853,7 +914,7 @@ class _ViewerState extends State<Viewer> {
             //                             )
             //                           : IconButton(
             //                               onPressed: () async {
-            //                                 await const HomePage()
+            //                                 await HomePage()
             //                                     .saveStatus(
             //                                         newPath,
             //                                         widget.multimediaViewer.file
@@ -911,7 +972,7 @@ class _ViewerState extends State<Viewer> {
             //               children: [
             //                 IconButton(
             //                   onPressed: () async {
-            //                     await const HomePage().shareFile(
+            //                     await HomePage().shareFile(
             //                         widget.multimediaViewer.file.path);
             //                   },
             //                   iconSize: 54,
@@ -923,7 +984,7 @@ class _ViewerState extends State<Viewer> {
             //                 ),
             //                 IconButton(
             //                   onPressed: () async {
-            //                     await const HomePage().shareFile(
+            //                     await HomePage().shareFile(
             //                         widget.multimediaViewer.file.path);
             //                   },
             //                   iconSize: 54,
@@ -957,7 +1018,7 @@ class _ViewerState extends State<Viewer> {
             //                                   ),
             //                                   TextButton(
             //                                     onPressed: () async {
-            //                                       await const HomePage()
+            //                                       await HomePage()
             //                                           .deleteItem(widget
             //                                               .multimediaViewer
             //                                               .file);
@@ -978,7 +1039,7 @@ class _ViewerState extends State<Viewer> {
             //                       )
             //                     : IconButton(
             //                         onPressed: () async {
-            //                           await const HomePage()
+            //                           await HomePage()
             //                               .saveStatus(
             //                                   newPath,
             //                                   widget.multimediaViewer.file.path,
