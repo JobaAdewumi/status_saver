@@ -26,6 +26,7 @@ class WhatsappPageState extends State<WhatsappPage> {
   late List<FileType> gImagesVideo;
 
   late String globalStatusPath;
+  late String globalStatusPath11;
   // late List<FileType> gImages;
   // late List<FileType> gVideos;
   // late List<FileType> gImagesVideo;
@@ -42,7 +43,7 @@ class WhatsappPageState extends State<WhatsappPage> {
   }
 
   Future onDragGridDown() async {
-    await const HomePage().getFileTypes(globalStatusPath).then(
+    await HomePage().getFileTypes(globalStatusPath, globalStatusPath11).then(
       (value) {
         Map<String, List<FileType>> allFiles = value;
         setState(
@@ -56,12 +57,50 @@ class WhatsappPageState extends State<WhatsappPage> {
     );
   }
 
+  Widget noStatusError() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+            'No Status Found, You have to watch stories on WhatsApp to make them appear here',
+            textAlign: TextAlign.center),
+        ElevatedButton.icon(
+          onPressed: null,
+          icon: const Icon(Icons.launch_rounded),
+          label: const Text('OPEN WHATSAPP'),
+        ),
+      ],
+    );
+  }
+
   // static const List<Widget> _widgetOptions
 
   Widget AllStatuses(List<FileType> gImagesVideo) {
-    Widget ImagesVideos;
-    if (gImagesVideo.isNotEmpty) {
-      ImagesVideos = RefreshIndicator(
+    Widget imagesVideos;
+    var checkTypes = gImagesVideo.where(
+      (e) {
+        if (e.file.path.contains('.jpg') ||
+            e.file.path.contains('.jpeg') ||
+            e.file.path.contains('.png') ||
+            e.file.path.contains('.mp4')) {
+          return true;
+        }
+        return false;
+      },
+    );
+    // bool checkTypes = gImagesVideo.where(
+    //   (e) {
+    //     if (e.file.path.contains('.jpg') ||
+    //         e.file.path.contains('.jpeg') ||
+    //         e.file.path.contains('.png') ||
+    //         e.file.path.contains('.mp4')) {
+    //       return true;
+    //     }
+    //     return false;
+    //   },
+    // ) as bool;
+    if (gImagesVideo.isNotEmpty && checkTypes.isNotEmpty) {
+      imagesVideos = RefreshIndicator(
         onRefresh: onDragGridDown,
         triggerMode: RefreshIndicatorTriggerMode.anywhere,
         child: GridView.builder(
@@ -97,94 +136,122 @@ class WhatsappPageState extends State<WhatsappPage> {
               return Card(
                 child: Column(
                   children: [
-                    SizedBox(
-                      width: 350,
-                      height: 134,
-                      child: image,
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        width: 350,
+                        height: 134,
+                        child: image,
+                      ),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                                fixedSize: const Size(60.0, 53.0),
-                                primary: Colors.red),
-                            onPressed: () async {
-                              await const HomePage().shareFile(statuses.path);
-                            },
-                            child: Column(
-                              children: const [
-                                Icon(Icons.share),
-                                Text('SHARE')
-                              ],
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  fixedSize: const Size(60.0, 53.0),
+                                  primary: Colors.red),
+                              onPressed: () async {
+                                await HomePage().shareFile(statuses.path);
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.share),
+                                  Text(
+                                    'SHARE',
+                                    style: TextStyle(fontSize: 10),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                                fixedSize: const Size(60.0, 53.0),
-                                primary: Colors.green),
-                            onPressed: () async {
-                              await const HomePage().shareFile(statuses.path);
-                            },
-                            child: Column(
-                              children: const [
-                                Icon(Icons.cached),
-                                Text('REPOST')
-                              ],
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  fixedSize: const Size(60.0, 53.0),
+                                  primary: Colors.green),
+                              onPressed: () async {
+                                await HomePage().shareFile(statuses.path);
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.cached),
+                                  Text(
+                                    'REPOST',
+                                    style: TextStyle(fontSize: 10),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                                fixedSize: const Size(60.0, 53.0)),
-                            onPressed: () async {
-                              await const HomePage()
-                                  .saveStatus(newPath, statuses.path, copyPath)
-                                  .then(
-                                (value) {
-                                  return showDialog(
-                                    context: context,
-                                    barrierDismissible: true,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: const Text(
-                                            'Status was saved successfully'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Ok'),
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  fixedSize: const Size(60.0, 53.0)),
+                              onPressed: () async {
+                                await HomePage().saveStatus(statuses.path).then(
+                                  (value) {
+                                    if (value) {
+                                      return ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Status was saved successfully',
+                                            style:
+                                                TextStyle(color: Colors.white),
                                           ),
-                                        ],
+                                          behavior: SnackBarBehavior.floating,
+                                          elevation: 1,
+                                          dismissDirection:
+                                              DismissDirection.horizontal,
+                                          duration: Duration(seconds: 1),
+                                        ),
                                       );
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                            child: Column(
-                              children: const [
-                                Icon(Icons.save_alt),
-                                Text('SAVE')
-                              ],
+                                    } else {
+                                      return ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Error Saving Status',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: Colors.redAccent,
+                                          elevation: 1,
+                                          dismissDirection:
+                                              DismissDirection.horizontal,
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.save_alt),
+                                  Text(
+                                    'SAVE',
+                                    style: TextStyle(fontSize: 10),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
               );
             }
             return FutureBuilder(
-              future: const HomePage().generateVideoThumbnail(statuses),
+              future: HomePage().generateVideoThumbnail(statuses),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Image video = Image.memory(snapshot.data as dynamic,
@@ -192,113 +259,143 @@ class WhatsappPageState extends State<WhatsappPage> {
                   return Card(
                     child: Column(
                       children: [
-                        Stack(
-                          children: [
-                            SizedBox(
-                              width: 350,
-                              height: 134,
-                              child: video,
-                            ),
-                            Positioned(
-                              top: 30,
-                              left: 60,
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, route.viewer,
-                                      arguments: MultimediaViewer(
-                                          file: statuses, copyPath: copyPath));
-                                },
-                                icon: const Icon(
-                                  Icons.play_circle_outline,
-                                  color: Colors.white,
-                                  size: 50,
+                        Expanded(
+                          flex: 2,
+                          child: Stack(
+                            children: [
+                              SizedBox(
+                                width: 350,
+                                height: 134,
+                                child: video,
+                              ),
+                              Positioned(
+                                top: 30,
+                                left: 60,
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, route.viewer,
+                                        arguments: MultimediaViewer(
+                                            file: statuses,
+                                            copyPath: copyPath));
+                                  },
+                                  icon: const Icon(
+                                    Icons.play_circle_outline,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    fixedSize: const Size(60.0, 53.0),
-                                    primary: Colors.red),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .shareFile(statuses.path);
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.share),
-                                    Text('SHARE')
-                                  ],
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(60.0, 53.0),
+                                      primary: Colors.red),
+                                  onPressed: () async {
+                                    await HomePage().shareFile(statuses.path);
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.share),
+                                      Text(
+                                        'SHARE',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    fixedSize: const Size(60.0, 53.0),
-                                    primary: Colors.green),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .shareFile(statuses.path);
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.cached),
-                                    Text('REPOST')
-                                  ],
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(60.0, 53.0),
+                                      primary: Colors.green),
+                                  onPressed: () async {
+                                    await HomePage().shareFile(statuses.path);
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.cached),
+                                      Text(
+                                        'REPOST',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                ),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .saveStatus(
-                                          newPath, statuses.path, copyPath)
-                                      .then(
-                                    (value) {
-                                      return showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text(
-                                                'Status was saved successfully'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('Ok'),
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    fixedSize: const Size(60.0, 53.0),
+                                  ),
+                                  onPressed: () async {
+                                    await HomePage()
+                                        .saveStatus(statuses.path)
+                                        .then(
+                                      (value) {
+                                        if (value) {
+                                          return ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Status was saved successfully',
+                                                style: TextStyle(
+                                                    color: Colors.white),
                                               ),
-                                            ],
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              elevation: 1,
+                                              dismissDirection:
+                                                  DismissDirection.horizontal,
+                                              duration: Duration(seconds: 1),
+                                            ),
                                           );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text('SAVE')
-                                  ],
+                                        } else {
+                                          return ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Error Saving Status',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              backgroundColor: Colors.redAccent,
+                                              elevation: 1,
+                                              dismissDirection:
+                                                  DismissDirection.horizontal,
+                                              duration: Duration(seconds: 1),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.save_alt),
+                                      Text(
+                                        'SAVE',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -313,27 +410,23 @@ class WhatsappPageState extends State<WhatsappPage> {
         ),
       );
     } else {
-      ImagesVideos = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
-              textAlign: TextAlign.center),
-          ElevatedButton.icon(
-            onPressed: null,
-            icon: const Icon(Icons.send_time_extension_sharp),
-            label: const Text('OPEN WHATSAPP'),
-          ),
-        ],
-      );
+      imagesVideos = noStatusError();
     }
-    return ImagesVideos;
+    return imagesVideos;
   }
 
   Widget StatusVideos(List<FileType> gVideos) {
-    Widget Videos;
-    if (gVideos.isNotEmpty) {
-      Videos = RefreshIndicator(
+    Widget videos;
+    var checkTypes = gVideos.where(
+      (e) {
+        if (e.file.path.contains('.mp4')) {
+          return true;
+        }
+        return false;
+      },
+    );
+    if (gVideos.isNotEmpty && checkTypes.isNotEmpty) {
+      videos = RefreshIndicator(
         onRefresh: onDragGridDown,
         triggerMode: RefreshIndicatorTriggerMode.anywhere,
         child: GridView.builder(
@@ -355,7 +448,7 @@ class WhatsappPageState extends State<WhatsappPage> {
             }
 
             return FutureBuilder(
-              future: const HomePage().generateVideoThumbnail(statuses),
+              future: HomePage().generateVideoThumbnail(statuses),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Image video = Image.memory(snapshot.data as dynamic,
@@ -363,113 +456,143 @@ class WhatsappPageState extends State<WhatsappPage> {
                   return Card(
                     child: Column(
                       children: [
-                        Stack(
-                          children: [
-                            SizedBox(
-                              width: 350,
-                              height: 134,
-                              child: video,
-                            ),
-                            Positioned(
-                              top: 30,
-                              left: 60,
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, route.viewer,
-                                      arguments: MultimediaViewer(
-                                          file: statuses, copyPath: copyPath));
-                                },
-                                icon: const Icon(
-                                  Icons.play_circle_outline,
-                                  color: Colors.white,
-                                  size: 50,
+                        Expanded(
+                          flex: 2,
+                          child: Stack(
+                            children: [
+                              SizedBox(
+                                width: 350,
+                                height: 134,
+                                child: video,
+                              ),
+                              Positioned(
+                                top: 30,
+                                left: 60,
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, route.viewer,
+                                        arguments: MultimediaViewer(
+                                            file: statuses,
+                                            copyPath: copyPath));
+                                  },
+                                  icon: const Icon(
+                                    Icons.play_circle_outline,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    fixedSize: const Size(60.0, 53.0),
-                                    primary: Colors.red),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .shareFile(statuses.path);
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.share),
-                                    Text('SHARE')
-                                  ],
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(60.0, 53.0),
+                                      primary: Colors.red),
+                                  onPressed: () async {
+                                    await HomePage().shareFile(statuses.path);
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.share),
+                                      Text(
+                                        'SHARE',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    fixedSize: const Size(60.0, 53.0),
-                                    primary: Colors.green),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .shareFile(statuses.path);
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.cached),
-                                    Text('REPOST')
-                                  ],
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      fixedSize: const Size(60.0, 53.0),
+                                      primary: Colors.green),
+                                  onPressed: () async {
+                                    await HomePage().shareFile(statuses.path);
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.cached),
+                                      Text(
+                                        'REPOST',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                ),
-                                onPressed: () async {
-                                  await const HomePage()
-                                      .saveStatus(
-                                          newPath, statuses.path, copyPath)
-                                      .then(
-                                    (value) {
-                                      return showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text(
-                                                'Status was saved successfully'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('Ok'),
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    fixedSize: const Size(60.0, 53.0),
+                                  ),
+                                  onPressed: () async {
+                                    await HomePage()
+                                        .saveStatus(statuses.path)
+                                        .then(
+                                      (value) {
+                                        if (value) {
+                                          return ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Status was saved successfully',
+                                                style: TextStyle(
+                                                    color: Colors.white),
                                               ),
-                                            ],
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              elevation: 1,
+                                              dismissDirection:
+                                                  DismissDirection.horizontal,
+                                              duration: Duration(seconds: 1),
+                                            ),
                                           );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text('SAVE')
-                                  ],
+                                        } else {
+                                          return ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Error Saving Status',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              backgroundColor: Colors.redAccent,
+                                              elevation: 1,
+                                              dismissDirection:
+                                                  DismissDirection.horizontal,
+                                              duration: Duration(seconds: 1),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.save_alt),
+                                      Text(
+                                        'SAVE',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -484,27 +607,25 @@ class WhatsappPageState extends State<WhatsappPage> {
         ),
       );
     } else {
-      Videos = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
-              textAlign: TextAlign.center),
-          ElevatedButton.icon(
-            onPressed: null,
-            icon: const Icon(Icons.send_time_extension_sharp),
-            label: const Text('OPEN WHATSAPP'),
-          ),
-        ],
-      );
+      videos = noStatusError();
     }
-    return Videos;
+    return videos;
   }
 
   Widget StatusImages(List<FileType> gImages) {
-    Widget Images;
-    if (gImages.isNotEmpty) {
-      Images = RefreshIndicator(
+    Widget images;
+    var checkTypes = gImagesVideo.where(
+      (e) {
+        if (e.file.path.contains('.jpg') ||
+            e.file.path.contains('.jpeg') ||
+            e.file.path.contains('.png')) {
+          return true;
+        }
+        return false;
+      },
+    );
+    if (gImages.isNotEmpty && checkTypes.isNotEmpty) {
+      images = RefreshIndicator(
         onRefresh: onDragGridDown,
         triggerMode: RefreshIndicatorTriggerMode.anywhere,
         child: GridView.builder(
@@ -537,84 +658,113 @@ class WhatsappPageState extends State<WhatsappPage> {
             return Card(
               child: Column(
                 children: [
-                  SizedBox(
-                    width: 350,
-                    height: 134,
-                    child: image,
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      width: 350,
+                      height: 134,
+                      child: image,
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.red),
-                          onPressed: () async {
-                            await const HomePage().shareFile(statuses.path);
-                          },
-                          child: Column(
-                            children: const [Icon(Icons.share), Text('SHARE')],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                                fixedSize: const Size(60.0, 53.0),
+                                primary: Colors.red),
+                            onPressed: () async {
+                              await HomePage().shareFile(statuses.path);
+                            },
+                            child: Column(
+                              children: const [
+                                Icon(Icons.share),
+                                Text(
+                                  'SHARE',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.green),
-                          onPressed: () async {
-                            await const HomePage().shareFile(statuses.path);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.cached),
-                              Text('REPOST')
-                            ],
+                        Expanded(
+                          flex: 1,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                                fixedSize: const Size(60.0, 53.0),
+                                primary: Colors.green),
+                            onPressed: () async {
+                              await HomePage().shareFile(statuses.path);
+                            },
+                            child: Column(
+                              children: const [
+                                Icon(Icons.cached),
+                                Text(
+                                  'REPOST',
+                                  style: TextStyle(fontSize: 10),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0)),
-                          onPressed: () async {
-                            await const HomePage()
-                                .saveStatus(newPath, statuses.path, copyPath)
-                                .then(
-                              (value) {
-                                return showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                          'Status was saved successfully'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Ok'),
+                        Expanded(
+                          flex: 1,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                                fixedSize: const Size(60.0, 53.0)),
+                            onPressed: () async {
+                              await HomePage().saveStatus(statuses.path).then(
+                                (value) {
+                                  if (value) {
+                                    return ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Status was saved successfully',
+                                          style: TextStyle(color: Colors.white),
                                         ),
-                                      ],
+                                        behavior: SnackBarBehavior.floating,
+                                        elevation: 1,
+                                        dismissDirection:
+                                            DismissDirection.horizontal,
+                                        duration: Duration(seconds: 1),
+                                      ),
                                     );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.save_alt),
-                              Text('SAVE')
-                            ],
+                                  } else {
+                                    return ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Error Saving Status',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor: Colors.redAccent,
+                                        elevation: 1,
+                                        dismissDirection:
+                                            DismissDirection.horizontal,
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                            child: Column(
+                              children: const [
+                                Icon(Icons.save_alt),
+                                Text(
+                                  'SAVE',
+                                  style: TextStyle(fontSize: 10),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -623,21 +773,9 @@ class WhatsappPageState extends State<WhatsappPage> {
         ),
       );
     } else {
-      Images = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-              'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
-              textAlign: TextAlign.center),
-          ElevatedButton.icon(
-            onPressed: null,
-            icon: const Icon(Icons.send_time_extension_sharp),
-            label: const Text('OPEN WHATSAPP'),
-          ),
-        ],
-      );
+      images = noStatusError();
     }
-    return Images;
+    return images;
   }
 
   // List<Widget> pagesList = [
@@ -660,16 +798,39 @@ class WhatsappPageState extends State<WhatsappPage> {
           builder: (context, snapshot) {
             final List<FileSystemEntity> entities = snapshot;
 
-            late FileSystemEntity entity;
+            if (entities.isEmpty) {
+              return noStatusError();
+            }
+
+            FileSystemEntity? entity;
+            FileSystemEntity? entity11;
             for (var e in entities) {
               if (FileManager.basename(e) == 'WhatsApp') {
                 entity = e;
               }
+              if (FileManager.basename(e) == 'Android') {
+                entity11 = e;
+              }
             }
-            String? path = entity.path;
+
+            String? path = entity?.path ?? '';
             String newPath = '$path/Media/.Statuses/';
             entity = Directory(newPath);
             Directory content = Directory(newPath);
+
+            String? path11 = entity11?.path ?? '';
+            String newPath11 =
+                '$path11/media/com.whatsapp/WhatsApp/Media/.Statuses/';
+            print(newPath11);
+            entity11 = Directory(newPath);
+            Directory content11 = Directory(newPath);
+
+            if (!entity.existsSync() && !entity11.existsSync()) {
+              return noStatusError();
+            }
+
+            globalStatusPath = newPath;
+            globalStatusPath11 = newPath11;
 
             List contentList =
                 content.listSync(recursive: false, followLinks: false);
@@ -681,7 +842,7 @@ class WhatsappPageState extends State<WhatsappPage> {
                   f.path.contains('.png')).toList();
 
             return FutureBuilder(
-              future: const HomePage().getFileTypes(newPath),
+              future: HomePage().getFileTypes(newPath, newPath11),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Map<String, List<FileType>> allFiles =
