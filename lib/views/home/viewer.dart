@@ -1,23 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:all_status_saver/functions/global_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-
-import 'package:all_status_saver/views/home/home.dart';
 
 import 'package:all_status_saver/routes/routes.dart' as route;
 
 class MultimediaViewer {
   final bool isImage;
   final File file;
-  final String copyPath;
   final bool isStatusPage;
 
   MultimediaViewer({
     this.isImage = false,
     required this.file,
-    required this.copyPath,
     this.isStatusPage = false,
   });
 }
@@ -72,15 +69,45 @@ class _ViewerState extends State<Viewer> {
       });
   }
 
-  // void hello() {
-  //   // if (_controller.value.)
-  // }
-
-  // @override
-  // void setState(VoidCallback fn) {
-  //   // TODO: implement setState
-  //   super.setState(fn);
-  // }
+  saveStatus(String statusPath) async {
+    await GlobalFunctions().saveStatus(statusPath).then(
+      (value) {
+        bool check = value == null
+            ? false
+            : value == true
+                ? true
+                : false;
+        if (check) {
+          return ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Status was saved successfully',
+                style: TextStyle(color: Colors.white),
+              ),
+              behavior: SnackBarBehavior.floating,
+              elevation: 1,
+              dismissDirection: DismissDirection.horizontal,
+              duration: Duration(seconds: 1),
+            ),
+          );
+        } else {
+          return ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Error Saving Status',
+                style: TextStyle(color: Colors.white),
+              ),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.redAccent,
+              elevation: 1,
+              dismissDirection: DismissDirection.horizontal,
+              duration: Duration(seconds: 1),
+            ),
+          );
+        }
+      },
+    );
+  }
 
   void _handleDoubleTapDown(TapDownDetails details) {
     _doubleTapDetails = details;
@@ -154,7 +181,7 @@ class _ViewerState extends State<Viewer> {
                                   children: [
                                     IconButton(
                                       onPressed: () async {
-                                        await HomePage().shareFile(
+                                        await GlobalFunctions().shareFile(
                                             widget.multimediaViewer.file.path);
                                       },
                                       iconSize: 54,
@@ -166,7 +193,7 @@ class _ViewerState extends State<Viewer> {
                                     ),
                                     IconButton(
                                       onPressed: () async {
-                                        await HomePage().shareFile(
+                                        await GlobalFunctions().shareFile(
                                             widget.multimediaViewer.file.path);
                                       },
                                       iconSize: 54,
@@ -203,7 +230,7 @@ class _ViewerState extends State<Viewer> {
                                                       ),
                                                       TextButton(
                                                         onPressed: () async {
-                                                          await HomePage()
+                                                          await GlobalFunctions()
                                                               .deleteItem(widget
                                                                   .multimediaViewer
                                                                   .file);
@@ -231,62 +258,8 @@ class _ViewerState extends State<Viewer> {
                                           )
                                         : IconButton(
                                             onPressed: () async {
-                                              await HomePage()
-                                                  .saveStatus(
-                                                widget
-                                                    .multimediaViewer.file.path,
-                                              )
-                                                  .then(
-                                                (value) {
-                                                  if (value) {
-                                                    return ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                          'Status was saved successfully',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                        behavior:
-                                                            SnackBarBehavior
-                                                                .floating,
-                                                        elevation: 1,
-                                                        dismissDirection:
-                                                            DismissDirection
-                                                                .horizontal,
-                                                        duration: Duration(
-                                                            seconds: 1),
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    return ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                          'Error Saving Status',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                        behavior:
-                                                            SnackBarBehavior
-                                                                .floating,
-                                                        backgroundColor:
-                                                            Colors.redAccent,
-                                                        elevation: 1,
-                                                        dismissDirection:
-                                                            DismissDirection
-                                                                .horizontal,
-                                                        duration: Duration(
-                                                            seconds: 1),
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                              );
+                                              saveStatus(widget
+                                                  .multimediaViewer.file.path);
                                             },
                                             iconSize: 54,
                                             padding: const EdgeInsets.all(15.0),
@@ -304,40 +277,6 @@ class _ViewerState extends State<Viewer> {
                       ),
                     ),
                   )
-                // ? Expanded(
-                //     flex: 5,
-                //     child: Column(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       crossAxisAlignment: CrossAxisAlignment.center,
-                //       children: [
-                //         Padding(
-                //           padding: const EdgeInsets.only(top: 30),
-                //           child: ConstrainedBox(
-                //             constraints: BoxConstraints.loose(
-                //               Size.fromHeight(
-                //                   MediaQuery.of(context).size.height * 0.7),
-                //             ),
-                //             child: GestureDetector(
-                //               onDoubleTapDown: _handleDoubleTapDown,
-                //               onDoubleTap: _handleDoubleTap,
-                //               child: InteractiveViewer(
-                //                 transformationController:
-                //                     _transformationController,
-                //                 panEnabled: true,
-                //                 boundaryMargin: const EdgeInsets.all(20),
-                //                 minScale: 0.5,
-                //                 maxScale: 3,
-                //                 child: Image.file(
-                //                   widget.multimediaViewer.file,
-                //                   fit: BoxFit.cover,
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   )
                 : _controller.value.isInitialized
                     ? Expanded(
                         child: Container(
@@ -526,7 +465,7 @@ class _ViewerState extends State<Viewer> {
                                                 children: [
                                                   IconButton(
                                                     onPressed: () async {
-                                                      await HomePage()
+                                                      await GlobalFunctions()
                                                           .shareFile(widget
                                                               .multimediaViewer
                                                               .file
@@ -543,7 +482,7 @@ class _ViewerState extends State<Viewer> {
                                                   ),
                                                   IconButton(
                                                     onPressed: () async {
-                                                      await HomePage()
+                                                      await GlobalFunctions()
                                                           .shareFile(widget
                                                               .multimediaViewer
                                                               .file
@@ -594,7 +533,7 @@ class _ViewerState extends State<Viewer> {
                                                                     TextButton(
                                                                       onPressed:
                                                                           () async {
-                                                                        await HomePage().deleteItem(widget
+                                                                        await GlobalFunctions().deleteItem(widget
                                                                             .multimediaViewer
                                                                             .file);
                                                                         Navigator.of(
@@ -625,7 +564,7 @@ class _ViewerState extends State<Viewer> {
                                                         )
                                                       : IconButton(
                                                           onPressed: () async {
-                                                            await HomePage()
+                                                            await GlobalFunctions()
                                                                 .saveStatus(
                                                               widget
                                                                   .multimediaViewer
@@ -634,7 +573,7 @@ class _ViewerState extends State<Viewer> {
                                                             )
                                                                 .then(
                                                               (value) {
-                                                                if (value) {
+                                                                if (value!) {
                                                                   return ScaffoldMessenger.of(
                                                                           context)
                                                                       .showSnackBar(
@@ -713,373 +652,6 @@ class _ViewerState extends State<Viewer> {
                         ),
                       )
                     : Container(),
-            // !widget.multimediaViewer.isImage && _controller.value.isInitialized
-            //     ? Expanded(
-            //         child: Align(
-            //           alignment: FractionalOffset.bottomCenter,
-            //           child: Container(
-            //             alignment: Alignment.bottomCenter,
-            //             child: Column(
-            //               children: [
-            //                 Expanded(
-            //                   child: Row(
-            //                     mainAxisAlignment:
-            //                         MainAxisAlignment.spaceBetween,
-            //                     children: [
-            //                       Padding(
-            //                         padding: const EdgeInsets.only(
-            //                           left: 20,
-            //                           right: 20,
-            //                         ),
-            //                         child:
-            //                             _controller.value.position.inSeconds > 9
-            //                                 ? Text(
-            //                                     '00:${_controller.value.position.inSeconds}',
-            //                                     style: const TextStyle(
-            //                                         color: Colors.white),
-            //                                   )
-            //                                 : Text(
-            //                                     '00:0${_controller.value.position.inSeconds}',
-            //                                     style: const TextStyle(
-            //                                         color: Colors.white),
-            //                                   ),
-            //                       ),
-            //                       Padding(
-            //                         padding: const EdgeInsets.only(
-            //                           right: 20,
-            //                           left: 20,
-            //                         ),
-            //                         child:
-            //                             _controller.value.duration.inSeconds > 9
-            //                                 ? Text(
-            //                                     '00:${_controller.value.duration.inSeconds}',
-            //                                     style: const TextStyle(
-            //                                         color: Colors.white),
-            //                                   )
-            //                                 : Text(
-            //                                     '00:0${_controller.value.duration.inSeconds}',
-            //                                     style: const TextStyle(
-            //                                         color: Colors.white),
-            //                                   ),
-            //                       ),
-            //                     ],
-            //                   ),
-            //                 ),
-            //                 VideoProgressIndicator(
-            //                   _controller,
-            //                   padding: const EdgeInsets.only(
-            //                       top: 10.0, left: 7.0, right: 7.0),
-            //                   allowScrubbing: true,
-            //                   colors: const VideoProgressColors(
-            //                       backgroundColor: Colors.blue,
-            //                       playedColor: Colors.green,
-            //                       bufferedColor: Colors.grey),
-            //                 ),
-            //                 Expanded(
-            //                   child: Row(
-            //                     mainAxisAlignment: MainAxisAlignment.center,
-            //                     children: [
-            //                       IconButton(
-            //                         onPressed: () {
-            //                           int seconds =
-            //                               _controller.value.position.inSeconds -
-            //                                   5;
-            //                           setState(
-            //                             () {
-            //                               _controller.seekTo(
-            //                                   Duration(seconds: seconds));
-            //                               setState(() {});
-            //                             },
-            //                           );
-            //                         },
-            //                         icon: const Icon(
-            //                           Icons.fast_rewind_rounded,
-            //                           color: Colors.white,
-            //                         ),
-            //                       ),
-            //                       IconButton(
-            //                         onPressed: () {
-            //                           setState(
-            //                             () {
-            //                               _controller.value.isPlaying
-            //                                   ? _controller.pause()
-            //                                   : _controller.play();
-            //                             },
-            //                           );
-            //                         },
-            //                         icon: Icon(
-            //                           _controller.value.isPlaying
-            //                               ? Icons.pause
-            //                               : Icons.play_arrow,
-            //                           color: Colors.white,
-            //                         ),
-            //                       ),
-            //                       IconButton(
-            //                         onPressed: () {
-            //                           int seconds =
-            //                               _controller.value.position.inSeconds +
-            //                                   5;
-            //                           setState(
-            //                             () {
-            //                               _controller.seekTo(
-            //                                   Duration(seconds: seconds));
-            //                               setState(() {});
-            //                             },
-            //                           );
-            //                         },
-            //                         icon: const Icon(
-            //                           Icons.fast_forward_rounded,
-            //                           color: Colors.white,
-            //                         ),
-            //                       ),
-            //                     ],
-            //                   ),
-            //                 ),
-            //                 Expanded(
-            //                   child: Row(
-            //                     mainAxisAlignment: MainAxisAlignment.center,
-            //                     children: [
-            //                       IconButton(
-            //                         onPressed: () async {
-            //                           await HomePage().shareFile(
-            //                               widget.multimediaViewer.file.path);
-            //                         },
-            //                         iconSize: 54,
-            //                         padding: const EdgeInsets.all(15.0),
-            //                         icon: const Icon(
-            //                           Icons.share,
-            //                           color: Colors.white,
-            //                         ),
-            //                       ),
-            //                       IconButton(
-            //                         onPressed: () async {
-            //                           await HomePage().shareFile(
-            //                               widget.multimediaViewer.file.path);
-            //                         },
-            //                         iconSize: 54,
-            //                         padding: const EdgeInsets.all(15.0),
-            //                         icon: const Icon(
-            //                           Icons.cached,
-            //                           color: Colors.white,
-            //                         ),
-            //                       ),
-            //                       widget.multimediaViewer.isStatusPage
-            //                           ? IconButton(
-            //                               onPressed: () async {
-            //                                 return showDialog(
-            //                                   context: context,
-            //                                   barrierDismissible: true,
-            //                                   builder: (context) {
-            //                                     return AlertDialog(
-            //                                       title: const Text(
-            //                                           'Delete Permanently?'),
-            //                                       content: const Text(
-            //                                           'Are you sure you want to delete this file permanently?'),
-            //                                       contentPadding:
-            //                                           const EdgeInsets.fromLTRB(
-            //                                               24.0,
-            //                                               20.0,
-            //                                               24.0,
-            //                                               17.0),
-            //                                       actions: [
-            //                                         TextButton(
-            //                                           onPressed: () {
-            //                                             Navigator.of(context)
-            //                                                 .pop();
-            //                                           },
-            //                                           child:
-            //                                               const Text('Cancel'),
-            //                                         ),
-            //                                         TextButton(
-            //                                           onPressed: () async {
-            //                                             await HomePage()
-            //                                                 .deleteItem(widget
-            //                                                     .multimediaViewer
-            //                                                     .file);
-            //                                           },
-            //                                           child:
-            //                                               const Text('Delete'),
-            //                                         ),
-            //                                       ],
-            //                                     );
-            //                                   },
-            //                                 );
-            //                               },
-            //                               iconSize: 54,
-            //                               padding: const EdgeInsets.all(15.0),
-            //                               icon: const Icon(
-            //                                 Icons.delete_forever_rounded,
-            //                                 color: Colors.white,
-            //                               ),
-            //                             )
-            //                           : IconButton(
-            //                               onPressed: () async {
-            //                                 await HomePage()
-            //                                     .saveStatus(
-            //                                         newPath,
-            //                                         widget.multimediaViewer.file
-            //                                             .path,
-            //                                         widget.multimediaViewer
-            //                                             .copyPath)
-            //                                     .then(
-            //                                   (value) {
-            //                                     return showDialog(
-            //                                       context: context,
-            //                                       barrierDismissible: true,
-            //                                       builder: (context) {
-            //                                         return AlertDialog(
-            //                                           title: const Text(
-            //                                               'Status was saved successfully'),
-            //                                           actions: [
-            //                                             TextButton(
-            //                                               onPressed: () {
-            //                                                 Navigator.of(
-            //                                                         context)
-            //                                                     .pop();
-            //                                               },
-            //                                               child:
-            //                                                   const Text('Ok'),
-            //                                             ),
-            //                                           ],
-            //                                         );
-            //                                       },
-            //                                     );
-            //                                   },
-            //                                 );
-            //                               },
-            //                               iconSize: 54,
-            //                               padding: const EdgeInsets.all(15.0),
-            //                               icon: const Icon(
-            //                                 Icons.save_alt,
-            //                                 color: Colors.white,
-            //                               ),
-            //                             ),
-            //                     ],
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       )
-            //     : Expanded(
-            //         child: Align(
-            //           alignment: FractionalOffset.bottomCenter,
-            //           child: Container(
-            //             alignment: Alignment.bottomCenter,
-            //             child: Row(
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               children: [
-            //                 IconButton(
-            //                   onPressed: () async {
-            //                     await HomePage().shareFile(
-            //                         widget.multimediaViewer.file.path);
-            //                   },
-            //                   iconSize: 54,
-            //                   padding: const EdgeInsets.all(15.0),
-            //                   icon: const Icon(
-            //                     Icons.share,
-            //                     color: Colors.white,
-            //                   ),
-            //                 ),
-            //                 IconButton(
-            //                   onPressed: () async {
-            //                     await HomePage().shareFile(
-            //                         widget.multimediaViewer.file.path);
-            //                   },
-            //                   iconSize: 54,
-            //                   padding: const EdgeInsets.all(15.0),
-            //                   icon: const Icon(
-            //                     Icons.cached,
-            //                     color: Colors.white,
-            //                   ),
-            //                 ),
-            //                 widget.multimediaViewer.isStatusPage
-            //                     ? IconButton(
-            //                         onPressed: () async {
-            //                           return showDialog(
-            //                             context: context,
-            //                             barrierDismissible: true,
-            //                             builder: (context) {
-            //                               return AlertDialog(
-            //                                 title: const Text(
-            //                                     'Delete Permanently?'),
-            //                                 content: const Text(
-            //                                     'Are you sure you want to delete this file permanently?'),
-            //                                 contentPadding:
-            //                                     const EdgeInsets.fromLTRB(
-            //                                         24.0, 20.0, 24.0, 17.0),
-            //                                 actions: [
-            //                                   TextButton(
-            //                                     onPressed: () {
-            //                                       Navigator.of(context).pop();
-            //                                     },
-            //                                     child: const Text('Cancel'),
-            //                                   ),
-            //                                   TextButton(
-            //                                     onPressed: () async {
-            //                                       await HomePage()
-            //                                           .deleteItem(widget
-            //                                               .multimediaViewer
-            //                                               .file);
-            //                                     },
-            //                                     child: const Text('Delete'),
-            //                                   ),
-            //                                 ],
-            //                               );
-            //                             },
-            //                           );
-            //                         },
-            //                         iconSize: 54,
-            //                         padding: const EdgeInsets.all(15.0),
-            //                         icon: const Icon(
-            //                           Icons.delete_forever_rounded,
-            //                           color: Colors.white,
-            //                         ),
-            //                       )
-            //                     : IconButton(
-            //                         onPressed: () async {
-            //                           await HomePage()
-            //                               .saveStatus(
-            //                                   newPath,
-            //                                   widget.multimediaViewer.file.path,
-            //                                   widget.multimediaViewer.copyPath)
-            //                               .then(
-            //                             (value) {
-            //                               return showDialog(
-            //                                 context: context,
-            //                                 barrierDismissible: true,
-            //                                 builder: (context) {
-            //                                   return AlertDialog(
-            //                                     title: const Text(
-            //                                         'Status was saved successfully'),
-            //                                     actions: [
-            //                                       TextButton(
-            //                                         onPressed: () {
-            //                                           Navigator.of(context)
-            //                                               .pop();
-            //                                         },
-            //                                         child: const Text('Ok'),
-            //                                       ),
-            //                                     ],
-            //                                   );
-            //                                 },
-            //                               );
-            //                             },
-            //                           );
-            //                         },
-            //                         iconSize: 54,
-            //                         padding: const EdgeInsets.all(15.0),
-            //                         icon: const Icon(
-            //                           Icons.save_alt,
-            //                           color: Colors.white,
-            //                         ),
-            //                       ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       ),
           ],
         ),
       ),
