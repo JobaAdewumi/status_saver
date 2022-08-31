@@ -21,7 +21,6 @@ Future<bool> showExitPopup(context) async {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        print('yes selected');
                         exit(0);
                       },
                       style: ElevatedButton.styleFrom(
@@ -36,7 +35,6 @@ Future<bool> showExitPopup(context) async {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        print('no selected');
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(primary: Colors.white),
