@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:all_status_saver/helpers/ThemeManager.dart';
-import 'package:all_status_saver/helpers/StorageManager.dart';
+import 'package:all_status_saver/helpers/storage_manager.dart';
+import 'package:all_status_saver/helpers/theme_manager.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
