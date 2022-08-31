@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import './helpers/ThemeManager.dart';
+import 'helpers/theme_manager.dart';
 
 import 'routes/routes.dart' as route;
 
