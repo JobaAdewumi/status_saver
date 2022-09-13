@@ -258,7 +258,7 @@ class _ViewerState extends State<Viewer> {
                                           )
                                         : IconButton(
                                             onPressed: () async {
-                                              saveStatus(widget
+                                              await saveStatus(widget
                                                   .multimediaViewer.file.path);
                                             },
                                             iconSize: 54,
@@ -564,70 +564,11 @@ class _ViewerState extends State<Viewer> {
                                                         )
                                                       : IconButton(
                                                           onPressed: () async {
-                                                            await GlobalFunctions()
-                                                                .saveStatus(
+                                                            await saveStatus(
                                                               widget
                                                                   .multimediaViewer
                                                                   .file
                                                                   .path,
-                                                            )
-                                                                .then(
-                                                              (value) {
-                                                                if (value!) {
-                                                                  return ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                    const SnackBar(
-                                                                      content:
-                                                                          Text(
-                                                                        'Status was saved successfully',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      ),
-                                                                      behavior:
-                                                                          SnackBarBehavior
-                                                                              .floating,
-                                                                      elevation:
-                                                                          1,
-                                                                      dismissDirection:
-                                                                          DismissDirection
-                                                                              .horizontal,
-                                                                      duration: Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                    ),
-                                                                  );
-                                                                } else {
-                                                                  return ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                    const SnackBar(
-                                                                      content:
-                                                                          Text(
-                                                                        'Error Saving Status',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      ),
-                                                                      behavior:
-                                                                          SnackBarBehavior
-                                                                              .floating,
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .redAccent,
-                                                                      elevation:
-                                                                          1,
-                                                                      dismissDirection:
-                                                                          DismissDirection
-                                                                              .horizontal,
-                                                                      duration: Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                    ),
-                                                                  );
-                                                                }
-                                                              },
                                                             );
                                                           },
                                                           iconSize: 54,
