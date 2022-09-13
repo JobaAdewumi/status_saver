@@ -19,6 +19,12 @@ class FileType {
 }
 
 class GlobalFunctions {
+  // static const _channel = MethodChannel('all_status_saver');
+
+  // Future retrieveStatuses({required String path}) async {
+  //   await _channel.invokeMethod('retrieveStatuses', {'path': path});
+  // }
+
   Future<void> shareFile(String path) async {
     await Share.shareFiles([path]);
   }
@@ -29,7 +35,7 @@ class GlobalFunctions {
         oldPath.contains('.jpeg') ||
         oldPath.contains('.png')) {
       await GallerySaver.saveImage(oldPath,
-              toDcim: false, albumName: 'All Status Saver')
+              toDcim: true, albumName: 'All Status Saver')
           .then(
         (value) {
           savedFile = value;
@@ -40,7 +46,7 @@ class GlobalFunctions {
 
     if (oldPath.contains('.mp4')) {
       await GallerySaver.saveVideo(oldPath,
-              toDcim: false, albumName: 'All Status Saver')
+              toDcim: true, albumName: 'All Status Saver')
           .then(
         (value) {
           savedFile = value;
