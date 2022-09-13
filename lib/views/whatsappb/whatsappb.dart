@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/helpers/storage_manager.dart';
+import 'package:all_status_saver/views/Permissions.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_manager/file_manager.dart';
@@ -29,9 +32,12 @@ class WhatsappBPageState extends State<WhatsappBPage> {
 
   late Saf saf;
 
+  int? androidVersion;
+
   @override
   void initState() {
     super.initState();
+    getAndroidVersion();
     saf = Saf(
         '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses/');
     setState(() {});
@@ -41,6 +47,26 @@ class WhatsappBPageState extends State<WhatsappBPage> {
   void dispose() {
     super.dispose();
     _pageController.dispose();
+  }
+
+  Future getAndroidVersion() async {
+    StorageManager.readData('androidVersion').then(
+      (value) async {
+        if (value == null) {
+          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          StorageManager.saveData(
+              'androidVersion', androidInfo.version.sdkInt!);
+          setState(() {
+            androidVersion = androidInfo.version.sdkInt!;
+          });
+        } else {
+          setState(() {
+            androidVersion = value;
+          });
+        }
+      },
+    );
   }
 
   saveStatus(String statusPath) async {
@@ -91,9 +117,9 @@ class WhatsappBPageState extends State<WhatsappBPage> {
         Map<String, List<FileType>> allFiles = value;
         setState(
           () {
-            List<FileType> gImages = allFiles['images']!;
-            List<FileType> gVideos = allFiles['videos']!;
-            List<FileType> gImagesVideo = allFiles['all']!;
+            gImages = allFiles['images']!;
+            gVideos = allFiles['videos']!;
+            gImagesVideo = allFiles['all']!;
           },
         );
       },
@@ -449,6 +475,55 @@ class WhatsappBPageState extends State<WhatsappBPage> {
     return images;
   }
 
+  // Future<void> copyPath(String from, String to) async {
+  //   // if (_doNothing(from, to)) {
+  //   //   return;
+  //   // }
+  //   await Directory(to).create(recursive: true);
+  //   await for (final file in Directory(from).list(recursive: true)) {
+  //     final copyTo = p.join(to, p.relative(file.path, from: from));
+  //     if (file is Directory) {
+  //       await Directory(copyTo).create(recursive: true);
+  //     } else if (file is File) {
+  //       await File(file.path).copy(copyTo);
+  //     } else if (file is Link) {
+  //       await Link(copyTo).create(await file.target(), recursive: true);
+  //     }
+  //   }
+  // }
+
+  // Future trial() async {
+  //   File copyfile;
+  //   String newPath11 =
+  //       '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media';
+  //   // String newPath11 =
+  //   //     '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
+  //   var tempDir = await getTemporaryDirectory();
+  //   var patht = tempDir.path;
+  //   print(patht);
+  //   String temppath = '$patht/.Statuses';
+  //   Directory directory = Directory(patht);
+  //   Directory directory2 = Directory(temppath);
+  //   // if (!await directory.exists()) {
+  //   //   await directory.create(recursive: true);
+  //   //   print('hi');
+  //   // }
+
+  //   if (await directory.exists()) {
+  //     Directory path = Directory(newPath11);
+  //     print(path);
+  //     // File media = path;
+  //     // copyfile = path.copySync('$patht/$media.path');
+  //     // print(copyfile);
+
+  //     p.copyPath(path.path, patht);
+  //   }
+  //   List contentList =
+  //       directory2.listSync(recursive: false, followLinks: false);
+  //   print(contentList);
+  //   // copyfile =
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -463,8 +538,10 @@ class WhatsappBPageState extends State<WhatsappBPage> {
           builder: (context, snapshot) {
             final List<FileSystemEntity> entities = snapshot;
 
-            if (entities.isEmpty) {
-              return noStatusError();
+            if (androidVersion! <= 29) {
+              if (entities.isEmpty) {
+                return noStatusError();
+              }
             }
 
             FileSystemEntity? entity;
@@ -478,36 +555,31 @@ class WhatsappBPageState extends State<WhatsappBPage> {
               }
             }
 
+            var directoryPath = directoriesPaths?[0];
+
+            print(directoriesPaths);
+
             String? path = entity?.path ?? '';
             String newPath = '$path/Media/.Statuses/';
-            globalStatusPath = newPath;
             entity = Directory(newPath);
-            Directory content = Directory(newPath);
 
-            String? path11 = entity11?.path ?? '';
+            String? path11 = directoryPath;
+            // trial();
+
             String newPath11 =
-                '$path11/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses/';
-            print(newPath11);
-            entity11 = Directory(newPath);
+                '/storage/emulated/0/$path11/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
 
-            // List<String>? paths = await saf.getFilesPath();
+            print(newPath11);
+            entity11 = Directory(newPath11);
 
             if (!entity.existsSync() && !entity11.existsSync()) {
               return noStatusError();
             }
 
             Directory content11 = Directory(newPath);
+            Directory content = Directory(newPath);
             globalStatusPath = newPath;
             globalStatusPath11 = newPath11;
-
-            List contentList =
-                content.listSync(recursive: false, followLinks: false);
-            // print(contentList.stat())
-            var images = contentList
-              ..where((f) =>
-                  f.path.contains('.jpg') ||
-                  f.path.contains('.jpeg') ||
-                  f.path.contains('.png')).toList();
 
             return FutureBuilder(
               future: GlobalFunctions().getFileTypes(newPath, newPath11),

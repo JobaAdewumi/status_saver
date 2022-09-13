@@ -1,16 +1,16 @@
 import 'dart:io';
-import 'package:all_status_saver/functions/global_functions.dart';
-import 'package:all_status_saver/views/permissions.dart';
+
 import 'package:flutter/material.dart';
-import 'package:shared_storage/media_store.dart' as mediastore;
 
 import 'package:file_manager/file_manager.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+
+import 'package:all_status_saver/views/permissions.dart';
+import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/helpers/storage_manager.dart';
 
 import 'package:all_status_saver/routes/routes.dart' as route;
-
 import 'package:all_status_saver/views/home/Viewer.dart';
-
-import 'package:shared_storage/shared_storage.dart';
 
 class WhatsappPage extends StatefulWidget {
   const WhatsappPage({super.key});
@@ -29,19 +29,41 @@ class WhatsappPageState extends State<WhatsappPage> {
 
   late String globalStatusPath;
   late String globalStatusPath11;
-  // late List<FileType> gImages;
-  // late List<FileType> gVideos;
-  // late List<FileType> gImagesVideo;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setState(() {});
-  // }
+
+  int? androidVersion;
+
+  @override
+  void initState() {
+    super.initState();
+    getAndroidVersion();
+    setState(() {});
+  }
 
   @override
   void dispose() {
     super.dispose();
     _pageController.dispose();
+  }
+
+  Future getAndroidVersion() async {
+    StorageManager.readData('androidVersion').then(
+      (value) async {
+        if (value == null) {
+          print(value);
+          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          StorageManager.saveData(
+              'androidVersion', androidInfo.version.sdkInt!);
+          setState(() {
+            androidVersion = androidInfo.version.sdkInt!;
+          });
+        } else {
+          setState(() {
+            androidVersion = value;
+          });
+        }
+      },
+    );
   }
 
   saveStatus(String statusPath) async {
@@ -458,7 +480,7 @@ class WhatsappPageState extends State<WhatsappPage> {
           builder: (context, snapshot) {
             final List<FileSystemEntity> entities = snapshot;
 
-            if (aboveAndroid10 == false) {
+            if (androidVersion! <= 29) {
               if (entities.isEmpty) {
                 return noStatusError();
               }
@@ -474,39 +496,20 @@ class WhatsappPageState extends State<WhatsappPage> {
                 entity11 = e;
               }
             }
-            var trial = mediastore
-                .getMediaStoreContentDirectory(MediaStoreCollection.images);
-            print(trial);
 
-            var test = directoriesPaths?[0];
-            // test =
-            //     '/storage/emulated/0/${test!}/com.whatsapp/WhatsApp/Media/.Statuses';
-            // var testing = Directory(test);
-            // bool doesIt = testing.existsSync();
-            // final dirFiles = testing.list().toList();
-            // final dirFiles = testing
-            //     .listSync(recursive: true, followLinks: true)
-            //     .map((item) => item.path)
-            //     .where((item) => item.endsWith('.jpg'))
-            //     .toList(growable: false);
-            // print('directories path');
+            var directoryPath = directoriesPaths?[0];
+
             print(directoriesPaths);
-            // print(test);
-            // print(testing);
-            // print(doesIt);
-            // print(dirFiles);
 
             String? path = entity?.path ?? '';
             String newPath = '$path/Media/.Statuses/';
             entity = Directory(newPath);
 
-            String? path11 = test;
+            String? path11 = directoryPath ?? 'Android/media';
 
-            // String newPath11 = test;
             String newPath11 =
                 '/storage/emulated/0/$path11/com.whatsapp/WhatsApp/Media/.Statuses';
-            // String newPath11 =
-            //     '$path11/media/com.whatsapp/WhatsApp/Media/.Statuses/';
+
             print(newPath11);
             entity11 = Directory(newPath11);
 
@@ -518,15 +521,6 @@ class WhatsappPageState extends State<WhatsappPage> {
             Directory content = Directory(newPath);
             globalStatusPath = newPath;
             globalStatusPath11 = newPath11;
-
-            // List contentList =
-            //     content.listSync(recursive: false, followLinks: false);
-            // // print(contentList.stat())
-            // var images = contentList
-            //   ..where((f) =>
-            //       f.path.contains('.jpg') ||
-            //       f.path.contains('.jpeg') ||
-            //       f.path.contains('.png')).toList();
 
             return FutureBuilder(
               future: GlobalFunctions().getFileTypes(newPath, newPath11),
