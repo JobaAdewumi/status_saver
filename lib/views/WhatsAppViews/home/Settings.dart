@@ -52,7 +52,6 @@ class _SettingsState extends State<Settings> {
                         title: const Text('Select Theme'),
                         content: DropdownButton(
                           onChanged: (String? newValue) {
-                            print(newValue);
                             if (newValue == 'light') {
                               setState(
                                 () {

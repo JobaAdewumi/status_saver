@@ -557,8 +557,6 @@ class WhatsappBPageState extends State<WhatsappBPage> {
 
             var directoryPath = directoriesPaths?[0];
 
-            print(directoriesPaths);
-
             String? path = entity?.path ?? '';
             String newPath = '$path/Media/.Statuses/';
             entity = Directory(newPath);
@@ -569,15 +567,12 @@ class WhatsappBPageState extends State<WhatsappBPage> {
             String newPath11 =
                 '/storage/emulated/0/$path11/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
 
-            print(newPath11);
             entity11 = Directory(newPath11);
 
             if (!entity.existsSync() && !entity11.existsSync()) {
               return noStatusError();
             }
 
-            Directory content11 = Directory(newPath);
-            Directory content = Directory(newPath);
             globalStatusPath = newPath;
             globalStatusPath11 = newPath11;
 

@@ -498,14 +498,14 @@ class SavedStatusPageState extends State<SavedStatusPage> {
               return noStatusError();
             }
 
-            Directory content = Directory(newPath);
-            List contentList =
-                content.listSync(recursive: false, followLinks: false);
-            var images = contentList
-              ..where((f) =>
-                  f.path.contains('.jpg') ||
-                  f.path.contains('.jpeg') ||
-                  f.path.contains('.png')).toList();
+            // Directory content = Directory(newPath);
+            // List contentList =
+            //     content.listSync(recursive: false, followLinks: false);
+            // var images = contentList
+            //   ..where((f) =>
+            //       f.path.contains('.jpg') ||
+            //       f.path.contains('.jpeg') ||
+            //       f.path.contains('.png')).toList();
 
             return FutureBuilder(
               future: _getFileTypes(newPath),
