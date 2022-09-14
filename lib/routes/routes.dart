@@ -32,7 +32,6 @@ Route<dynamic> controller(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const SavedStatusPage());
     case viewer:
       final args = settings.arguments as MultimediaViewer;
-      final MultimediaViewer multimediaViewer;
       return MaterialPageRoute(builder: (context) {
         return Viewer(multimediaViewer: args);
       });
