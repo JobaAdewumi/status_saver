@@ -140,461 +140,441 @@ class _ViewerState extends State<Viewer> {
         backgroundColor: Colors.transparent,
       ),
       backgroundColor: Colors.black,
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            widget.multimediaViewer.isImage
-                ? Expanded(
-                    flex: 5,
-                    child: Container(
-                      child: Stack(
-                        children: [
-                          Center(
-                            // widthFactor: MediaQuery.of(context).size.width,
-                            // heightFactor: MediaQuery.of(context).size.height,
-                            child: GestureDetector(
-                              onDoubleTapDown: _handleDoubleTapDown,
-                              onDoubleTap: _handleDoubleTap,
-                              child: InteractiveViewer(
-                                transformationController:
-                                    _transformationController,
-                                panEnabled: true,
-                                boundaryMargin: const EdgeInsets.all(20),
-                                minScale: 0.5,
-                                maxScale: 3,
-                                child: Image.file(
-                                  widget.multimediaViewer.file,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          widget.multimediaViewer.isImage
+              ? Expanded(
+                  flex: 5,
+                  child: Stack(
+                    children: [
+                      Center(
+                        // widthFactor: MediaQuery.of(context).size.width,
+                        // heightFactor: MediaQuery.of(context).size.height,
+                        child: GestureDetector(
+                          onDoubleTapDown: _handleDoubleTapDown,
+                          onDoubleTap: _handleDoubleTap,
+                          child: InteractiveViewer(
+                            transformationController: _transformationController,
+                            panEnabled: true,
+                            boundaryMargin: const EdgeInsets.all(20),
+                            minScale: 0.5,
+                            maxScale: 3,
+                            child: Image.file(
+                              widget.multimediaViewer.file,
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                          Positioned(
-                            child: Align(
-                              alignment: FractionalOffset.bottomCenter,
-                              child: Container(
-                                alignment: Alignment.bottomCenter,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () async {
-                                        await GlobalFunctions().shareFile(
-                                            widget.multimediaViewer.file.path);
-                                      },
-                                      iconSize: 54,
-                                      padding: const EdgeInsets.all(15.0),
-                                      icon: const Icon(
-                                        Icons.share,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        await GlobalFunctions().shareFile(
-                                            widget.multimediaViewer.file.path);
-                                      },
-                                      iconSize: 54,
-                                      padding: const EdgeInsets.all(15.0),
-                                      icon: const Icon(
-                                        Icons.cached,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    widget.multimediaViewer.isStatusPage
-                                        ? IconButton(
-                                            onPressed: () async {
-                                              return showDialog(
-                                                context: context,
-                                                barrierDismissible: true,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        'Delete Permanently?'),
-                                                    content: const Text(
-                                                        'Are you sure you want to delete this file permanently?'),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                                .fromLTRB(24.0,
-                                                            20.0, 24.0, 17.0),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: const Text(
-                                                            'Cancel'),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          await GlobalFunctions()
-                                                              .deleteItem(widget
-                                                                  .multimediaViewer
-                                                                  .file);
-                                                          Navigator.of(context)
-                                                            ..pop()
-                                                            ..pop()
-                                                            ..pop()
-                                                            ..pushNamed(route
-                                                                .savedStatusPage);
-                                                        },
-                                                        child: const Text(
-                                                            'Delete'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            iconSize: 54,
-                                            padding: const EdgeInsets.all(15.0),
-                                            icon: const Icon(
-                                              Icons.delete_forever_rounded,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : IconButton(
-                                            onPressed: () async {
-                                              await saveStatus(widget
-                                                  .multimediaViewer.file.path);
-                                            },
-                                            iconSize: 54,
-                                            padding: const EdgeInsets.all(15.0),
-                                            icon: const Icon(
-                                              Icons.save_alt,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : _controller.value.isInitialized
-                    ? Expanded(
-                        child: Container(
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: GestureDetector(
-                                  onTap: onVideoTap,
-                                  child: AspectRatio(
-                                    aspectRatio: _controller.value.aspectRatio,
-                                    child: VideoPlayer(_controller),
-                                  ),
-                                ),
-                              ),
-                              controlInView == true
-                                  ? Positioned(
-                                      bottom: 0.0,
-                                      left: 0.0,
-                                      right: 0.0,
-                                      child: Align(
-                                        alignment:
-                                            FractionalOffset.bottomCenter,
-                                        child: Container(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 20,
-                                                      right: 20,
-                                                    ),
-                                                    child:
-                                                        _controller
-                                                                    .value
-                                                                    .position
-                                                                    .inSeconds >
-                                                                9
-                                                            ? Text(
-                                                                '00:${_controller.value.position.inSeconds}',
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              )
-                                                            : Text(
-                                                                '00:0${_controller.value.position.inSeconds}',
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      right: 20,
-                                                      left: 20,
-                                                    ),
-                                                    child:
-                                                        _controller
-                                                                    .value
-                                                                    .duration
-                                                                    .inSeconds >
-                                                                9
-                                                            ? Text(
-                                                                '00:${_controller.value.duration.inSeconds}',
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              )
-                                                            : Text(
-                                                                '00:0${_controller.value.duration.inSeconds}',
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                  ),
-                                                ],
-                                              ),
-                                              ConstrainedBox(
-                                                constraints:
-                                                    BoxConstraints.loose(
-                                                  Size.fromHeight(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.7),
-                                                ),
-                                                child: VideoProgressIndicator(
-                                                  _controller,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10.0,
-                                                          left: 7.0,
-                                                          right: 7.0),
-                                                  allowScrubbing: true,
-                                                  colors:
-                                                      const VideoProgressColors(
-                                                          backgroundColor:
-                                                              Colors.blue,
-                                                          playedColor:
-                                                              Colors.green,
-                                                          bufferedColor:
-                                                              Colors.grey),
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      int seconds = _controller
-                                                              .value
-                                                              .position
-                                                              .inSeconds -
-                                                          5;
-                                                      setState(
-                                                        () {
-                                                          _controller.seekTo(
-                                                              Duration(
-                                                                  seconds:
-                                                                      seconds));
-                                                          setState(() {});
-                                                        },
-                                                      );
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.fast_rewind_rounded,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      setState(
-                                                        () {
-                                                          _controller.value
-                                                                  .isPlaying
-                                                              ? _controller
-                                                                  .pause()
-                                                              : _controller
-                                                                  .play();
-                                                        },
-                                                      );
-                                                    },
-                                                    icon: Icon(
-                                                      _controller
-                                                              .value.isPlaying
-                                                          ? Icons.pause
-                                                          : Icons.play_arrow,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      int seconds = _controller
-                                                              .value
-                                                              .position
-                                                              .inSeconds +
-                                                          5;
-                                                      setState(
-                                                        () {
-                                                          _controller.seekTo(
-                                                              Duration(
-                                                                  seconds:
-                                                                      seconds));
-                                                          setState(() {});
-                                                        },
-                                                      );
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons
-                                                          .fast_forward_rounded,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () async {
-                                                      await GlobalFunctions()
-                                                          .shareFile(widget
-                                                              .multimediaViewer
-                                                              .file
-                                                              .path);
-                                                    },
-                                                    iconSize: 54,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            15.0),
-                                                    icon: const Icon(
-                                                      Icons.share,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () async {
-                                                      await GlobalFunctions()
-                                                          .shareFile(widget
-                                                              .multimediaViewer
-                                                              .file
-                                                              .path);
-                                                    },
-                                                    iconSize: 54,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            15.0),
-                                                    icon: const Icon(
-                                                      Icons.cached,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  widget.multimediaViewer
-                                                          .isStatusPage
-                                                      ? IconButton(
-                                                          onPressed: () async {
-                                                            return showDialog(
-                                                              context: context,
-                                                              barrierDismissible:
-                                                                  true,
-                                                              builder:
-                                                                  (context) {
-                                                                return AlertDialog(
-                                                                  title: const Text(
-                                                                      'Delete Permanently?'),
-                                                                  content:
-                                                                      const Text(
-                                                                          'Are you sure you want to delete this file permanently?'),
-                                                                  contentPadding:
-                                                                      const EdgeInsets
-                                                                              .fromLTRB(
-                                                                          24.0,
-                                                                          20.0,
-                                                                          24.0,
-                                                                          17.0),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Cancel'),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () async {
-                                                                        await GlobalFunctions().deleteItem(widget
-                                                                            .multimediaViewer
-                                                                            .file);
-                                                                        Navigator.of(
-                                                                            context)
-                                                                          ..pop()
-                                                                          ..pop()
-                                                                          ..pop()
-                                                                          ..pushNamed(
-                                                                              route.savedStatusPage);
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Delete'),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          iconSize: 54,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(15.0),
-                                                          icon: const Icon(
-                                                            Icons
-                                                                .delete_forever_rounded,
-                                                            color: Colors.white,
-                                                          ),
-                                                        )
-                                                      : IconButton(
-                                                          onPressed: () async {
-                                                            await saveStatus(
-                                                              widget
-                                                                  .multimediaViewer
-                                                                  .file
-                                                                  .path,
-                                                            );
-                                                          },
-                                                          iconSize: 54,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(15.0),
-                                                          icon: const Icon(
-                                                            Icons.save_alt,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : Container()
-                            ],
                           ),
                         ),
-                      )
-                    : Container(),
-          ],
-        ),
+                      ),
+                      Positioned(
+                        child: Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Container(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    await GlobalFunctions().shareFile(
+                                        widget.multimediaViewer.file.path);
+                                  },
+                                  iconSize: 54,
+                                  padding: const EdgeInsets.all(15.0),
+                                  icon: const Icon(
+                                    Icons.share,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    await GlobalFunctions().shareFile(
+                                        widget.multimediaViewer.file.path);
+                                  },
+                                  iconSize: 54,
+                                  padding: const EdgeInsets.all(15.0),
+                                  icon: const Icon(
+                                    Icons.cached,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                widget.multimediaViewer.isStatusPage
+                                    ? IconButton(
+                                        onPressed: () async {
+                                          return showDialog(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Delete Permanently?'),
+                                                content: const Text(
+                                                    'Are you sure you want to delete this file permanently?'),
+                                                contentPadding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        24.0, 20.0, 24.0, 17.0),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      await GlobalFunctions()
+                                                          .deleteItem(widget
+                                                              .multimediaViewer
+                                                              .file);
+                                                      Navigator.of(context)
+                                                        ..pop()
+                                                        ..pop()
+                                                        ..pop()
+                                                        ..pushNamed(route
+                                                            .savedStatusPage);
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        iconSize: 54,
+                                        padding: const EdgeInsets.all(15.0),
+                                        icon: const Icon(
+                                          Icons.delete_forever_rounded,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : IconButton(
+                                        onPressed: () async {
+                                          await saveStatus(widget
+                                              .multimediaViewer.file.path);
+                                        },
+                                        iconSize: 54,
+                                        padding: const EdgeInsets.all(15.0),
+                                        icon: const Icon(
+                                          Icons.save_alt,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : _controller.value.isInitialized
+                  ? Expanded(
+                      child: Container(
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: GestureDetector(
+                                onTap: onVideoTap,
+                                child: AspectRatio(
+                                  aspectRatio: _controller.value.aspectRatio,
+                                  child: VideoPlayer(_controller),
+                                ),
+                              ),
+                            ),
+                            controlInView == true
+                                ? Positioned(
+                                    bottom: 0.0,
+                                    left: 0.0,
+                                    right: 0.0,
+                                    child: Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Container(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                  ),
+                                                  child:
+                                                      _controller.value.position
+                                                                  .inSeconds >
+                                                              9
+                                                          ? Text(
+                                                              '00:${_controller.value.position.inSeconds}',
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            )
+                                                          : Text(
+                                                              '00:0${_controller.value.position.inSeconds}',
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    right: 20,
+                                                    left: 20,
+                                                  ),
+                                                  child:
+                                                      _controller.value.duration
+                                                                  .inSeconds >
+                                                              9
+                                                          ? Text(
+                                                              '00:${_controller.value.duration.inSeconds}',
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            )
+                                                          : Text(
+                                                              '00:0${_controller.value.duration.inSeconds}',
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                ),
+                                              ],
+                                            ),
+                                            ConstrainedBox(
+                                              constraints: BoxConstraints.loose(
+                                                Size.fromHeight(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.7),
+                                              ),
+                                              child: VideoProgressIndicator(
+                                                _controller,
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0,
+                                                    left: 7.0,
+                                                    right: 7.0),
+                                                allowScrubbing: true,
+                                                colors:
+                                                    const VideoProgressColors(
+                                                        backgroundColor:
+                                                            Colors.blue,
+                                                        playedColor:
+                                                            Colors.green,
+                                                        bufferedColor:
+                                                            Colors.grey),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    int seconds = _controller
+                                                            .value
+                                                            .position
+                                                            .inSeconds -
+                                                        5;
+                                                    setState(
+                                                      () {
+                                                        _controller.seekTo(
+                                                            Duration(
+                                                                seconds:
+                                                                    seconds));
+                                                        setState(() {});
+                                                      },
+                                                    );
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.fast_rewind_rounded,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    setState(
+                                                      () {
+                                                        _controller
+                                                                .value.isPlaying
+                                                            ? _controller
+                                                                .pause()
+                                                            : _controller
+                                                                .play();
+                                                      },
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                    _controller.value.isPlaying
+                                                        ? Icons.pause
+                                                        : Icons.play_arrow,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    int seconds = _controller
+                                                            .value
+                                                            .position
+                                                            .inSeconds +
+                                                        5;
+                                                    setState(
+                                                      () {
+                                                        _controller.seekTo(
+                                                            Duration(
+                                                                seconds:
+                                                                    seconds));
+                                                        setState(() {});
+                                                      },
+                                                    );
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.fast_forward_rounded,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    await GlobalFunctions()
+                                                        .shareFile(widget
+                                                            .multimediaViewer
+                                                            .file
+                                                            .path);
+                                                  },
+                                                  iconSize: 54,
+                                                  padding: const EdgeInsets.all(
+                                                      15.0),
+                                                  icon: const Icon(
+                                                    Icons.share,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    await GlobalFunctions()
+                                                        .shareFile(widget
+                                                            .multimediaViewer
+                                                            .file
+                                                            .path);
+                                                  },
+                                                  iconSize: 54,
+                                                  padding: const EdgeInsets.all(
+                                                      15.0),
+                                                  icon: const Icon(
+                                                    Icons.cached,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                widget.multimediaViewer
+                                                        .isStatusPage
+                                                    ? IconButton(
+                                                        onPressed: () async {
+                                                          return showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                true,
+                                                            builder: (context) {
+                                                              return AlertDialog(
+                                                                title: const Text(
+                                                                    'Delete Permanently?'),
+                                                                content: const Text(
+                                                                    'Are you sure you want to delete this file permanently?'),
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        24.0,
+                                                                        20.0,
+                                                                        24.0,
+                                                                        17.0),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                    child: const Text(
+                                                                        'Cancel'),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      await GlobalFunctions().deleteItem(widget
+                                                                          .multimediaViewer
+                                                                          .file);
+                                                                      Navigator.of(
+                                                                          context)
+                                                                        ..pop()
+                                                                        ..pop()
+                                                                        ..pop()
+                                                                        ..pushNamed(
+                                                                            route.savedStatusPage);
+                                                                    },
+                                                                    child: const Text(
+                                                                        'Delete'),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        iconSize: 54,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(15.0),
+                                                        icon: const Icon(
+                                                          Icons
+                                                              .delete_forever_rounded,
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
+                                                    : IconButton(
+                                                        onPressed: () async {
+                                                          await saveStatus(
+                                                            widget
+                                                                .multimediaViewer
+                                                                .file
+                                                                .path,
+                                                          );
+                                                        },
+                                                        iconSize: 54,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(15.0),
+                                                        icon: const Icon(
+                                                          Icons.save_alt,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container()
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(),
+        ],
       ),
     );
   }

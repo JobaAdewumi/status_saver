@@ -33,7 +33,6 @@ class HomePageState extends State<HomePage> {
     StorageManager.readData('androidVersion').then(
       (value) async {
         if (value == null) {
-          print(value);
           DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
           AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
           StorageManager.saveData(
@@ -61,7 +60,6 @@ class HomePageState extends State<HomePage> {
     if (androidVersion == null) {
       await getAndroidVersion();
     }
-    print(androidVersion);
     if (androidVersion! >= 30) {
       if (await requestPermission11(context)) {
         Navigator.pushNamed(context, route);

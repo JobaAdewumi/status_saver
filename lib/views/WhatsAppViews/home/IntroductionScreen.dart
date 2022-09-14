@@ -46,33 +46,31 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            const Expanded(
-              child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: FlutterLogo(
-                  size: 80.0,
+      body: Column(
+        children: [
+          const Expanded(
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: FlutterLogo(
+                size: 80.0,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.popAndPushNamed(context, route.homePage);
+                  },
+                  child: const Text('PROCEED'),
                 ),
               ),
             ),
-            Expanded(
-              child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.popAndPushNamed(context, route.homePage);
-                    },
-                    child: const Text('PROCEED'),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
