@@ -9,7 +9,7 @@ import 'package:shared_storage/media_store.dart' as mediaStore;
 
 import 'package:all_status_saver/routes/routes.dart' as route;
 
-import 'package:all_status_saver/views/home/Viewer.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
 
 class SavedStatusPage extends StatefulWidget {
   const SavedStatusPage({super.key});

@@ -1,25 +1,25 @@
 import 'dart:io';
-import 'package:all_status_saver/functions/global_functions.dart';
-import 'package:all_status_saver/helpers/storage_manager.dart';
-import 'package:all_status_saver/views/Permissions.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:file_manager/file_manager.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+
+import 'package:all_status_saver/views/permissions.dart';
+import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/helpers/storage_manager.dart';
 
 import 'package:all_status_saver/routes/routes.dart' as route;
-import 'package:all_status_saver/views/home/Viewer.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
 
-import 'package:saf/saf.dart';
-
-class WhatsappBPage extends StatefulWidget {
-  const WhatsappBPage({super.key});
+class WhatsappPage extends StatefulWidget {
+  const WhatsappPage({super.key});
 
   @override
-  WhatsappBPageState createState() => WhatsappBPageState();
+  WhatsappPageState createState() => WhatsappPageState();
 }
 
-class WhatsappBPageState extends State<WhatsappBPage> {
+class WhatsappPageState extends State<WhatsappPage> {
   final FileManagerController controller = FileManagerController();
   final PageController _pageController = PageController(initialPage: 0);
 
@@ -30,16 +30,12 @@ class WhatsappBPageState extends State<WhatsappBPage> {
   late String globalStatusPath;
   late String globalStatusPath11;
 
-  late Saf saf;
-
   int? androidVersion;
 
   @override
   void initState() {
     super.initState();
     getAndroidVersion();
-    saf = Saf(
-        '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses/');
     setState(() {});
   }
 
@@ -53,6 +49,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
     StorageManager.readData('androidVersion').then(
       (value) async {
         if (value == null) {
+          print(value);
           DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
           AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
           StorageManager.saveData(
@@ -131,12 +128,12 @@ class WhatsappBPageState extends State<WhatsappBPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+            'No Status Found, You have to watch stories on WhatsApp to make them appear here',
             textAlign: TextAlign.center),
         ElevatedButton.icon(
           onPressed: null,
           icon: const Icon(Icons.launch_rounded),
-          label: const Text('OPEN WHATSAPP BUSINESS'),
+          label: const Text('OPEN WHATSAPP'),
         ),
       ],
     );
@@ -147,11 +144,8 @@ class WhatsappBPageState extends State<WhatsappBPage> {
   Widget ImageGrid(File statuses, FileType entit) {
     Widget image = InkWell(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          route.viewer,
-          arguments: MultimediaViewer(isImage: true, file: statuses),
-        );
+        Navigator.pushNamed(context, route.viewer,
+            arguments: MultimediaViewer(isImage: true, file: statuses));
       },
       child: Image.file(statuses, height: 100, width: 100, fit: BoxFit.cover),
     );
@@ -162,7 +156,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
             flex: 2,
             child: SizedBox(
               width: 350,
-              // height: 134,
+              height: 134,
               child: image,
             ),
           ),
@@ -183,7 +177,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                         Text(
                           'SHARE',
                           style: TextStyle(fontSize: 10),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -203,7 +197,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                         Text(
                           'REPOST',
                           style: TextStyle(fontSize: 10),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -214,7 +208,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                     style:
                         TextButton.styleFrom(fixedSize: const Size(60.0, 53.0)),
                     onPressed: () async {
-                      saveStatus(statuses.path);
+                      await saveStatus(statuses.path);
                     },
                     child: Column(
                       children: const [
@@ -222,7 +216,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                         Text(
                           'SAVE',
                           style: TextStyle(fontSize: 10),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -259,11 +253,8 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                         left: 60,
                         child: IconButton(
                           onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              route.viewer,
-                              arguments: MultimediaViewer(file: statuses),
-                            );
+                            Navigator.pushNamed(context, route.viewer,
+                                arguments: MultimediaViewer(file: statuses));
                           },
                           icon: const Icon(
                             Icons.play_circle_outline,
@@ -327,7 +318,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                             fixedSize: const Size(60.0, 53.0),
                           ),
                           onPressed: () async {
-                            saveStatus(statuses.path);
+                            await saveStatus(statuses.path);
                           },
                           child: Column(
                             children: const [
@@ -335,7 +326,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
                               Text(
                                 'SAVE',
                                 style: TextStyle(fontSize: 10),
-                              ),
+                              )
                             ],
                           ),
                         ),
@@ -438,7 +429,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
 
   Widget StatusImages(List<FileType> gImages) {
     Widget images;
-    var checkTypes = gImages.where(
+    var checkTypes = gImagesVideo.where(
       (e) {
         if (e.file.path.contains('.jpg') ||
             e.file.path.contains('.jpeg') ||
@@ -475,55 +466,6 @@ class WhatsappBPageState extends State<WhatsappBPage> {
     return images;
   }
 
-  // Future<void> copyPath(String from, String to) async {
-  //   // if (_doNothing(from, to)) {
-  //   //   return;
-  //   // }
-  //   await Directory(to).create(recursive: true);
-  //   await for (final file in Directory(from).list(recursive: true)) {
-  //     final copyTo = p.join(to, p.relative(file.path, from: from));
-  //     if (file is Directory) {
-  //       await Directory(copyTo).create(recursive: true);
-  //     } else if (file is File) {
-  //       await File(file.path).copy(copyTo);
-  //     } else if (file is Link) {
-  //       await Link(copyTo).create(await file.target(), recursive: true);
-  //     }
-  //   }
-  // }
-
-  // Future trial() async {
-  //   File copyfile;
-  //   String newPath11 =
-  //       '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media';
-  //   // String newPath11 =
-  //   //     '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
-  //   var tempDir = await getTemporaryDirectory();
-  //   var patht = tempDir.path;
-  //   print(patht);
-  //   String temppath = '$patht/.Statuses';
-  //   Directory directory = Directory(patht);
-  //   Directory directory2 = Directory(temppath);
-  //   // if (!await directory.exists()) {
-  //   //   await directory.create(recursive: true);
-  //   //   print('hi');
-  //   // }
-
-  //   if (await directory.exists()) {
-  //     Directory path = Directory(newPath11);
-  //     print(path);
-  //     // File media = path;
-  //     // copyfile = path.copySync('$patht/$media.path');
-  //     // print(copyfile);
-
-  //     p.copyPath(path.path, patht);
-  //   }
-  //   List contentList =
-  //       directory2.listSync(recursive: false, followLinks: false);
-  //   print(contentList);
-  //   // copyfile =
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -547,7 +489,7 @@ class WhatsappBPageState extends State<WhatsappBPage> {
             FileSystemEntity? entity;
             FileSystemEntity? entity11;
             for (var e in entities) {
-              if (FileManager.basename(e) == 'WhatsApp Business') {
+              if (FileManager.basename(e) == 'WhatsApp') {
                 entity = e;
               }
               if (FileManager.basename(e) == 'Android') {
@@ -563,11 +505,10 @@ class WhatsappBPageState extends State<WhatsappBPage> {
             String newPath = '$path/Media/.Statuses/';
             entity = Directory(newPath);
 
-            String? path11 = directoryPath;
-            // trial();
+            String? path11 = directoryPath ?? 'Android/media';
 
             String newPath11 =
-                '/storage/emulated/0/$path11/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
+                '/storage/emulated/0/$path11/com.whatsapp/WhatsApp/Media/.Statuses';
 
             print(newPath11);
             entity11 = Directory(newPath11);
