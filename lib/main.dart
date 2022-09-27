@@ -25,8 +25,26 @@ class MyApp extends StatelessWidget {
         SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
         );
+        print(theme.getCurrentTheme());
+        if (theme.getCurrentTheme() == 'dark') {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+              systemNavigationBarColor: const Color.fromARGB(255, 37, 51, 63),
+              systemNavigationBarDividerColor:
+                  const Color.fromARGB(255, 37, 51, 63),
+            ),
+          );
+        } else if (theme.getCurrentTheme() == 'light') {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+                systemNavigationBarColor: Colors.white,
+                systemNavigationBarDividerColor: Colors.grey,
+                systemNavigationBarIconBrightness: Brightness.dark),
+          );
+        }
+
         return MaterialApp(
-          title: 'Status Saver',
+          title: 'All Status Saver',
           theme: theme.getTheme(),
           onGenerateRoute: route.controller,
           initialRoute: route.introScreen,
