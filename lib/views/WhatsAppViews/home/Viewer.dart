@@ -88,45 +88,45 @@ class _ViewerState extends State<Viewer> {
       });
   }
 
-  saveStatus(String statusPath) async {
-    await GlobalFunctions().saveStatus(statusPath).then(
-      (value) {
-        bool check = value == null
-            ? false
-            : value == true
-                ? true
-                : false;
-        if (check) {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Status was saved successfully',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        } else {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Error Saving Status',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.redAccent,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        }
-      },
-    );
-  }
+  // saveStatus(String statusPath) async {
+  //   await GlobalFunctions().saveStatus(statusPath).then(
+  //     (value) {
+  //       bool check = value == null
+  //           ? false
+  //           : value == true
+  //               ? true
+  //               : false;
+  //       if (check) {
+  //         return ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text(
+  //               'Status was saved successfully',
+  //               style: TextStyle(color: Colors.white),
+  //             ),
+  //             behavior: SnackBarBehavior.floating,
+  //             elevation: 1,
+  //             dismissDirection: DismissDirection.horizontal,
+  //             duration: Duration(milliseconds: 400),
+  //           ),
+  //         );
+  //       } else {
+  //         return ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text(
+  //               'Error Saving Status',
+  //               style: TextStyle(color: Colors.white),
+  //             ),
+  //             behavior: SnackBarBehavior.floating,
+  //             backgroundColor: Colors.redAccent,
+  //             elevation: 1,
+  //             dismissDirection: DismissDirection.horizontal,
+  //             duration: Duration(milliseconds: 400),
+  //           ),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
   void _handleDoubleTapDown(TapDownDetails details) {
     _doubleTapDetails = details;
@@ -456,10 +456,10 @@ class _ViewerState extends State<Viewer> {
                     ),
                     child: IconButton(
                       onPressed: () async {
-                        await saveStatus(
-                          widget
-                              .multimediaViewer.allFiles[globalIndex].file.path,
-                        );
+                        await GlobalFunctions().saveStatus(
+                            widget.multimediaViewer.allFiles[globalIndex].file
+                                .path,
+                            context);
                       },
                       iconSize: 35,
                       padding: const EdgeInsets.all(15.0),

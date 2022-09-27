@@ -67,46 +67,6 @@ class WhatsappPageState extends State<WhatsappPage>
     );
   }
 
-  saveStatus(String statusPath) async {
-    await GlobalFunctions().saveStatus(statusPath).then(
-      (value) {
-        bool check = value == null
-            ? false
-            : value == true
-                ? true
-                : false;
-        if (check) {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Status was saved successfully',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        } else {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Error Saving Status',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.redAccent,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        }
-      },
-    );
-  }
-
   Future onDragGridDown() async {
     await GlobalFunctions()
         .getFileTypes(globalStatusPath, globalStatusPath11)
@@ -121,22 +81,6 @@ class WhatsappPageState extends State<WhatsappPage>
           },
         );
       },
-    );
-  }
-
-  Widget noStatusError() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-            'No Status Found, You have to watch stories on WhatsApp to make them appear here',
-            textAlign: TextAlign.center),
-        ElevatedButton.icon(
-          onPressed: null,
-          icon: const Icon(Icons.launch_rounded),
-          label: const Text('OPEN WHATSAPP'),
-        ),
-      ],
     );
   }
 
@@ -190,7 +134,7 @@ class WhatsappPageState extends State<WhatsappPage>
         ),
       );
     } else {
-      imagesVideos = noStatusError();
+      imagesVideos = GlobalFunctions().noStatusError(true);
     }
     return imagesVideos;
   }
@@ -227,7 +171,7 @@ class WhatsappPageState extends State<WhatsappPage>
         ),
       );
     } else {
-      videos = noStatusError();
+      videos = GlobalFunctions().noStatusError(true);
     }
     return videos;
   }
@@ -266,7 +210,7 @@ class WhatsappPageState extends State<WhatsappPage>
         ),
       );
     } else {
-      images = noStatusError();
+      images = GlobalFunctions().noStatusError(true);
     }
     return images;
   }
@@ -302,7 +246,7 @@ class WhatsappPageState extends State<WhatsappPage>
 
             if (androidVersion! <= 29) {
               if (entities.isEmpty) {
-                return noStatusError();
+                return GlobalFunctions().noStatusError(true);
               }
             }
 
@@ -331,7 +275,7 @@ class WhatsappPageState extends State<WhatsappPage>
             entity11 = Directory(newPath11);
 
             if (!entity.existsSync() && !entity11.existsSync()) {
-              return noStatusError();
+              return GlobalFunctions().noStatusError(true);
             }
 
             globalStatusPath = newPath;

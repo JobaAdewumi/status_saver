@@ -70,46 +70,6 @@ class WhatsappBPageState extends State<WhatsappBPage>
     );
   }
 
-  saveStatus(String statusPath) async {
-    await GlobalFunctions().saveStatus(statusPath).then(
-      (value) {
-        bool check = value == null
-            ? false
-            : value == true
-                ? true
-                : false;
-        if (check) {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Status was saved successfully',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        } else {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Error Saving Status',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.redAccent,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        }
-      },
-    );
-  }
-
   Future onDragGridDown() async {
     await GlobalFunctions()
         .getFileTypes(globalStatusPath, globalStatusPath11)
@@ -124,22 +84,6 @@ class WhatsappBPageState extends State<WhatsappBPage>
           },
         );
       },
-    );
-  }
-
-  Widget noStatusError() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-            'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
-            textAlign: TextAlign.center),
-        ElevatedButton.icon(
-          onPressed: null,
-          icon: const Icon(Icons.launch_rounded),
-          label: const Text('OPEN WHATSAPP BUSINESS'),
-        ),
-      ],
     );
   }
 
@@ -185,7 +129,7 @@ class WhatsappBPageState extends State<WhatsappBPage>
         ),
       );
     } else {
-      imagesVideos = noStatusError();
+      imagesVideos = GlobalFunctions().noStatusError(false);
     }
     return imagesVideos;
   }
@@ -222,7 +166,7 @@ class WhatsappBPageState extends State<WhatsappBPage>
         ),
       );
     } else {
-      videos = noStatusError();
+      videos = GlobalFunctions().noStatusError(false);
     }
     return videos;
   }
@@ -261,7 +205,7 @@ class WhatsappBPageState extends State<WhatsappBPage>
         ),
       );
     } else {
-      images = noStatusError();
+      images = GlobalFunctions().noStatusError(false);
     }
     return images;
   }
@@ -346,7 +290,7 @@ class WhatsappBPageState extends State<WhatsappBPage>
 
             if (androidVersion! <= 29) {
               if (entities.isEmpty) {
-                return noStatusError();
+                return GlobalFunctions().noStatusError(false);
               }
             }
 
@@ -376,7 +320,7 @@ class WhatsappBPageState extends State<WhatsappBPage>
             entity11 = Directory(newPath11);
 
             if (!entity.existsSync() && !entity11.existsSync()) {
-              return noStatusError();
+              return GlobalFunctions().noStatusError(false);
             }
 
             globalStatusPath = newPath;
