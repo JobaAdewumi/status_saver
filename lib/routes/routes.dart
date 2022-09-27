@@ -1,4 +1,5 @@
 import 'package:all_status_saver/views/Permissions.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/HelpAndInfo.dart';
 import 'package:flutter/material.dart';
 
 import 'package:all_status_saver/views/WhatsAppViews/home/Home.dart';
@@ -17,6 +18,7 @@ const String savedStatusPage = 'savedStatusPage';
 const String viewer = 'viewer';
 const String settingsP = 'settings';
 const String android11Screen = 'android11Screen';
+const String helpAndInfo = 'helpAndInfo';
 
 Route<dynamic> controller(RouteSettings settings) {
   switch (settings.name) {
@@ -43,6 +45,11 @@ Route<dynamic> controller(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) {
         return const Android11PermissionDialog();
       });
+    case helpAndInfo:
+      return MaterialPageRoute(builder: (context) {
+        return const HelpAndInfo();
+      });
+
     default:
       throw ('this route name does not exist');
   }
