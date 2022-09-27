@@ -87,7 +87,7 @@ class WhatsappPageState extends State<WhatsappPage>
               behavior: SnackBarBehavior.floating,
               elevation: 1,
               dismissDirection: DismissDirection.horizontal,
-              duration: Duration(seconds: 1),
+              duration: Duration(milliseconds: 400),
             ),
           );
         } else {
@@ -101,7 +101,7 @@ class WhatsappPageState extends State<WhatsappPage>
               backgroundColor: Colors.redAccent,
               elevation: 1,
               dismissDirection: DismissDirection.horizontal,
-              duration: Duration(seconds: 1),
+              duration: Duration(milliseconds: 400),
             ),
           );
         }

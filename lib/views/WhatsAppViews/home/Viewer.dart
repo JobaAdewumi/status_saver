@@ -87,7 +87,7 @@ class _ViewerState extends State<Viewer> {
               behavior: SnackBarBehavior.floating,
               elevation: 1,
               dismissDirection: DismissDirection.horizontal,
-              duration: Duration(seconds: 1),
+              duration: Duration(milliseconds: 400),
             ),
           );
         } else {
@@ -101,7 +101,7 @@ class _ViewerState extends State<Viewer> {
               backgroundColor: Colors.redAccent,
               elevation: 1,
               dismissDirection: DismissDirection.horizontal,
-              duration: Duration(seconds: 1),
+              duration: Duration(milliseconds: 400),
             ),
           );
         }
