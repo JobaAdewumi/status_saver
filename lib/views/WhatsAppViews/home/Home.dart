@@ -53,13 +53,18 @@ class HomePageState extends State<HomePage> {
     getAndroidVersion();
   }
 
-  Future permissionHandler(context, route) async {
+  Future permissionHandler(
+      BuildContext context, route, bool isWhatsApp, bool whatsappPage) async {
     if (androidVersion == null) {
       await getAndroidVersion();
     }
     if (androidVersion! >= 30) {
       if (await requestPermission11(context)) {
-        Navigator.pushNamed(context, route);
+        if (whatsappPage) {
+          Navigator.pushNamed(context, route, arguments: isWhatsApp);
+        } else {
+          Navigator.pushNamed(context, route);
+        }
       } else {
         return;
       }
@@ -68,7 +73,11 @@ class HomePageState extends State<HomePage> {
       if (await requestPermission([
         Permission.storage,
       ], context)) {
-        Navigator.pushNamed(context, route);
+        if (whatsappPage) {
+          Navigator.pushNamed(context, route, arguments: isWhatsApp);
+        } else {
+          Navigator.pushNamed(context, route);
+        }
       } else {
         return false;
       }
@@ -143,7 +152,8 @@ class HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(5),
                       child: GestureDetector(
                         onTap: () async {
-                          await permissionHandler(context, route.whatsAppPage);
+                          await permissionHandler(
+                              context, route.whatsappPage, true, true);
                         },
                         child: Card(
                           child: Padding(
@@ -168,7 +178,8 @@ class HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(5),
                       child: GestureDetector(
                         onTap: () async {
-                          await permissionHandler(context, route.whatsappBPage);
+                          await permissionHandler(
+                              context, route.whatsappPage, false, true);
                         },
                         child: Card(
                           child: Padding(
@@ -203,7 +214,7 @@ class HomePageState extends State<HomePage> {
                                     .color),
                             onPressed: () async {
                               await permissionHandler(
-                                  context, route.savedStatusPage);
+                                  context, route.savedStatusPage, false, false);
                             },
                             label: Text(
                               'Saved Statuses',
@@ -255,14 +266,16 @@ class HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.whatsapp_rounded),
                 title: const Text('WA Status'),
                 onTap: () async {
-                  await permissionHandler(context, route.whatsAppPage);
+                  await permissionHandler(
+                      context, route.whatsappPage, true, true);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.business),
                 title: const Text('WB Status'),
                 onTap: () async {
-                  await permissionHandler(context, route.whatsappBPage);
+                  await permissionHandler(
+                      context, route.whatsappPage, false, true);
                 },
               ),
               androidVersion! >= 30
@@ -271,7 +284,8 @@ class HomePageState extends State<HomePage> {
                       leading: const Icon(Icons.list),
                       title: const Text('Saved Statuses'),
                       onTap: () async {
-                        await permissionHandler(context, route.savedStatusPage);
+                        await permissionHandler(
+                            context, route.savedStatusPage, false, false);
                       },
                     ),
               const Divider(),
