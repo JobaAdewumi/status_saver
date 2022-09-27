@@ -1,15 +1,13 @@
 import 'dart:io';
 import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
 import 'package:flutter/material.dart';
-
-import 'package:file_manager/file_manager.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_storage/environment.dart' as environment;
-import 'package:shared_storage/media_store.dart' as mediaStore;
 
 import 'package:all_status_saver/routes/routes.dart' as route;
 
-import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
+import 'package:file_manager/file_manager.dart';
+import 'package:shared_storage/environment.dart' as environment;
+import 'package:shared_storage/media_store.dart' as mediaStore;
 
 class SavedStatusPage extends StatefulWidget {
   const SavedStatusPage({super.key});
@@ -56,11 +54,6 @@ class SavedStatusPageState extends State<SavedStatusPage>
     );
   }
 
-  Future<void> shareFile(String path) async {
-    await Share.shareFiles([path],
-        text: 'how are you doing', subject: 'i hope you are doing fine');
-  }
-
   Future saveStatus(String newPath, String oldPath, String filePath) async {
     Directory directory = Directory(newPath);
     late File savedFile;
@@ -75,6 +68,8 @@ class SavedStatusPageState extends State<SavedStatusPage>
     }
     return savedFile;
   }
+
+
 
   Future<Map<String, List<FileType>>> _getFileTypes(String path) async {
     List<FileType> mapVideoFiles = [];
@@ -139,14 +134,15 @@ class SavedStatusPageState extends State<SavedStatusPage>
     };
   }
 
-  Widget ImageGrid(File statuses, FileType entit) {
+  Widget ImageGrid(File statuses, FileType entit, List<FileType> allStatuses,
+  int index) {
     Widget image = InkWell(
       onTap: () {
         Navigator.pushNamed(
           context,
           route.viewer,
           arguments: MultimediaViewer(
-              isImage: true, file: statuses, isStatusPage: true),
+              isImage: true, allFiles: allStatuses, isStatusPage: true, index: index),
         );
       },
       child: Image.file(statuses, height: 100, width: 100, fit: BoxFit.cover),
@@ -172,12 +168,15 @@ class SavedStatusPageState extends State<SavedStatusPage>
                         fixedSize: const Size(60.0, 53.0),
                         primary: Colors.blue),
                     onPressed: () async {
-                      await shareFile(statuses.path);
+                      await GlobalFunctions().shareFile(statuses.path);
                     },
                     child: Column(
                       children: const [
                         Icon(Icons.share),
-                        Text('SHARE'),
+                        Text(
+                          'SHARE',
+                          style: TextStyle(fontSize: 10),
+                        ),
                       ],
                     ),
                   ),
@@ -189,12 +188,15 @@ class SavedStatusPageState extends State<SavedStatusPage>
                         fixedSize: const Size(60.0, 53.0),
                         primary: Colors.green),
                     onPressed: () async {
-                      await shareFile(statuses.path);
+                      await GlobalFunctions().shareFile(statuses.path);
                     },
                     child: Column(
                       children: const [
                         Icon(Icons.cached),
-                        Text('REPOST'),
+                        Text(
+                          'REPOST',
+                          style: TextStyle(fontSize: 10),
+                        ),
                       ],
                     ),
                   ),
@@ -239,7 +241,10 @@ class SavedStatusPageState extends State<SavedStatusPage>
                     child: Column(
                       children: const [
                         Icon(Icons.delete_forever_rounded),
-                        Text('DELETE'),
+                        Text(
+                          'DELETE',
+                          style: TextStyle(fontSize: 10),
+                        ),
                       ],
                     ),
                   ),
@@ -280,7 +285,7 @@ class SavedStatusPageState extends State<SavedStatusPage>
                               context,
                               route.viewer,
                               arguments: MultimediaViewer(
-                                  file: statuses, isStatusPage: true),
+                                  allFiles: allStatuses, isStatusPage: true, index: index),
                             );
                           },
                           icon: const Icon(
@@ -305,10 +310,16 @@ class SavedStatusPageState extends State<SavedStatusPage>
                               fixedSize: const Size(60.0, 53.0),
                               primary: Colors.blue),
                           onPressed: () async {
-                            await shareFile(statuses.path);
+                            await GlobalFunctions().shareFile(statuses.path);
                           },
                           child: Column(
-                            children: const [Icon(Icons.share), Text('SHARE')],
+                            children: const [
+                              Icon(Icons.share),
+                              Text(
+                                'SHARE',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -319,12 +330,15 @@ class SavedStatusPageState extends State<SavedStatusPage>
                               fixedSize: const Size(60.0, 53.0),
                               primary: Colors.green),
                           onPressed: () async {
-                            await shareFile(statuses.path);
+                            await GlobalFunctions().shareFile(statuses.path);
                           },
                           child: Column(
                             children: const [
                               Icon(Icons.cached),
-                              Text('REPOST')
+                              Text(
+                                'REPOST',
+                                style: TextStyle(fontSize: 10),
+                              )
                             ],
                           ),
                         ),
@@ -370,7 +384,10 @@ class SavedStatusPageState extends State<SavedStatusPage>
                           child: Column(
                             children: const [
                               Icon(Icons.delete_forever_rounded),
-                              Text('DELETE')
+                              Text(
+                                'DELETE',
+                                style: TextStyle(fontSize: 10),
+                              )
                             ],
                           ),
                         ),
@@ -388,6 +405,7 @@ class SavedStatusPageState extends State<SavedStatusPage>
       },
     );
   }
+
 
   Widget AllStatuses(List<FileType> allStatuses) {
     Widget ImagesVideos;
@@ -408,9 +426,11 @@ class SavedStatusPageState extends State<SavedStatusPage>
           if (entit.file.path.contains('.jpg') ||
               entit.file.path.contains('.jpeg') ||
               entit.file.path.contains('.png')) {
-            return ImageGrid(statuses, entit);
+            return ImageGrid(
+                statuses, entit, allStatuses, index);
           }
-          return VideoGrid(allStatuses, statuses, index);
+          return VideoGrid(
+              allStatuses, statuses, index,);
         },
       );
     } else {
@@ -435,7 +455,8 @@ class SavedStatusPageState extends State<SavedStatusPage>
             entit.file.delete();
           }
 
-          return VideoGrid(allVideos, statuses, index);
+          return VideoGrid(
+              allVideos, statuses, index,);
         },
       );
     } else {
@@ -460,7 +481,8 @@ class SavedStatusPageState extends State<SavedStatusPage>
             entit.file.delete();
           }
 
-          return ImageGrid(statuses, entit);
+          return ImageGrid(
+              statuses, entit, allImages, index);
         },
       );
     } else {
@@ -515,15 +537,6 @@ class SavedStatusPageState extends State<SavedStatusPage>
             if (!entity.existsSync()) {
               return noStatusError();
             }
-
-            // Directory content = Directory(newPath);
-            // List contentList =
-            //     content.listSync(recursive: false, followLinks: false);
-            // var images = contentList
-            //   ..where((f) =>
-            //       f.path.contains('.jpg') ||
-            //       f.path.contains('.jpeg') ||
-            //       f.path.contains('.png')).toList();
 
             return FutureBuilder(
               future: _getFileTypes(newPath),
