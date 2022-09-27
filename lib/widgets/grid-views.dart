@@ -6,45 +6,45 @@ import 'package:flutter/material.dart';
 import 'package:all_status_saver/routes/routes.dart' as route;
 
 class GlobalWidgets {
-  saveStatus(String statusPath, BuildContext context) async {
-    await GlobalFunctions().saveStatus(statusPath).then(
-      (value) {
-        bool check = value == null
-            ? false
-            : value == true
-                ? true
-                : false;
-        if (check) {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Status was saved successfully',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        } else {
-          return ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Error Saving Status',
-                style: TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.redAccent,
-              elevation: 1,
-              dismissDirection: DismissDirection.horizontal,
-              duration: Duration(milliseconds: 400),
-            ),
-          );
-        }
-      },
-    );
-  }
+  // saveStatus(String statusPath, BuildContext context) async {
+  //   await GlobalFunctions().saveStatus(statusPath).then(
+  //     (value) {
+  //       bool check = value == null
+  //           ? false
+  //           : value == true
+  //               ? true
+  //               : false;
+  //       if (check) {
+  //         return ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text(
+  //               'Status was saved successfully',
+  //               style: TextStyle(color: Colors.white),
+  //             ),
+  //             behavior: SnackBarBehavior.floating,
+  //             elevation: 1,
+  //             dismissDirection: DismissDirection.horizontal,
+  //             duration: Duration(milliseconds: 400),
+  //           ),
+  //         );
+  //       } else {
+  //         return ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text(
+  //               'Error Saving Status',
+  //               style: TextStyle(color: Colors.white),
+  //             ),
+  //             behavior: SnackBarBehavior.floating,
+  //             backgroundColor: Colors.redAccent,
+  //             elevation: 1,
+  //             dismissDirection: DismissDirection.horizontal,
+  //             duration: Duration(milliseconds: 400),
+  //           ),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget ImageGrid(
     File statuses,
@@ -121,7 +121,8 @@ class GlobalWidgets {
                       primary: Colors.blue,
                     ),
                     onPressed: () async {
-                      await saveStatus(statuses.path, context);
+                      await GlobalFunctions()
+                          .saveStatus(statuses.path, context);
                     },
                     child: Column(
                       children: const [
@@ -241,7 +242,8 @@ class GlobalWidgets {
                             primary: Colors.blue,
                           ),
                           onPressed: () async {
-                            await saveStatus(statuses.path, context);
+                            await GlobalFunctions()
+                                .saveStatus(statuses.path, context);
                           },
                           child: Column(
                             children: const [
