@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:all_status_saver/helpers/storage_manager.dart';
 import 'package:all_status_saver/helpers/theme_manager.dart';
-import 'package:provider/provider.dart';
+import 'package:all_status_saver/routes/routes.dart' as route;
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -27,8 +28,6 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  // late String globalTheme;
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
@@ -43,12 +42,14 @@ class _SettingsState extends State<Settings> {
                 leading: const Icon(Icons.palette_rounded),
                 title: const Text('Theme'),
                 subtitle: Text('$currentTheme mode'),
-                trailing: const Icon(Icons.arrow_forward_ios_rounded),
+                trailing: const Icon(Icons.arrow_forward_rounded),
                 onTap: () async {
                   return showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
+                        backgroundColor:
+                            Theme.of(context).appBarTheme.backgroundColor,
                         title: const Text('Select Theme'),
                         content: DropdownButton(
                           onChanged: (String? newValue) {
@@ -85,6 +86,13 @@ class _SettingsState extends State<Settings> {
                       );
                     },
                   );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info_outline_rounded),
+                title: const Text('Help and info'),
+                onTap: () {
+                  Navigator.pushNamed(context, route.helpAndInfo);
                 },
               ),
             ],
