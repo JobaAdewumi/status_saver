@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:all_status_saver/widgets/grid-views.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_manager/file_manager.dart';
@@ -8,9 +9,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:all_status_saver/views/permissions.dart';
 import 'package:all_status_saver/functions/global_functions.dart';
 import 'package:all_status_saver/helpers/storage_manager.dart';
-
-import 'package:all_status_saver/routes/routes.dart' as route;
-import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
 
 class WhatsappPage extends StatefulWidget {
   const WhatsappPage({super.key});
@@ -142,212 +140,6 @@ class WhatsappPageState extends State<WhatsappPage>
     );
   }
 
-  // static const List<Widget> _widgetOptions
-
-  Widget ImageGrid(File statuses, FileType entit) {
-    Widget image = InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, route.viewer,
-            arguments: MultimediaViewer(isImage: true, file: statuses));
-      },
-      child: Image.file(statuses, height: 100, width: 100, fit: BoxFit.cover),
-    );
-    return Card(
-      child: Column(
-        children: [
-          Expanded(
-            flex: 2,
-            child: SizedBox(
-              width: 350,
-              height: 134,
-              child: image,
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        fixedSize: const Size(60.0, 53.0), primary: Colors.red),
-                    onPressed: () async {
-                      await GlobalFunctions().shareFile(statuses.path);
-                    },
-                    child: Column(
-                      children: const [
-                        Icon(Icons.share),
-                        Text(
-                          'SHARE',
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        fixedSize: const Size(60.0, 53.0),
-                        primary: Colors.green),
-                    onPressed: () async {
-                      await GlobalFunctions().shareFile(statuses.path);
-                    },
-                    child: Column(
-                      children: const [
-                        Icon(Icons.cached),
-                        Text(
-                          'REPOST',
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: TextButton(
-                    style:
-                        TextButton.styleFrom(fixedSize: const Size(60.0, 53.0)),
-                    onPressed: () async {
-                      await saveStatus(statuses.path);
-                    },
-                    child: Column(
-                      children: const [
-                        Icon(Icons.save_alt),
-                        Text(
-                          'SAVE',
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget VideoGrid(List<FileType> allStatuses, File statuses, int index) {
-    return FutureBuilder(
-      future: GlobalFunctions().generateVideoThumbnail(statuses),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          Image video = Image.memory(snapshot.data as dynamic,
-              height: 100, width: 100, fit: BoxFit.cover);
-          return Card(
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: 350,
-                        height: 134,
-                        child: video,
-                      ),
-                      Positioned(
-                        top: 30,
-                        left: 60,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, route.viewer,
-                                arguments: MultimediaViewer(file: statuses));
-                          },
-                          icon: const Icon(
-                            Icons.play_circle_outline,
-                            color: Colors.white,
-                            size: 50,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.red),
-                          onPressed: () async {
-                            await GlobalFunctions().shareFile(statuses.path);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.share),
-                              Text(
-                                'SHARE',
-                                style: TextStyle(fontSize: 10),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.green),
-                          onPressed: () async {
-                            await GlobalFunctions().shareFile(statuses.path);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.cached),
-                              Text(
-                                'REPOST',
-                                style: TextStyle(fontSize: 10),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            fixedSize: const Size(60.0, 53.0),
-                          ),
-                          onPressed: () async {
-                            await saveStatus(statuses.path);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.save_alt),
-                              Text(
-                                'SAVE',
-                                style: TextStyle(fontSize: 10),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
-
   Widget AllStatuses(List<FileType> gImagesVideo) {
     Widget imagesVideos;
     var checkTypes = gImagesVideo.where(
@@ -381,9 +173,19 @@ class WhatsappPageState extends State<WhatsappPage>
             if (entit.file.path.contains('.jpg') ||
                 entit.file.path.contains('.jpeg') ||
                 entit.file.path.contains('.png')) {
-              return ImageGrid(statuses, entit);
+              return GlobalWidgets().ImageGrid(
+                statuses,
+                gImagesVideo,
+                index,
+                context,
+              );
             }
-            return VideoGrid(gImagesVideo, statuses, index);
+            return GlobalWidgets().VideoGrid(
+              gImagesVideo,
+              statuses,
+              index,
+              context,
+            );
           },
         ),
       );
@@ -420,7 +222,7 @@ class WhatsappPageState extends State<WhatsappPage>
               entit.file.delete();
             }
 
-            return VideoGrid(gVideos, statuses, index);
+            return GlobalWidgets().VideoGrid(gVideos, statuses, index, context);
           },
         ),
       );
@@ -459,7 +261,7 @@ class WhatsappPageState extends State<WhatsappPage>
               entit.file.delete();
             }
 
-            return ImageGrid(statuses, entit);
+            return GlobalWidgets().ImageGrid(statuses, gImages, index, context);
           },
         ),
       );
