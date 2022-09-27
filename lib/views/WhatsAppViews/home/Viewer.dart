@@ -144,6 +144,10 @@ class _ViewerState extends State<Viewer> {
     }
   }
 
+  removeScale() {
+    _transformationController.value = Matrix4.identity();
+  }
+
   Widget ImageViewer(int index) {
     return Stack(
       children: [
@@ -558,7 +562,9 @@ class _ViewerState extends State<Viewer> {
           if (!widget.multimediaViewer.allFiles[i].isImage) {
             initializeVideo(i);
           }
-          if (widget.multimediaViewer.allFiles[i].isImage) {}
+          if (widget.multimediaViewer.allFiles[i].isImage) {
+            removeScale();
+          }
         },
         itemBuilder: (context, index) {
           if (widget.multimediaViewer.allFiles[index].isImage) {
