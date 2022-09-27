@@ -1,19 +1,17 @@
 import 'package:all_status_saver/views/Permissions.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/HelpAndInfo.dart';
+import 'package:all_status_saver/views/WhatsAppViews/WhatsApp/WhatsApp.dart';
 import 'package:flutter/material.dart';
 
 import 'package:all_status_saver/views/WhatsAppViews/home/Home.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/IntroductionScreen.dart';
-import 'package:all_status_saver/views/WhatsAppViews/whatsapp/Whatsapp.dart';
-import 'package:all_status_saver/views/WhatsAppViews/whatsappb/WhatsappB.dart';
 import 'package:all_status_saver/views/WhatsAppViews/saved_statuses/SavedStatuses.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/Settings.dart';
 
 const String homePage = 'homepage';
 const String introScreen = 'introScreen';
-const String whatsAppPage = 'whatsapppage';
-const String whatsappBPage = 'whatsappbpage';
+const String whatsappPage = 'whatsapppage';
 const String savedStatusPage = 'savedStatusPage';
 const String viewer = 'viewer';
 const String settingsP = 'settings';
@@ -26,10 +24,11 @@ Route<dynamic> controller(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const IntroScreen());
     case homePage:
       return MaterialPageRoute(builder: (context) => const HomePage());
-    case whatsAppPage:
-      return MaterialPageRoute(builder: (context) => const WhatsappPage());
-    case whatsappBPage:
-      return MaterialPageRoute(builder: (context) => const WhatsappBPage());
+    case whatsappPage:
+      final args = settings.arguments as bool;
+      return MaterialPageRoute(builder: (context) {
+        return WhatsApp(isWhatsApp: args);
+      });
     case savedStatusPage:
       return MaterialPageRoute(builder: (context) => const SavedStatusPage());
     case viewer:
