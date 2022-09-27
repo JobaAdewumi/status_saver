@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -29,7 +30,68 @@ class GlobalFunctions {
     await Share.shareFiles([path]);
   }
 
-  Future<bool?> saveStatus(String oldPath) async {
+  Widget noStatusError(bool isWhatsApp) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        isWhatsApp
+            ? const Text(
+                'No Status Found, You have to watch stories on WhatsApp to make them appear here',
+                textAlign: TextAlign.center)
+            : const Text(
+                'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+                textAlign: TextAlign.center),
+        ElevatedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.launch_rounded),
+            label: isWhatsApp
+                ? const Text('OPEN WHATSAPP')
+                : const Text('OPEN WHATSAPP BUSINESS')),
+      ],
+    );
+  }
+
+  saveStatus(String statusPath, BuildContext context) async {
+    await realSaveStatus(statusPath).then(
+      (value) {
+        bool check = value == null
+            ? false
+            : value == true
+                ? true
+                : false;
+        if (check) {
+          return ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Status was saved successfully',
+                style: TextStyle(color: Colors.white),
+              ),
+              behavior: SnackBarBehavior.floating,
+              elevation: 1,
+              dismissDirection: DismissDirection.horizontal,
+              duration: Duration(milliseconds: 400),
+            ),
+          );
+        } else {
+          return ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Error Saving Status',
+                style: TextStyle(color: Colors.white),
+              ),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.redAccent,
+              elevation: 1,
+              dismissDirection: DismissDirection.horizontal,
+              duration: Duration(milliseconds: 400),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<bool?> realSaveStatus(String oldPath) async {
     late bool? savedFile;
     if (oldPath.contains('.jpg') ||
         oldPath.contains('.jpeg') ||
