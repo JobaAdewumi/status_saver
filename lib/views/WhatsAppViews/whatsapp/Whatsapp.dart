@@ -1,24 +1,22 @@
 import 'dart:io';
 
-import 'package:all_status_saver/widgets/grid-views.dart';
-import 'package:flutter/material.dart';
-
-import 'package:file_manager/file_manager.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-
-import 'package:all_status_saver/views/permissions.dart';
 import 'package:all_status_saver/functions/global_functions.dart';
 import 'package:all_status_saver/helpers/storage_manager.dart';
+import 'package:all_status_saver/views/Permissions.dart';
+import 'package:all_status_saver/widgets/grid-views.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:file_manager/file_manager.dart';
+import 'package:flutter/material.dart';
 
-class WhatsappPage extends StatefulWidget {
-  const WhatsappPage({super.key});
+class WhatsApp extends StatefulWidget {
+  final bool isWhatsApp;
+  const WhatsApp({super.key, required this.isWhatsApp});
 
   @override
-  WhatsappPageState createState() => WhatsappPageState();
+  State<WhatsApp> createState() => _WhatsAppState();
 }
 
-class WhatsappPageState extends State<WhatsappPage>
-    with TickerProviderStateMixin {
+class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   final FileManagerController controller = FileManagerController();
 
   late TabController _tabController;
@@ -252,12 +250,23 @@ class WhatsappPageState extends State<WhatsappPage>
 
             FileSystemEntity? entity;
             FileSystemEntity? entity11;
-            for (var e in entities) {
-              if (FileManager.basename(e) == 'WhatsApp') {
-                entity = e;
+            if (widget.isWhatsApp) {
+              for (var e in entities) {
+                if (FileManager.basename(e) == 'WhatsApp') {
+                  entity = e;
+                }
+                if (FileManager.basename(e) == 'Android') {
+                  entity11 = e;
+                }
               }
-              if (FileManager.basename(e) == 'Android') {
-                entity11 = e;
+            } else if (!widget.isWhatsApp) {
+              for (var e in entities) {
+                if (FileManager.basename(e) == 'WhatsApp Business') {
+                  entity = e;
+                }
+                if (FileManager.basename(e) == 'Android') {
+                  entity11 = e;
+                }
               }
             }
 
@@ -269,8 +278,9 @@ class WhatsappPageState extends State<WhatsappPage>
 
             String? path11 = directoryPath ?? 'Android/media';
 
-            String newPath11 =
-                '/storage/emulated/0/$path11/com.whatsapp/WhatsApp/Media/.Statuses';
+            String newPath11 = widget.isWhatsApp
+                ? '/storage/emulated/0/$path11/com.whatsapp/WhatsApp/Media/.Statuses'
+                : '/storage/emulated/0/$path11/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
 
             entity11 = Directory(newPath11);
 
