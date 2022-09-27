@@ -34,6 +34,8 @@ class _ViewerState extends State<Viewer> {
 
   late PageController _pageController;
 
+  late int globalIndex;
+
   bool controlInView = true;
 
   Timer scheduleTimeout([int seconds = 3]) =>
@@ -61,6 +63,8 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     _pageController =
         PageController(initialPage: widget.multimediaViewer.index);
+
+    globalIndex = widget.multimediaViewer.index;
 
     _controller = VideoPlayerController.file(
         widget.multimediaViewer.allFiles[widget.multimediaViewer.index].file)
@@ -149,132 +153,22 @@ class _ViewerState extends State<Viewer> {
   }
 
   Widget ImageViewer(int index) {
-    return Stack(
-      children: [
-        Center(
-          child: GestureDetector(
-            onDoubleTapDown: _handleDoubleTapDown,
-            onDoubleTap: _handleDoubleTap,
-            child: InteractiveViewer(
-              transformationController: _transformationController,
-              panEnabled: true,
-              boundaryMargin: EdgeInsets.zero,
-              minScale: 0.5,
-              maxScale: 3,
-              child: Image.file(
-                widget.multimediaViewer.allFiles[index].file,
-                fit: BoxFit.cover,
-              ),
-            ),
+    return Center(
+      child: GestureDetector(
+        onDoubleTapDown: _handleDoubleTapDown,
+        onDoubleTap: _handleDoubleTap,
+        child: InteractiveViewer(
+          transformationController: _transformationController,
+          panEnabled: true,
+          boundaryMargin: EdgeInsets.zero,
+          minScale: 0.5,
+          maxScale: 3,
+          child: Image.file(
+            widget.multimediaViewer.allFiles[index].file,
+            fit: BoxFit.cover,
           ),
         ),
-        Positioned(
-          child: Align(
-            alignment: FractionalOffset.bottomCenter,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 15),
-                    child: IconButton(
-                      onPressed: () async {
-                        await GlobalFunctions().shareFile(
-                            widget.multimediaViewer.allFiles[index].file.path);
-                      },
-                      iconSize: 35,
-                      padding: const EdgeInsets.all(15.0),
-                      icon: const Icon(
-                        Icons.share,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 15),
-                    child: IconButton(
-                      onPressed: () async {
-                        await GlobalFunctions().shareFile(
-                            widget.multimediaViewer.allFiles[index].file.path);
-                      },
-                      iconSize: 35,
-                      padding: const EdgeInsets.all(15.0),
-                      icon: const Icon(
-                        Icons.cached,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  widget.multimediaViewer.isStatusPage
-                      ? Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          child: IconButton(
-                            onPressed: () async {
-                              return showDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text('Delete Permanently?'),
-                                    content: const Text(
-                                        'Are you sure you want to delete this file permanently?'),
-                                    contentPadding: const EdgeInsets.fromLTRB(
-                                        24.0, 20.0, 24.0, 17.0),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          await GlobalFunctions().deleteItem(
-                                              widget.multimediaViewer
-                                                  .allFiles[index].file);
-                                          Navigator.of(context)
-                                            ..pop()
-                                            ..pop()
-                                            ..pop()
-                                            ..pushNamed(route.savedStatusPage);
-                                        },
-                                        child: const Text('Delete'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            iconSize: 35,
-                            padding: const EdgeInsets.all(15.0),
-                            icon: const Icon(
-                              Icons.delete_forever_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          child: IconButton(
-                            onPressed: () async {
-                              await saveStatus(widget
-                                  .multimediaViewer.allFiles[index].file.path);
-                            },
-                            iconSize: 35,
-                            padding: const EdgeInsets.all(15.0),
-                            icon: const Icon(
-                              Icons.save_alt,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -410,129 +304,6 @@ class _ViewerState extends State<Viewer> {
                             ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 15,
-                                right: 15,
-                              ),
-                              child: IconButton(
-                                onPressed: () async {
-                                  await GlobalFunctions().shareFile(widget
-                                      .multimediaViewer
-                                      .allFiles[index]
-                                      .file
-                                      .path);
-                                },
-                                iconSize: 35,
-                                padding: const EdgeInsets.all(15.0),
-                                icon: const Icon(
-                                  Icons.share,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 15,
-                                right: 15,
-                              ),
-                              child: IconButton(
-                                onPressed: () async {
-                                  await GlobalFunctions().shareFile(widget
-                                      .multimediaViewer
-                                      .allFiles[index]
-                                      .file
-                                      .path);
-                                },
-                                iconSize: 35,
-                                padding: const EdgeInsets.all(15.0),
-                                icon: const Icon(
-                                  Icons.cached,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            widget.multimediaViewer.isStatusPage
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 15,
-                                      right: 15,
-                                    ),
-                                    child: IconButton(
-                                      onPressed: () async {
-                                        return showDialog(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: const Text(
-                                                  'Delete Permanently?'),
-                                              content: const Text(
-                                                  'Are you sure you want to delete this file permanently?'),
-                                              contentPadding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      24.0, 20.0, 24.0, 17.0),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await GlobalFunctions()
-                                                        .deleteItem(widget
-                                                            .multimediaViewer
-                                                            .allFiles[index]
-                                                            .file);
-                                                    Navigator.of(context)
-                                                      ..pop()
-                                                      ..pop()
-                                                      ..pop()
-                                                      ..pushNamed(route
-                                                          .savedStatusPage);
-                                                  },
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      iconSize: 35,
-                                      padding: const EdgeInsets.all(15.0),
-                                      icon: const Icon(
-                                        Icons.delete_forever_rounded,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 15,
-                                      right: 15,
-                                    ),
-                                    child: IconButton(
-                                      onPressed: () async {
-                                        await saveStatus(
-                                          widget.multimediaViewer
-                                              .allFiles[index].file.path,
-                                        );
-                                      },
-                                      iconSize: 35,
-                                      padding: const EdgeInsets.all(15.0),
-                                      icon: const Icon(
-                                        Icons.save_alt,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -558,6 +329,7 @@ class _ViewerState extends State<Viewer> {
         itemCount: widget.multimediaViewer.allFiles.length,
         allowImplicitScrolling: false,
         onPageChanged: (int i) {
+          globalIndex = i;
           _controller.pause();
           if (!widget.multimediaViewer.allFiles[i].isImage) {
             initializeVideo(i);
@@ -585,6 +357,121 @@ class _ViewerState extends State<Viewer> {
           }
         },
       ),
+      persistentFooterButtons: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+              ),
+              child: IconButton(
+                onPressed: () async {
+                  await GlobalFunctions().shareFile(
+                      widget.multimediaViewer.allFiles[globalIndex].file.path);
+                },
+                iconSize: 35,
+                padding: const EdgeInsets.all(15.0),
+                icon: const Icon(
+                  Icons.share,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+              ),
+              child: IconButton(
+                onPressed: () async {
+                  await GlobalFunctions().shareFile(
+                      widget.multimediaViewer.allFiles[globalIndex].file.path);
+                },
+                iconSize: 35,
+                padding: const EdgeInsets.all(15.0),
+                icon: const Icon(
+                  Icons.cached,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            widget.multimediaViewer.isStatusPage
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                      right: 15,
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        return showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete Permanently?'),
+                              content: const Text(
+                                  'Are you sure you want to delete this file permanently?'),
+                              contentPadding: const EdgeInsets.fromLTRB(
+                                  24.0, 20.0, 24.0, 17.0),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    await GlobalFunctions().deleteItem(widget
+                                        .multimediaViewer
+                                        .allFiles[globalIndex]
+                                        .file);
+                                    Navigator.of(context)
+                                      ..pop()
+                                      ..pop()
+                                      ..pop()
+                                      ..pushNamed(route.savedStatusPage);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      iconSize: 35,
+                      padding: const EdgeInsets.all(15.0),
+                      icon: const Icon(
+                        Icons.delete_forever_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                      right: 15,
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        await saveStatus(
+                          widget
+                              .multimediaViewer.allFiles[globalIndex].file.path,
+                        );
+                      },
+                      iconSize: 35,
+                      padding: const EdgeInsets.all(15.0),
+                      icon: const Icon(
+                        Icons.save_alt,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+          ],
+        ),
+      ],
     );
   }
 
