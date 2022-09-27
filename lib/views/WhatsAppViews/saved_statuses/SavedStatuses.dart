@@ -18,23 +18,26 @@ class SavedStatusPage extends StatefulWidget {
   SavedStatusPageState createState() => SavedStatusPageState();
 }
 
-class SavedStatusPageState extends State<SavedStatusPage> {
+class SavedStatusPageState extends State<SavedStatusPage>
+    with TickerProviderStateMixin {
   final FileManagerController controller = FileManagerController();
-  final PageController _pageController = PageController(initialPage: 0);
+  late TabController _tabController;
 
   late List<FileType> gImages;
   late List<FileType> gVideos;
   late List<FileType> gImagesVideo;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setState(() {});
-  // }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
 
   @override
   void dispose() {
     super.dispose();
-    _pageController.dispose();
+    _tabController.dispose();
   }
 
   Widget noStatusError() {
@@ -471,6 +474,21 @@ class SavedStatusPageState extends State<SavedStatusPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Saved Statuses'),
+        foregroundColor: Colors.white,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.all_inbox_rounded),
+            ),
+            Tab(
+              icon: Icon(Icons.image),
+            ),
+            Tab(
+              icon: Icon(Icons.video_library_rounded),
+            ),
+          ],
+        ),
       ),
       body: Container(
         margin: const EdgeInsets.all(10),
@@ -516,9 +534,8 @@ class SavedStatusPageState extends State<SavedStatusPage> {
                   List<FileType> images = allFiles['images']!;
                   List<FileType> videos = allFiles['videos']!;
                   List<FileType> imagesVideo = allFiles['all']!;
-                  return PageView(
-                    controller: _pageController,
-                    scrollDirection: Axis.horizontal,
+                  return TabBarView(
+                    controller: _tabController,
                     children: [
                       AllStatuses(imagesVideo),
                       StatusImages(images),

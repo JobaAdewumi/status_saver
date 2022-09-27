@@ -19,9 +19,11 @@ class WhatsappPage extends StatefulWidget {
   WhatsappPageState createState() => WhatsappPageState();
 }
 
-class WhatsappPageState extends State<WhatsappPage> {
+class WhatsappPageState extends State<WhatsappPage>
+    with TickerProviderStateMixin {
   final FileManagerController controller = FileManagerController();
-  final PageController _pageController = PageController(initialPage: 0);
+
+  late TabController _tabController;
 
   late List<FileType> gImages;
   late List<FileType> gVideos;
@@ -35,6 +37,7 @@ class WhatsappPageState extends State<WhatsappPage> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     getAndroidVersion();
     setState(() {});
   }
@@ -42,7 +45,7 @@ class WhatsappPageState extends State<WhatsappPage> {
   @override
   void dispose() {
     super.dispose();
-    _pageController.dispose();
+    _tabController.dispose();
   }
 
   Future getAndroidVersion() async {
@@ -471,6 +474,21 @@ class WhatsappPageState extends State<WhatsappPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recent Statuses'),
+        foregroundColor: Colors.white,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.all_inbox_rounded),
+            ),
+            Tab(
+              icon: Icon(Icons.image),
+            ),
+            Tab(
+              icon: Icon(Icons.video_library_rounded),
+            ),
+          ],
+        ),
       ),
       body: Container(
         margin: const EdgeInsets.all(10),
@@ -526,9 +544,9 @@ class WhatsappPageState extends State<WhatsappPage> {
                   gImages = allFiles['images']!;
                   gVideos = allFiles['videos']!;
                   gImagesVideo = allFiles['all']!;
-                  return PageView(
-                    controller: _pageController,
-                    scrollDirection: Axis.horizontal,
+
+                  return TabBarView(
+                    controller: _tabController,
                     children: [
                       AllStatuses(gImagesVideo),
                       StatusImages(gImages),
