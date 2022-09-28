@@ -570,8 +570,11 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recent Statuses'),
+        title: widget.whatsAppOptions.isStatusPage
+            ? const Text('Saved Statuses')
+            : const Text('Recent Statuses'),
         foregroundColor: Colors.white,
+        centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
