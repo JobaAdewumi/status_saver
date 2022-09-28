@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/views/WhatsAppViews/WhatsApp/WhatsApp.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -293,6 +294,7 @@ class _ViewerState extends State<Viewer> {
           _controller.pause();
           if (!widget.multimediaViewer.allFiles[i].isImage) {
             initializeVideo(i);
+            print('hiiii');
           }
           if (widget.multimediaViewer.allFiles[i].isImage) {
             removeScale();
@@ -312,7 +314,7 @@ class _ViewerState extends State<Viewer> {
           } else {
             // return const Center(
             //   child: Text('hiiii'),
-            // );
+            // )
             return Container();
           }
         },
@@ -392,7 +394,12 @@ class _ViewerState extends State<Viewer> {
                                       ..pop()
                                       ..pop()
                                       ..pop()
-                                      ..pushNamed(route.savedStatusPage);
+                                      ..pushNamed(
+                                        route.whatsappPage,
+                                        arguments: WhatsAppOptions(
+                                            isWhatsApp: false,
+                                            isStatusPage: true),
+                                      );
                                   },
                                   child: const Text('Delete'),
                                 ),
