@@ -30,7 +30,7 @@ class GlobalFunctions {
     await Share.shareFiles([path]);
   }
 
-  Widget noStatusError(bool isWhatsApp) {
+  Widget noStatusError(bool isWhatsApp, bool isStatusPage) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -38,15 +38,22 @@ class GlobalFunctions {
             ? const Text(
                 'No Status Found, You have to watch stories on WhatsApp to make them appear here',
                 textAlign: TextAlign.center)
-            : const Text(
-                'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
-                textAlign: TextAlign.center),
+            : isStatusPage
+                ? const Text(
+                    'No Status Found, You have to watch stories on WhatsApp Business or WhatsApp to make them appear here',
+                    textAlign: TextAlign.center)
+                : const Text(
+                    'No Status Found, You have to watch stories on WhatsApp Business to make them appear here',
+                    textAlign: TextAlign.center),
         ElevatedButton.icon(
-            onPressed: null,
-            icon: const Icon(Icons.launch_rounded),
-            label: isWhatsApp
-                ? const Text('OPEN WHATSAPP')
-                : const Text('OPEN WHATSAPP BUSINESS')),
+          onPressed: null,
+          icon: const Icon(Icons.launch_rounded),
+          label: isWhatsApp
+              ? const Text('OPEN WHATSAPP')
+              : isStatusPage
+                  ? const Text('OPEN PLAY STORE')
+                  : const Text('OPEN WHATSAPP BUSINESS'),
+        ),
       ],
     );
   }
