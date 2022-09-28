@@ -102,9 +102,15 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   ) {
     Widget image = InkWell(
       onTap: () {
-        Navigator.pushNamed(context, route.viewer,
-            arguments:
-                MultimediaViewer(isImage: true, allFiles: files, index: index));
+        Navigator.pushNamed(
+          context,
+          route.viewer,
+          arguments: MultimediaViewer(
+              isImage: true,
+              allFiles: files,
+              index: index,
+              isStatusPage: widget.whatsAppOptions.isStatusPage),
+        );
       },
       child: Image.file(statuses, height: 100, width: 100, fit: BoxFit.cover),
     );
@@ -274,7 +280,10 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                               context,
                               route.viewer,
                               arguments: MultimediaViewer(
-                                  allFiles: allStatuses, index: index),
+                                  allFiles: allStatuses,
+                                  index: index,
+                                  isStatusPage:
+                                      widget.whatsAppOptions.isStatusPage),
                             );
                           },
                           icon: const Icon(
