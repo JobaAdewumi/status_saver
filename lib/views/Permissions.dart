@@ -71,7 +71,11 @@ class Android11PermissionDialog extends StatelessWidget {
               Navigator.popAndPushNamed(context, route.homePage);
               requestPermission11(context);
             },
-            child: const Text('Grant Folder permission'),
+            child: Text(
+              'Grant Folder permission',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodySmall?.color),
+            ),
           ),
         ],
       ),

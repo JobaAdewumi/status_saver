@@ -65,7 +65,11 @@ class IntroScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.popAndPushNamed(context, route.homePage);
                   },
-                  child: const Text('PROCEED'),
+                  child: Text(
+                    'PROCEED',
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color),
+                  ),
                 ),
               ),
             ),
