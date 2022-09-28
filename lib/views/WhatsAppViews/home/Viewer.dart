@@ -113,9 +113,14 @@ class _ViewerState extends State<Viewer> {
     _transformationController.value = Matrix4.identity();
   }
 
+  void _handleDragDown(DragEndDetails details) {
+    Navigator.pop(context);
+  }
+
   Widget ImageViewer(int index) {
     return Center(
       child: GestureDetector(
+        onVerticalDragEnd: _handleDragDown,
         onDoubleTapDown: _handleDoubleTapDown,
         onDoubleTap: _handleDoubleTap,
         child: InteractiveViewer(
@@ -138,6 +143,7 @@ class _ViewerState extends State<Viewer> {
       children: [
         Center(
           child: GestureDetector(
+            onVerticalDragEnd: _handleDragDown,
             onTap: onVideoTap,
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,
