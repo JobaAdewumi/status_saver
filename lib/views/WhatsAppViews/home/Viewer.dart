@@ -294,7 +294,6 @@ class _ViewerState extends State<Viewer> {
           _controller.pause();
           if (!widget.multimediaViewer.allFiles[i].isImage) {
             initializeVideo(i);
-            print('hiiii');
           }
           if (widget.multimediaViewer.allFiles[i].isImage) {
             removeScale();
