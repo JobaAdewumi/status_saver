@@ -32,7 +32,7 @@ class HelpAndInfo extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 7),
             child: Text(
-              '2.2.0 build4',
+              '2.2.1 build1',
               textAlign: TextAlign.center,
             ),
           ),
