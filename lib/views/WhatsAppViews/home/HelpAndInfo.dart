@@ -88,6 +88,14 @@ class HelpAndInfo extends StatelessWidget {
               style: TextStyle(fontSize: 15),
             ),
           ),
+          Padding(
+            padding: EdgeInsets.only(top: 15, left: 20),
+            child: Text(
+              '+ Swipe down in viewer to exit',
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
         ],
       ),
     );
