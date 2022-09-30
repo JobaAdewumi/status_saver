@@ -310,16 +310,8 @@ class _ViewerState extends State<Viewer> {
             return ImageViewer(index);
           } else if (!widget.multimediaViewer.allFiles[index].isImage &&
               _controller.value.isInitialized) {
-            // if (_controller.value.isPlaying) {
-            //   _controller.pause();
-            // } else {
-            //   _controller.play();
-            // }
             return VideoViewer(index);
           } else {
-            // return const Center(
-            //   child: Text('hiiii'),
-            // )
             return Container();
           }
         },
