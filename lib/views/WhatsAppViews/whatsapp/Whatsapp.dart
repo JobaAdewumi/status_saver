@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:all_status_saver/functions/global_functions.dart';
 import 'package:all_status_saver/helpers/storage_manager.dart';
-import 'package:all_status_saver/views/Permissions.dart';
-import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
+import 'package:all_status_saver/views/permissions.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/viewer.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';

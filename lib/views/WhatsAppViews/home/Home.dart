@@ -1,12 +1,12 @@
 import 'package:all_status_saver/helpers/storage_manager.dart';
-import 'package:all_status_saver/views/WhatsAppViews/whatsapp/Whatsapp.dart';
+import 'package:all_status_saver/views/WhatsAppViews/whatsapp/whatsapp.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:all_status_saver/views/Permissions.dart';
+import 'package:all_status_saver/views/permissions.dart';
 
 import 'package:all_status_saver/widgets/exit-popup.dart';
 

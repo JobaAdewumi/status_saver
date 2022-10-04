@@ -1,13 +1,13 @@
-import 'package:all_status_saver/views/Permissions.dart';
-import 'package:all_status_saver/views/WhatsAppViews/whatsapp/Whatsapp.dart';
-import 'package:all_status_saver/views/WhatsAppViews/home/HelpAndInfo.dart';
+import 'package:all_status_saver/views/permissions.dart';
+import 'package:all_status_saver/views/WhatsAppViews/whatsapp/whatsapp.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/help_and_info.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:all_status_saver/views/WhatsAppViews/home/Home.dart';
-import 'package:all_status_saver/views/WhatsAppViews/home/IntroductionScreen.dart';
-import 'package:all_status_saver/views/WhatsAppViews/home/Viewer.dart';
-import 'package:all_status_saver/views/WhatsAppViews/home/Settings.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/introduction_screen.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/viewer.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/settings.dart';
 
 const String homePage = 'homepage';
 const String introScreen = 'introScreen';
