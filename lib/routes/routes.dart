@@ -4,7 +4,7 @@ import 'package:all_status_saver/views/WhatsAppViews/home/help_and_info.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:all_status_saver/views/WhatsAppViews/home/Home.dart';
+import 'package:all_status_saver/views/WhatsAppViews/home/home.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/introduction_screen.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/viewer.dart';
 import 'package:all_status_saver/views/WhatsAppViews/home/settings.dart';
