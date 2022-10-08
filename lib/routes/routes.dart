@@ -44,7 +44,7 @@ Route<dynamic> controller(RouteSettings settings) {
       });
     case helpAndInfo:
       return MaterialPageRoute(builder: (context) {
-        return const HelpAndInfo();
+        return HelpAndInfo();
       });
 
     default:
