@@ -114,7 +114,11 @@ class _ViewerState extends State<Viewer> {
   }
 
   void _handleDragDown(DragEndDetails details) {
-    Navigator.pop(context);
+    if (_transformationController.value == Matrix4.identity()) {
+      Navigator.pop(context);
+    } else {
+      return;
+    }
   }
 
   Widget ImageViewer(int index) {
