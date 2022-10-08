@@ -94,6 +94,17 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     );
   }
 
+  _onVideoTap(List<FileType> allFiles, int index, bool isStatusPage) {
+    Navigator.pushNamed(
+      context,
+      route.viewer,
+      arguments: MultimediaViewer(
+          allFiles: allFiles,
+          index: index,
+          isStatusPage: widget.whatsAppOptions.isStatusPage),
+    );
+  }
+
   Widget ImageGrid(
     File statuses,
     List<FileType> files,
@@ -264,36 +275,29 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
               children: [
                 Expanded(
                   flex: 2,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: 350,
-                        height: 134,
-                        child: video,
-                      ),
-                      Positioned(
-                        top: 30,
-                        left: 60,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              route.viewer,
-                              arguments: MultimediaViewer(
-                                  allFiles: allStatuses,
-                                  index: index,
-                                  isStatusPage:
-                                      widget.whatsAppOptions.isStatusPage),
-                            );
-                          },
-                          icon: const Icon(
+                  child: GestureDetector(
+                    onTap: () {
+                      _onVideoTap(allStatuses, index,
+                          widget.whatsAppOptions.isStatusPage);
+                    },
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: 350,
+                          height: 134,
+                          child: video,
+                        ),
+                        const Positioned(
+                          top: 30,
+                          left: 60,
+                          child: Icon(
                             Icons.play_circle_outline,
                             color: Colors.white,
                             size: 50,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
