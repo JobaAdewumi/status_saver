@@ -267,7 +267,7 @@ class GlobalFunctions {
     final unit8list = await VideoThumbnail.thumbnailData(
       video: file.path,
       imageFormat: ImageFormat.JPEG,
-      maxWidth: 128,
+      maxWidth: 2000,
       quality: 100,
     );
     return unit8list;

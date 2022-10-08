@@ -288,7 +288,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                           },
                           icon: const Icon(
                             Icons.play_circle_outline,
-                            color: Colors.white,
+                            color: Colors.blue,
                             size: 50,
                           ),
                         ),
