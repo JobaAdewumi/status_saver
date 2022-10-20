@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:path/path.dart' as path;
 
 class FileType {
   final bool isImage;
@@ -267,7 +267,7 @@ class GlobalFunctions {
     final unit8list = await VideoThumbnail.thumbnailData(
       video: file.path,
       imageFormat: ImageFormat.JPEG,
-      maxWidth: 2000,
+      maxWidth: 720,
       quality: 100,
     );
     return unit8list;
