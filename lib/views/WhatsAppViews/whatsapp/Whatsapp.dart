@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:all_status_saver/functions/global_functions.dart';
 import 'package:all_status_saver/helpers/storage_manager.dart';
-import 'package:all_status_saver/views/permissions.dart';
+import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:all_status_saver/views/WhatsAppViews/home/viewer.dart';
+import 'package:all_status_saver/views/permissions.dart';
+import 'package:async/async.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
-
-import 'package:all_status_saver/routes/routes.dart' as route;
 
 class WhatsAppOptions {
   final bool isWhatsApp;
@@ -17,6 +17,16 @@ class WhatsAppOptions {
   WhatsAppOptions({
     required this.isWhatsApp,
     this.isStatusPage = false,
+  });
+}
+
+class SelectedFile {
+  final File file;
+  final int index;
+
+  SelectedFile({
+    required this.file,
+    required this.index,
   });
 }
 
@@ -41,6 +51,41 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   late String globalStatusPath11;
 
   int? androidVersion;
+
+  List<SelectedFile> selectedCards = [];
+
+  final AsyncMemoizer _memoizer = AsyncMemoizer();
+
+  getThumbnails(File statuses) {
+    return _memoizer.runOnce(() async {
+      await GlobalFunctions().generateVideoThumbnail(statuses).then((value) {
+        // print(value);
+        return value;
+      });
+    });
+  }
+
+  void onCardLongPress(File file, int index) {
+    if (selectedCards.any((element) => element.index == index)) {
+      setState(() {
+        selectedCards.removeWhere((element) => element.index == index);
+      });
+    } else {
+      setState(() {
+        selectedCards.add(SelectedFile(file: file, index: index));
+      });
+    }
+  }
+
+  Future deleteAllSelected() async {
+    for (var element in selectedCards) {
+      print(element.index);
+      // await element.file.delete();
+    }
+    setState(() {
+      selectedCards.clear();
+    });
+  }
 
   @override
   void initState() {
@@ -112,16 +157,23 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     BuildContext context,
   ) {
     Widget image = InkWell(
+      onLongPress: () {
+        onCardLongPress(statuses, index);
+      },
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          route.viewer,
-          arguments: MultimediaViewer(
-              isImage: true,
-              allFiles: files,
-              index: index,
-              isStatusPage: widget.whatsAppOptions.isStatusPage),
-        );
+        if (selectedCards.isEmpty) {
+          Navigator.pushNamed(
+            context,
+            route.viewer,
+            arguments: MultimediaViewer(
+                isImage: true,
+                allFiles: files,
+                index: index,
+                isStatusPage: widget.whatsAppOptions.isStatusPage),
+          );
+        } else {
+          onCardLongPress(statuses, index);
+        }
       },
       child: Image.file(statuses, height: 100, width: 100, fit: BoxFit.cover),
     );
@@ -130,10 +182,34 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         children: [
           Expanded(
             flex: 2,
-            child: SizedBox(
-              width: 350,
-              height: 134,
-              child: image,
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: 350,
+                  height: 134,
+                  child: image,
+                ),
+                selectedCards.isNotEmpty
+                    ? Positioned(
+                        left: 7,
+                        top: 7,
+                        child: selectedCards
+                                .any((element) => element.index == index)
+                            ? Icon(
+                                Icons.check_circle,
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .backgroundColor,
+                              )
+                            : Icon(
+                                Icons.circle_outlined,
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .backgroundColor,
+                              ),
+                      )
+                    : Container(),
+              ],
             ),
           ),
           Expanded(
@@ -264,172 +340,201 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     int index,
     BuildContext context,
   ) {
-    return FutureBuilder(
-      future: GlobalFunctions().generateVideoThumbnail(statuses),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          Image video = Image.memory(snapshot.data as dynamic,
-              height: 100, width: 100, fit: BoxFit.cover);
-          return Card(
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: GestureDetector(
-                    onTap: () {
-                      _onVideoTap(allStatuses, index,
-                          widget.whatsAppOptions.isStatusPage);
-                    },
-                    child: Stack(
-                      children: [
-                        SizedBox(
-                          width: 350,
-                          height: 134,
-                          child: video,
+    return Card(
+      child: Stack(
+        children: [
+          selectedCards.isNotEmpty
+              ? Positioned(
+                  left: 7,
+                  top: 7,
+                  child: selectedCards.any((element) => element.index == index)
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Theme.of(context).appBarTheme.backgroundColor,
+                        )
+                      : Icon(
+                          Icons.circle_outlined,
+                          color: Theme.of(context).appBarTheme.backgroundColor,
                         ),
-                        const Positioned(
-                          top: 30,
-                          left: 60,
-                          child: Icon(
-                            Icons.play_circle_outline,
-                            color: Colors.blue,
-                            size: 50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.red),
-                          onPressed: () async {
-                            await GlobalFunctions().shareFile(statuses.path);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.share),
-                              Text(
-                                'SHARE',
-                                style: TextStyle(fontSize: 10),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.green),
-                          onPressed: () async {
-                            await GlobalFunctions().shareFile(statuses.path);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.cached),
-                              Text(
-                                'REPOST',
-                                style: TextStyle(fontSize: 10),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      widget.whatsAppOptions.isStatusPage
-                          ? Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    fixedSize: const Size(60.0, 53.0),
-                                    primary: Colors.red),
-                                onPressed: () async {
-                                  return showDialog(
-                                    context: context,
-                                    barrierDismissible: true,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title:
-                                            const Text('Delete Permanently?'),
-                                        content: const Text(
-                                            'Are you sure you want to delete this file permanently?'),
-                                        contentPadding:
-                                            const EdgeInsets.fromLTRB(
-                                                24.0, 20.0, 24.0, 17.0),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              setState(() {
-                                                statuses.deleteSync();
-                                              });
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Delete'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.delete_forever_rounded),
-                                    Text(
-                                      'DELETE',
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                  primary: Colors.blue,
-                                ),
-                                onPressed: () async {
-                                  await GlobalFunctions()
-                                      .saveStatus(statuses.path, context);
-                                },
-                                child: Column(
-                                  children: const [
-                                    Icon(Icons.save_alt),
-                                    Text(
-                                      'SAVE',
-                                      style: TextStyle(fontSize: 10),
-                                    )
-                                  ],
-                                ),
+                )
+              : Container(),
+          FutureBuilder(
+            future: getThumbnails(statuses),
+            builder: (context, snapshot) {
+              // print(snapshot.data);
+              if (snapshot.hasData) {
+                Image video = Image.memory(snapshot.data as dynamic,
+                    height: 100, width: 100, fit: BoxFit.cover);
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: GestureDetector(
+                        onLongPress: () {
+                          onCardLongPress(statuses, index);
+                        },
+                        onTap: () {
+                          if (selectedCards.isEmpty) {
+                            _onVideoTap(allStatuses, index,
+                                widget.whatsAppOptions.isStatusPage);
+                          } else {
+                            onCardLongPress(statuses, index);
+                          }
+                        },
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                              width: 350,
+                              height: 134,
+                              child: video,
+                            ),
+                            const Positioned(
+                              top: 30,
+                              left: 60,
+                              child: Icon(
+                                Icons.play_circle_outline,
+                                color: Colors.blue,
+                                size: 50,
                               ),
                             ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  fixedSize: const Size(60.0, 53.0),
+                                  primary: Colors.red),
+                              onPressed: () async {
+                                await GlobalFunctions()
+                                    .shareFile(statuses.path);
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.share),
+                                  Text(
+                                    'SHARE',
+                                    style: TextStyle(fontSize: 10),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  fixedSize: const Size(60.0, 53.0),
+                                  primary: Colors.green),
+                              onPressed: () async {
+                                await GlobalFunctions()
+                                    .shareFile(statuses.path);
+                              },
+                              child: Column(
+                                children: const [
+                                  Icon(Icons.cached),
+                                  Text(
+                                    'REPOST',
+                                    style: TextStyle(fontSize: 10),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          widget.whatsAppOptions.isStatusPage
+                              ? Expanded(
+                                  flex: 1,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                        fixedSize: const Size(60.0, 53.0),
+                                        primary: Colors.red),
+                                    onPressed: () async {
+                                      return showDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Delete Permanently?'),
+                                            content: const Text(
+                                                'Are you sure you want to delete this file permanently?'),
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    24.0, 20.0, 24.0, 17.0),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    statuses.deleteSync();
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Delete'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Column(
+                                      children: const [
+                                        Icon(Icons.delete_forever_rounded),
+                                        Text(
+                                          'DELETE',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Expanded(
+                                  flex: 1,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      fixedSize: const Size(60.0, 53.0),
+                                      primary: Colors.blue,
+                                    ),
+                                    onPressed: () async {
+                                      await GlobalFunctions()
+                                          .saveStatus(statuses.path, context);
+                                    },
+                                    child: Column(
+                                      children: const [
+                                        Icon(Icons.save_alt),
+                                        Text(
+                                          'SAVE',
+                                          style: TextStyle(fontSize: 10),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -570,30 +675,67 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     return images;
   }
 
+  PreferredSizeWidget tabBar() {
+    return TabBar(
+      controller: _tabController,
+      tabs: const [
+        Tab(
+          icon: Icon(Icons.all_inbox_rounded),
+        ),
+        Tab(
+          icon: Icon(Icons.image),
+        ),
+        Tab(
+          icon: Icon(Icons.video_library_rounded),
+        ),
+      ],
+    );
+  }
+
+  PreferredSizeWidget selectedAppbar() {
+    return AppBar(
+      title: Text('${selectedCards.length} Selected'),
+      foregroundColor: Colors.white,
+      actions: [
+        const IconButton(
+          onPressed: null,
+          icon: Icon(Icons.share),
+        ),
+        const IconButton(
+          onPressed: null,
+          icon: Icon(Icons.cached),
+        ),
+        widget.whatsAppOptions.isStatusPage
+            ? IconButton(
+                onPressed: () async {
+                  await deleteAllSelected();
+                },
+                icon: const Icon(Icons.delete_forever_rounded),
+              )
+            : const IconButton(
+                onPressed: null,
+                icon: Icon(Icons.save_alt),
+              ),
+      ],
+      bottom: tabBar(),
+    );
+  }
+
+  PreferredSizeWidget normalAppbar() {
+    return AppBar(
+      title: widget.whatsAppOptions.isStatusPage
+          ? const Text('Saved Statuses')
+          : const Text('Recent Statuses'),
+      foregroundColor: Colors.white,
+      centerTitle: true,
+      bottom: tabBar(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: widget.whatsAppOptions.isStatusPage
-            ? const Text('Saved Statuses')
-            : const Text('Recent Statuses'),
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(
-              icon: Icon(Icons.all_inbox_rounded),
-            ),
-            Tab(
-              icon: Icon(Icons.image),
-            ),
-            Tab(
-              icon: Icon(Icons.video_library_rounded),
-            ),
-          ],
-        ),
-      ),
+      appBar: selectedCards.isNotEmpty ? selectedAppbar() : normalAppbar(),
       body: Container(
         margin: const EdgeInsets.all(10),
         child: FileManager(
