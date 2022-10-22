@@ -70,7 +70,10 @@ void registerSingletons() {
   GetIt.I.registerLazySingleton<AppLogic>(() => AppLogic());
 
   GetIt.I.registerLazySingleton<SettingsLogic>(() => SettingsLogic());
+
+  GetIt.I.registerLazySingleton<WhatsappLogic>(() => WhatsappLogic());
 }
 
 AppLogic get appLogic => GetIt.I.get<AppLogic>();
 SettingsLogic get settingsLogic => GetIt.I.get<SettingsLogic>();
+WhatsappLogic get whatsappLogic => GetIt.I.get<WhatsappLogic>();
