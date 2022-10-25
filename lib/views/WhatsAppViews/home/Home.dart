@@ -1,14 +1,11 @@
 import 'package:all_status_saver/helpers/storage_manager.dart';
-import 'package:all_status_saver/views/WhatsAppViews/whatsapp/whatsapp.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-
 import 'package:all_status_saver/routes/routes.dart' as route;
+import 'package:all_status_saver/views/WhatsAppViews/whatsapp/whatsapp.dart';
+import 'package:all_status_saver/views/permissions.dart';
+import 'package:all_status_saver/widgets/exit-popup.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'package:all_status_saver/views/permissions.dart';
-
-import 'package:all_status_saver/widgets/exit-popup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -163,8 +160,11 @@ class HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(5),
                       child: GestureDetector(
                         onTap: () async {
-                          await permissionHandler(context, route.whatsappPage,
-                              WhatsAppOptions(isWhatsApp: true));
+                          await permissionHandler(
+                              context,
+                              route.whatsappPage,
+                              WhatsAppOptions(
+                                  isWhatsApp: true, isStatusPage: false));
                         },
                         child: Card(
                           child: Padding(
@@ -189,8 +189,11 @@ class HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(5),
                       child: GestureDetector(
                         onTap: () async {
-                          await permissionHandler(context, route.whatsappPage,
-                              WhatsAppOptions(isWhatsApp: false));
+                          await permissionHandler(
+                              context,
+                              route.whatsappPage,
+                              WhatsAppOptions(
+                                  isWhatsApp: false, isStatusPage: false));
                         },
                         child: Card(
                           child: Padding(
@@ -281,7 +284,7 @@ class HomePageState extends State<HomePage> {
                 title: const Text('WA Status'),
                 onTap: () async {
                   await permissionHandler(context, route.whatsappPage,
-                      WhatsAppOptions(isWhatsApp: true));
+                      WhatsAppOptions(isWhatsApp: true, isStatusPage: false));
                 },
               ),
               ListTile(
@@ -289,7 +292,7 @@ class HomePageState extends State<HomePage> {
                 title: const Text('WB Status'),
                 onTap: () async {
                   await permissionHandler(context, route.whatsappPage,
-                      WhatsAppOptions(isWhatsApp: false));
+                      WhatsAppOptions(isWhatsApp: false, isStatusPage: false));
                 },
               ),
               androidVersion! >= 30
