@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -11,11 +11,13 @@ class FileType {
   final bool isImage;
   final File file;
   final DateTime? dateTime;
+  final Uint8List? videoThumbnail;
 
   FileType({
     this.isImage = false,
     required this.file,
     this.dateTime,
+    this.videoThumbnail,
   });
 }
 
@@ -144,30 +146,17 @@ class GlobalFunctions {
 
   Future<Map<String, List<FileType>>> getFileTypes(
       String path, String secondaryPath) async {
-    var tempDir = await getTemporaryDirectory();
-    print(tempDir);
-    // String paths =
-    //     '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
-    // List<String>? paths = await safBusiness.getFilesPath();
+    // var tempDir = await getTemporaryDirectory();
+    // print(tempDir);
+
     List<FileType> mapVideoFiles = [];
     List<FileType> mapImageFiles = [];
     List<FileType> mapAllFiles = [];
 
     if (await Directory(path).exists()) {
-      // List<String>? paths = await safBusiness.getFilesPath();
-      // //  List<FileSystemEntity> dirFiless = [];
-      // List<FileSystemEntity> dirFiles = [];
-
-      // for (var path in paths!) {
-      //   dirFiles.add(Directory(path));
-      // }
-
       final dirFiles = Directory(path)
           .listSync(recursive: false, followLinks: false)
           .toList();
-      // final dirFiles = Directory(path)
-      //     .listSync(recursive: false, followLinks: false)
-      //     .toList();
 
       List<FileSystemEntity> videoFiles =
           dirFiles.where((f) => f.path.contains('.mp4')).toList();
@@ -183,10 +172,14 @@ class GlobalFunctions {
         if (mapVideoFiles.isEmpty) {
           mapVideoFiles.clear();
         }
-        mapVideoFiles.add(FileType(
-          file: File(fv.path),
-          dateTime: (await fv.stat()).modified,
-        ));
+
+        await generateVideoThumbnail(File(fv.path)).then((value) async {
+          mapVideoFiles.add(FileType(
+            file: File(fv.path),
+            dateTime: (await fv.stat()).modified,
+            videoThumbnail: value,
+          ));
+        });
       }
 
       for (FileSystemEntity fv in imageFiles) {
@@ -207,14 +200,6 @@ class GlobalFunctions {
     }
 
     if (await Directory(secondaryPath).exists()) {
-      // var check = copyDirectory(Directory(secondaryPath),
-      //     Directory('/storage/emulated/0/Android${tempDir.path}'));
-      // // File sPath = File(secondaryPath);
-      // // // var tempPath = tempDir.path;
-      // // var check =
-      // //     await sPath.copy('/storage/emulated/0/Android${tempDir.path}');
-      // print('check');
-      // print(check);
       final dirFiles = Directory(secondaryPath)
           .listSync(recursive: false, followLinks: false)
           .toList();
@@ -233,10 +218,13 @@ class GlobalFunctions {
         if (mapVideoFiles.isEmpty) {
           mapVideoFiles.clear();
         }
-        mapVideoFiles.add(FileType(
-          file: File(fv.path),
-          dateTime: (await fv.stat()).modified,
-        ));
+        await generateVideoThumbnail(File(fv.path)).then((value) async {
+          mapVideoFiles.add(FileType(
+            file: File(fv.path),
+            dateTime: (await fv.stat()).modified,
+            videoThumbnail: value,
+          ));
+        });
       }
 
       for (FileSystemEntity fv in imageFiles) {

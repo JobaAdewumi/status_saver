@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/common_libs.dart';
 import 'package:all_status_saver/helpers/storage_manager.dart';
 import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:all_status_saver/views/WhatsAppViews/home/viewer.dart';
@@ -9,6 +9,8 @@ import 'package:async/async.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
+
+import 'package:all_status_saver/routes/routes.dart' as route;
 
 class WhatsAppOptions {
   final bool isWhatsApp;
@@ -86,6 +88,10 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       selectedCards.clear();
     });
   }
+
+  bool triedToGetStatusAgain11 = false;
+
+  bool showErrorPage = false;
 
   @override
   void initState() {
@@ -219,7 +225,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   flex: 1,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                        fixedSize: const Size(60.0, 53.0), primary: Colors.red),
+                        foregroundColor: Colors.red,
+                        fixedSize: const Size(60.0, 53.0)),
                     onPressed: () async {
                       await GlobalFunctions().shareFile(statuses.path);
                     },
@@ -238,8 +245,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   flex: 1,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                        fixedSize: const Size(60.0, 53.0),
-                        primary: Colors.green),
+                        foregroundColor: Colors.green,
+                        fixedSize: const Size(60.0, 53.0)),
                     onPressed: () async {
                       await GlobalFunctions().shareFile(statuses.path);
                     },
@@ -259,8 +266,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                         flex: 1,
                         child: TextButton(
                           style: TextButton.styleFrom(
-                              fixedSize: const Size(60.0, 53.0),
-                              primary: Colors.red),
+                              foregroundColor: Colors.red,
+                              fixedSize: const Size(60.0, 53.0)),
                           onPressed: () async {
                             return showDialog(
                               context: context,
@@ -308,8 +315,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                         flex: 1,
                         child: TextButton(
                           style: TextButton.styleFrom(
+                            foregroundColor: Colors.blue,
                             fixedSize: const Size(60.0, 53.0),
-                            primary: Colors.blue,
                           ),
                           onPressed: () async {
                             await GlobalFunctions()
@@ -410,8 +417,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                             flex: 1,
                             child: TextButton(
                               style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                  primary: Colors.red),
+                                  foregroundColor: Colors.red, fixedSize: const Size(60.0, 53.0)),
                               onPressed: () async {
                                 await GlobalFunctions()
                                     .shareFile(statuses.path);
@@ -431,8 +437,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                             flex: 1,
                             child: TextButton(
                               style: TextButton.styleFrom(
-                                  fixedSize: const Size(60.0, 53.0),
-                                  primary: Colors.green),
+                                  foregroundColor: Colors.green, fixedSize: const Size(60.0, 53.0)),
                               onPressed: () async {
                                 await GlobalFunctions()
                                     .shareFile(statuses.path);
@@ -453,8 +458,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                                   flex: 1,
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                        fixedSize: const Size(60.0, 53.0),
-                                        primary: Colors.red),
+                                        foregroundColor: Colors.red, fixedSize: const Size(60.0, 53.0)),
                                     onPressed: () async {
                                       return showDialog(
                                         context: context,
@@ -504,8 +508,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                                   flex: 1,
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                      fixedSize: const Size(60.0, 53.0),
-                                      primary: Colors.blue,
+                                      foregroundColor: Colors.blue, fixedSize: const Size(60.0, 53.0),
                                     ),
                                     onPressed: () async {
                                       await GlobalFunctions()
@@ -675,35 +678,139 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     return images;
   }
 
-  PreferredSizeWidget tabBar() {
-    return TabBar(
+  Widget returnFromInitCalculation() {
+    if (showErrorPage) {
+      return GlobalFunctions().noStatusError(widget.whatsAppOptions.isWhatsApp,
+          widget.whatsAppOptions.isStatusPage);
+    }
+    return TabBarView(
       controller: _tabController,
-      tabs: const [
-        Tab(
-          icon: Icon(Icons.all_inbox_rounded),
-        ),
-        Tab(
-          icon: Icon(Icons.image),
-        ),
-        Tab(
-          icon: Icon(Icons.video_library_rounded),
-        ),
+      children: [
+        AllStatuses(gImagesVideo),
+        StatusImages(gImages),
+        StatusVideos(gVideos),
       ],
     );
   }
 
-  PreferredSizeWidget selectedAppbar() {
-    return AppBar(
-      title: Text('${selectedCards.length} Selected'),
-      foregroundColor: Colors.white,
-      actions: [
-        const IconButton(
-          onPressed: null,
-          icon: Icon(Icons.share),
-        ),
-        const IconButton(
-          onPressed: null,
-          icon: Icon(Icons.cached),
+  @override
+  Widget build(BuildContext context) {
+    if (appLogic.androidVersion! <= 29) {
+      if (widget.whatsAppOptions.isWhatsApp) {
+        if (whatsappLogic.showNoWAStatusError) {
+          // return GlobalFunctions().noStatusError(
+          //     widget.whatsAppOptions.isWhatsApp,
+          //     widget.whatsAppOptions.isStatusPage);
+          showErrorPage = true;
+        }
+      } else if (widget.whatsAppOptions.isStatusPage) {
+        if (whatsappLogic.showNoStatusError) {
+          // return GlobalFunctions().noStatusError(
+          //     widget.whatsAppOptions.isWhatsApp,
+          //     widget.whatsAppOptions.isStatusPage);
+          showErrorPage = true;
+        }
+      } else if (!widget.whatsAppOptions.isWhatsApp &&
+          !widget.whatsAppOptions.isStatusPage) {
+        if (whatsappLogic.showNoWBStatusError) {
+          // return GlobalFunctions().noStatusError(
+          //     widget.whatsAppOptions.isWhatsApp,
+          //     widget.whatsAppOptions.isStatusPage);
+          showErrorPage = true;
+        }
+      }
+    }
+
+    // globalStatusPath = newPath;
+    // globalStatusPath11 = newPath11;
+
+    if (widget.whatsAppOptions.isStatusPage) {
+      gImages = whatsappLogic.gSSImages!;
+      gVideos = whatsappLogic.gSSVideos!;
+      gImagesVideo = whatsappLogic.gSSImagesVideo!;
+      if (appLogic.androidVersion! >= 30 &&
+          whatsappLogic.gSSImagesVideo!.isEmpty) {
+        whatsappLogic.init(true, false, false).then((value) {
+          triedToGetStatusAgain11 = true;
+          if (whatsappLogic.gSSImagesVideo!.isNotEmpty) {
+            gImages = whatsappLogic.gSSImages!;
+            gVideos = whatsappLogic.gSSVideos!;
+            gImagesVideo = whatsappLogic.gSSImagesVideo!;
+          } else {
+            // return GlobalFunctions().noStatusError(
+            //     widget.whatsAppOptions.isWhatsApp,
+            //     widget.whatsAppOptions.isStatusPage);
+            showErrorPage = true;
+          }
+        });
+      }
+    }
+
+    if (widget.whatsAppOptions.isWhatsApp &&
+        !widget.whatsAppOptions.isStatusPage) {
+      gImages = whatsappLogic.gWImages!;
+      gVideos = whatsappLogic.gWVideos!;
+      gImagesVideo = whatsappLogic.gWImagesVideo!;
+      if (appLogic.androidVersion! >= 30 &&
+          whatsappLogic.gWImagesVideo!.isEmpty) {
+        whatsappLogic.init(true, false, false).then((value) {
+          triedToGetStatusAgain11 = true;
+          if (whatsappLogic.gWImagesVideo!.isNotEmpty) {
+            gImages = whatsappLogic.gWImages!;
+            gVideos = whatsappLogic.gWVideos!;
+            gImagesVideo = whatsappLogic.gWImagesVideo!;
+          } else {
+            // return GlobalFunctions().noStatusError(
+            //     widget.whatsAppOptions.isWhatsApp,
+            //     widget.whatsAppOptions.isStatusPage);
+            showErrorPage = true;
+          }
+        });
+      }
+    }
+
+    if (!widget.whatsAppOptions.isWhatsApp &&
+        !widget.whatsAppOptions.isStatusPage) {
+      gImages = whatsappLogic.gWBImages!;
+      gVideos = whatsappLogic.gWBVideos!;
+      gImagesVideo = whatsappLogic.gWBImagesVideo!;
+      if (appLogic.androidVersion! >= 30 &&
+          whatsappLogic.gWBImagesVideo!.isEmpty) {
+        whatsappLogic.init(true, false, false).then((value) {
+          triedToGetStatusAgain11 = true;
+          if (whatsappLogic.gWBImagesVideo!.isNotEmpty) {
+            gImages = whatsappLogic.gWBImages!;
+            gVideos = whatsappLogic.gWBVideos!;
+            gImagesVideo = whatsappLogic.gWBImagesVideo!;
+          } else {
+            // return GlobalFunctions().noStatusError(
+            //     widget.whatsAppOptions.isWhatsApp,
+            //     widget.whatsAppOptions.isStatusPage);
+            showErrorPage = true;
+          }
+        });
+      }
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: widget.whatsAppOptions.isStatusPage
+            ? const Text('Saved Statuses')
+            : const Text('Recent Statuses'),
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.all_inbox_rounded),
+            ),
+            Tab(
+              icon: Icon(Icons.image),
+            ),
+            Tab(
+              icon: Icon(Icons.video_library_rounded),
+            ),
+          ],
         ),
         widget.whatsAppOptions.isStatusPage
             ? IconButton(
@@ -737,103 +844,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     return Scaffold(
       appBar: selectedCards.isNotEmpty ? selectedAppbar() : normalAppbar(),
       body: Container(
-        margin: const EdgeInsets.all(10),
-        child: FileManager(
-          controller: controller,
-          hideHiddenEntity: false,
-          builder: (context, snapshot) {
-            final List<FileSystemEntity> entities = snapshot;
-
-            if (androidVersion! <= 29) {
-              if (entities.isEmpty) {
-                return GlobalFunctions().noStatusError(
-                    widget.whatsAppOptions.isWhatsApp,
-                    widget.whatsAppOptions.isStatusPage);
-              }
-            }
-
-            FileSystemEntity? entity;
-            FileSystemEntity? entity11;
-            if (widget.whatsAppOptions.isWhatsApp) {
-              for (var e in entities) {
-                if (FileManager.basename(e) == 'WhatsApp') {
-                  entity = e;
-                }
-                if (FileManager.basename(e) == 'Android') {
-                  entity11 = e;
-                }
-              }
-            } else if (!widget.whatsAppOptions.isWhatsApp &&
-                !widget.whatsAppOptions.isStatusPage) {
-              for (var e in entities) {
-                if (FileManager.basename(e) == 'WhatsApp Business') {
-                  entity = e;
-                }
-                if (FileManager.basename(e) == 'Android') {
-                  entity11 = e;
-                }
-              }
-            } else if (widget.whatsAppOptions.isStatusPage) {
-              for (var e in entities) {
-                if (FileManager.basename(e) == 'DCIM') {
-                  entity = e;
-                }
-              }
-            }
-
-            var directoryPath = directoriesPaths?[0];
-
-            String? path = entity?.path ?? '';
-            String newPath = widget.whatsAppOptions.isStatusPage
-                ? '$path/All Status Saver/'
-                : '$path/Media/.Statuses/';
-            entity = Directory(newPath);
-
-            String? path11 = directoryPath ?? 'Android/media';
-
-            String newPath11 = widget.whatsAppOptions.isWhatsApp
-                ? '/storage/emulated/0/$path11/com.whatsapp/WhatsApp/Media/.Statuses'
-                : '/storage/emulated/0/$path11/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
-            print(newPath11);
-
-            entity11 = Directory(newPath11);
-
-            if (!entity.existsSync() && !entity11.existsSync()) {
-              return GlobalFunctions().noStatusError(
-                  widget.whatsAppOptions.isWhatsApp,
-                  widget.whatsAppOptions.isStatusPage);
-            }
-
-            globalStatusPath = newPath;
-            globalStatusPath11 = newPath11;
-
-            return FutureBuilder(
-              future: GlobalFunctions().getFileTypes(newPath, newPath11),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  Map<String, List<FileType>> allFiles =
-                      snapshot.data as Map<String, List<FileType>>;
-                  gImages = allFiles['images']!;
-                  gVideos = allFiles['videos']!;
-                  gImagesVideo = allFiles['all']!;
-
-                  return TabBarView(
-                    controller: _tabController,
-                    children: [
-                      AllStatuses(gImagesVideo),
-                      StatusImages(gImages),
-                      StatusVideos(gVideos),
-                    ],
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            );
-          },
-        ),
-      ),
+          margin: const EdgeInsets.all(10), child: returnFromInitCalculation()),
     );
   }
 }
