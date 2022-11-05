@@ -173,13 +173,10 @@ class GlobalFunctions {
           mapVideoFiles.clear();
         }
 
-        await generateVideoThumbnail(File(fv.path)).then((value) async {
-          mapVideoFiles.add(FileType(
-            file: File(fv.path),
-            dateTime: (await fv.stat()).modified,
-            videoThumbnail: value,
-          ));
-        });
+        mapVideoFiles.add(FileType(
+          file: File(fv.path),
+          dateTime: (await fv.stat()).modified,
+        ));
       }
 
       for (FileSystemEntity fv in imageFiles) {
@@ -218,13 +215,11 @@ class GlobalFunctions {
         if (mapVideoFiles.isEmpty) {
           mapVideoFiles.clear();
         }
-        await generateVideoThumbnail(File(fv.path)).then((value) async {
-          mapVideoFiles.add(FileType(
-            file: File(fv.path),
-            dateTime: (await fv.stat()).modified,
-            videoThumbnail: value,
-          ));
-        });
+
+        mapVideoFiles.add(FileType(
+          file: File(fv.path),
+          dateTime: (await fv.stat()).modified,
+        ));
       }
 
       for (FileSystemEntity fv in imageFiles) {
@@ -251,12 +246,67 @@ class GlobalFunctions {
     };
   }
 
+  // Future<Map<String, List<FileType>>> addThumbnailToFile(
+  //     String path, String secondaryPath) async {
+  //   // var tempDir = await getTemporaryDirectory();
+  //   // print(tempDir);
+
+  //   List<FileType> mapVideoFiles = [];
+  //   List<FileType> mapImageFiles = [];
+
+  //   List<FileType> newMapVideoFiles = [];
+  //   List<FileType> newMapAllFiles = [];
+
+  //   await getFileTypes(path, secondaryPath).then((value) {
+  //     Map<String, List<FileType>> allFiles = value;
+  //     mapImageFiles = allFiles['images'] ?? [];
+  //     mapVideoFiles = allFiles['videos'] ?? [];
+  //   });
+
+  //   newMapAllFiles = mapImageFiles;
+  //   if (mapVideoFiles.isNotEmpty) {
+  //     for (FileType fv in mapVideoFiles) {
+  //       await generateVideoThumbnail(fv.file).then((value) async {
+  //         gMapVideoFiles.add(FileType(
+  //           file: fv.file,
+  //           dateTime: fv.dateTime,
+  //           videoThumbnail: value,
+  //         ));
+
+  //         newMapAllFiles.add(FileType(
+  //           file: fv.file,
+  //           dateTime: fv.dateTime,
+  //           videoThumbnail: value,
+  //         ));
+  //       });
+  //       newMapVideoFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
+  //       newMapAllFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
+  //     }
+  //   }
+
+  //   return {
+  //     'images': mapImageFiles,
+  //     'videos': newMapVideoFiles,
+  //     'all': newMapAllFiles
+  //   };
+  // }
+
   Future generateVideoThumbnail(File file) async {
     final unit8list = await VideoThumbnail.thumbnailData(
       video: file.path,
       imageFormat: ImageFormat.JPEG,
       maxWidth: 720,
       quality: 100,
+    );
+    return unit8list;
+  }
+
+  Future generateLowQualityVideoThumbnail(File file) async {
+    final unit8list = await VideoThumbnail.thumbnailData(
+      video: file.path,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 200,
+      quality: 20,
     );
     return unit8list;
   }
