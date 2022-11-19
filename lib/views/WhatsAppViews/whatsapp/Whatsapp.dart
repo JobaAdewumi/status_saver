@@ -832,24 +832,48 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       title: Text('${selectedCards.length} Selected'),
       foregroundColor: Colors.white,
       actions: [
-        const IconButton(
-          onPressed: null,
-          icon: Icon(Icons.share),
+        IconButton(
+          onPressed: () async {
+            await GlobalFunctions()
+                .shareMultipleFile(selectedCards.map((e) => e.path).toList());
+          },
+          icon: Icon(
+            Icons.share,
+            color: Theme.of(context).primaryTextTheme.bodySmall?.color,
+          ),
         ),
-        const IconButton(
-          onPressed: null,
-          icon: Icon(Icons.cached),
+        IconButton(
+          onPressed: () async {
+            await GlobalFunctions()
+                .shareMultipleFile(selectedCards.map((e) => e.path).toList());
+          },
+          icon: Icon(
+            Icons.cached,
+            color: Theme.of(context).primaryTextTheme.bodySmall?.color,
+          ),
         ),
         widget.whatsAppOptions.isStatusPage
             ? IconButton(
                 onPressed: () async {
                   await deleteAllSelected();
                 },
-                icon: const Icon(Icons.delete_forever_rounded),
+                icon: Icon(
+                  Icons.delete_forever_rounded,
+                  color: Theme.of(context).primaryTextTheme.bodySmall?.color,
+                ),
               )
-            : const IconButton(
-                onPressed: null,
-                icon: Icon(Icons.save_alt),
+            : IconButton(
+                onPressed: () async {
+                  await GlobalFunctions()
+                      .saveMultipleStatuses(selectedCards, context);
+                  setState(() {
+                    selectedCards.clear();
+                  });
+                },
+                icon: Icon(
+                  Icons.save_alt,
+                  color: Theme.of(context).primaryTextTheme.bodySmall?.color,
+                ),
               ),
       ],
       bottom: tabBar(),
