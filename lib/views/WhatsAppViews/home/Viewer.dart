@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:all_status_saver/functions/global_functions.dart';
+import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:all_status_saver/views/WhatsAppViews/WhatsApp/WhatsApp.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
