@@ -52,43 +52,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
 
   List<SelectedFile> selectedCards = [];
 
-  // final AsyncMemoizer _memoizer = AsyncMemoizer();
-
-  // getThumbnails(File statuses) {
-  //   return _memoizer.runOnce(() async {
-  //     await GlobalFunctions().generateVideoThumbnail(statuses).then((value) {
-  //       // print(value);
-  //       return value;
-  //     });
-  //   });
-  // }
-
-  void onCardLongPress(File file, String path) {
-    if (selectedCards.any((element) => element.path == path)) {
-      setState(() {
-        selectedCards.removeWhere((element) => element.path == path);
-      });
-    } else {
-      setState(() {
-        selectedCards.add(SelectedFile(file: file, path: path));
-      });
-    }
-  }
-
-  Future deleteAllSelected() async {
-    for (var element in selectedCards) {
-      print(element.path);
-      // await element.file.delete();
-    }
-    setState(() {
-      selectedCards.clear();
-    });
-  }
-
-  bool triedToGetStatusAgain11 = false;
-
-  bool showErrorPage = false;
-
   @override
   void initState() {
     super.initState();
