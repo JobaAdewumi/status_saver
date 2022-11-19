@@ -6,8 +6,6 @@ import 'package:all_status_saver/views/WhatsAppViews/WhatsApp/WhatsApp.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:all_status_saver/routes/routes.dart' as route;
-
 class MultimediaViewer {
   final bool isImage;
   final int index;
