@@ -32,6 +32,10 @@ class GlobalFunctions {
     await Share.shareFiles([path]);
   }
 
+  Future<void> shareMultipleFile(List<String> paths) async {
+    await Share.shareFiles(paths);
+  }
+
   Widget noStatusError(bool isWhatsApp, bool isStatusPage) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
