@@ -104,6 +104,107 @@ class GlobalFunctions {
     );
   }
 
+  saveMultipleStatuses(List statuses, BuildContext context) async {
+    int successfullySaved = 0;
+    int failedSaved = 0;
+    for (var statusPath in statuses) {
+      await realSaveStatus(statusPath.path).then(
+        (value) {
+          bool check = value == null
+              ? false
+              : value == true
+                  ? true
+                  : false;
+          if (check) {
+            successfullySaved = successfullySaved + 1;
+          } else {
+            failedSaved = failedSaved + 1;
+          }
+        },
+      );
+    }
+
+    if (successfullySaved >= 1 && failedSaved == 0) {
+      return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            successfullySaved == 1
+                ? '$successfullySaved Status was saved successfully'
+                : '$successfullySaved Statuses were saved successfully',
+            style: const TextStyle(color: Colors.white),
+          ),
+          behavior: SnackBarBehavior.floating,
+          elevation: 1,
+          dismissDirection: DismissDirection.horizontal,
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    }
+
+    if (failedSaved >= 1 && successfullySaved == 0) {
+      return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            failedSaved == 1
+                ? '$failedSaved Status failed to save'
+                : '$failedSaved Statuses failed to save',
+            style: const TextStyle(color: Colors.white),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.redAccent,
+          elevation: 1,
+          dismissDirection: DismissDirection.horizontal,
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    }
+
+    if (failedSaved >= 1 && successfullySaved >= 1) {
+      return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            failedSaved == 1 && successfullySaved == 1
+                ? '$successfullySaved Status saved successfully and $failedSaved failed to save'
+                : '$successfullySaved Statuses saved successfully and $failedSaved failed to save',
+            style: const TextStyle(color: Colors.white),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.yellowAccent,
+          elevation: 1,
+          dismissDirection: DismissDirection.horizontal,
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    }
+
+    // return ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(
+    //     content: Text(
+    //       'Status was saved successfully',
+    //       style: TextStyle(color: Colors.white),
+    //     ),
+    //     behavior: SnackBarBehavior.floating,
+    //     elevation: 1,
+    //     dismissDirection: DismissDirection.horizontal,
+    //     duration: Duration(milliseconds: 400),
+    //   ),
+    // );
+
+    // return ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(
+    //     content: Text(
+    //       'Error Saving Status',
+    //       style: TextStyle(color: Colors.white),
+    //     ),
+    //     behavior: SnackBarBehavior.floating,
+    //     backgroundColor: Colors.redAccent,
+    //     elevation: 1,
+    //     dismissDirection: DismissDirection.horizontal,
+    //     duration: Duration(milliseconds: 400),
+    //   ),
+    // );
+  }
+
   Future<bool?> realSaveStatus(String oldPath) async {
     late bool? savedFile;
     if (oldPath.contains('.jpg') ||
