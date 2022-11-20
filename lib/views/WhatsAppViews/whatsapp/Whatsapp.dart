@@ -196,6 +196,120 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     }
   }
 
+  void onCardLongPress(File file, String path) {
+    if (selectedCards.any((element) => element.path == path)) {
+      setState(() {
+        selectedCards.removeWhere((element) => element.path == path);
+      });
+    } else {
+      setState(() {
+        selectedCards.add(SelectedFile(file: file, path: path));
+      });
+    }
+  }
+
+  deleteAllSelected() {
+    List<String> selectedCardsPaths = selectedCards.map((e) => e.path).toList();
+    List<File> filesToDelete = [];
+
+    List<String> toRemoveFromImages = [];
+    List<String> toRemoveFromVideos = [];
+
+    List<FileType> gInnerImages = gImages;
+    List<FileType> gInnerVideos = gVideos;
+    List<FileType> gInnerImagesVideo = gImagesVideo;
+
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Permanently?'),
+          content: Text(
+              'Are you sure you want to delete ${selectedCards.length} file(s) permanently?'),
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 17.0),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                for (var element in gInnerImagesVideo) {
+                  bool isPresent =
+                      selectedCardsPaths.any((e) => e == element.file.path);
+
+                  if (isPresent) {
+                    filesToDelete.add(element.file);
+                  }
+                }
+
+                for (var element in gInnerImages) {
+                  bool isPresent =
+                      selectedCardsPaths.any((e) => e == element.file.path);
+
+                  if (isPresent) {
+                    toRemoveFromImages.add(selectedCardsPaths
+                        .firstWhere((e) => e == element.file.path));
+                    setState(() {
+                      print('removed ${element.file.path}');
+                      gVideos.removeWhere((e) =>
+                          e.file.path ==
+                          toRemoveFromImages
+                              .firstWhere((e) => e == element.file.path));
+                    });
+                  }
+                }
+
+                for (var element in gInnerVideos) {
+                  bool isPresent =
+                      selectedCardsPaths.any((e) => e == element.file.path);
+
+                  if (isPresent) {
+                    toRemoveFromVideos.add(selectedCardsPaths
+                        .firstWhere((e) => e == element.file.path));
+                    setState(() {
+                      print('removed ${element.file.path}');
+                      gVideos.removeWhere((e) =>
+                          e.file.path ==
+                          toRemoveFromVideos
+                              .firstWhere((e) => e == element.file.path));
+                    });
+                  }
+                }
+
+                if (filesToDelete.isNotEmpty) {
+                  for (var element in filesToDelete) {
+                    print('deleted');
+                    setState(() {
+                      if (element.existsSync()) {
+                        element.deleteSync();
+                      }
+                    });
+                  }
+                  setState(() {
+                    selectedCards.clear();
+                    print('set state called');
+                    gImagesVideo = gInnerImagesVideo;
+                  });
+                  // Toast
+                }
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool triedToGetStatusAgain11 = false;
+
+  bool showErrorPage = false;
+
   @override
   void dispose() {
     super.dispose();
@@ -241,14 +355,15 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     );
   }
 
-  _onVideoTap(List<FileType> allFiles, int index, bool isStatusPage) {
+  _onVideoTap(List<FileType> allFiles, int index, bool isImage) {
     Navigator.pushNamed(
       context,
       route.viewer,
       arguments: MultimediaViewer(
           allFiles: allFiles,
           index: index,
-          isStatusPage: widget.whatsAppOptions.isStatusPage),
+          isStatusPage: widget.whatsAppOptions.isStatusPage,
+          isImage: isImage),
     );
   }
 
@@ -305,15 +420,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       },
       onTap: () {
         if (selectedCards.isEmpty) {
-          Navigator.pushNamed(
-            context,
-            route.viewer,
-            arguments: MultimediaViewer(
-                isImage: true,
-                allFiles: files,
-                index: index,
-                isStatusPage: widget.whatsAppOptions.isStatusPage),
-          );
+          _onVideoTap(files, index, true);
         } else {
           onCardLongPress(statuses, statuses.path);
         }
@@ -321,6 +428,11 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       child: Image.file(statuses, height: 100, width: 100, fit: BoxFit.cover),
     );
     return Card(
+      color: selectedCards.isNotEmpty
+          ? selectedCards.any((element) => element.path == statuses.path)
+              ? Theme.of(context).focusColor
+              : Theme.of(context).appBarTheme.backgroundColor
+          : Theme.of(context).appBarTheme.backgroundColor,
       child: Column(
         children: [
           Expanded(
@@ -332,146 +444,150 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   height: 134,
                   child: image,
                 ),
-                selectedCards.isNotEmpty
-                    ? Positioned(
-                        left: 7,
-                        top: 7,
-                        child: selectedCards
-                                .any((element) => element.path == statuses.path)
-                            ? Icon(
-                                Icons.check_circle,
-                                color: Theme.of(context)
-                                    .appBarTheme
-                                    .backgroundColor,
-                              )
-                            : Icon(
-                                Icons.circle_outlined,
-                                color: Theme.of(context)
-                                    .appBarTheme
-                                    .backgroundColor,
-                              ),
-                      )
-                    : Container(),
+                // selectedCards.isNotEmpty
+                //     ? Positioned(
+                //         left: 7,
+                //         top: 7,
+                //         child: selectedCards
+                //                 .any((element) => element.path == statuses.path)
+                //             ? Icon(
+                //                 Icons.check_circle,
+                //                 color: Theme.of(context)
+                //                     .appBarTheme
+                //                     .backgroundColor,
+                //               )
+                //             : Icon(
+                //                 Icons.circle_outlined,
+                //                 color: Theme.of(context)
+                //                     .appBarTheme
+                //                     .backgroundColor,
+                //               ),
+                //       )
+                //     : Container(),
               ],
             ),
           ),
           Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        fixedSize: const Size(60.0, 53.0)),
-                    onPressed: () async {
-                      await GlobalFunctions().shareFile(statuses.path);
-                    },
-                    child: Column(
-                      children: const [
-                        Icon(Icons.share),
-                        Text(
-                          'SHARE',
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                        foregroundColor: Colors.green,
-                        fixedSize: const Size(60.0, 53.0)),
-                    onPressed: () async {
-                      await GlobalFunctions().shareFile(statuses.path);
-                    },
-                    child: Column(
-                      children: const [
-                        Icon(Icons.cached),
-                        Text(
-                          'REPOST',
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                widget.whatsAppOptions.isStatusPage
-                    ? Expanded(
+            child: selectedCards.isEmpty
+                ? Row(
+                    children: [
+                      Expanded(
                         flex: 1,
                         child: TextButton(
                           style: TextButton.styleFrom(
                               foregroundColor: Colors.red,
                               fixedSize: const Size(60.0, 53.0)),
                           onPressed: () async {
-                            return showDialog(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Delete Permanently?'),
-                                  content: const Text(
-                                      'Are you sure you want to delete this file permanently?'),
-                                  contentPadding: const EdgeInsets.fromLTRB(
-                                      24.0, 20.0, 24.0, 17.0),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          statuses.deleteSync();
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            await GlobalFunctions().shareFile(statuses.path);
                           },
                           child: Column(
                             children: const [
-                              Icon(Icons.delete_forever_rounded),
+                              Icon(Icons.share),
                               Text(
-                                'DELETE',
-                                style: TextStyle(fontSize: 10),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Expanded(
-                        flex: 1,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                            fixedSize: const Size(60.0, 53.0),
-                          ),
-                          onPressed: () async {
-                            await GlobalFunctions()
-                                .saveStatus(statuses.path, context);
-                          },
-                          child: Column(
-                            children: const [
-                              Icon(Icons.save_alt),
-                              Text(
-                                'SAVE',
+                                'SHARE',
                                 style: TextStyle(fontSize: 10),
                               )
                             ],
                           ),
                         ),
                       ),
-              ],
-            ),
+                      Expanded(
+                        flex: 1,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.green,
+                              fixedSize: const Size(60.0, 53.0)),
+                          onPressed: () async {
+                            await GlobalFunctions().shareFile(statuses.path);
+                          },
+                          child: Column(
+                            children: const [
+                              Icon(Icons.cached),
+                              Text(
+                                'REPOST',
+                                style: TextStyle(fontSize: 10),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      widget.whatsAppOptions.isStatusPage
+                          ? Expanded(
+                              flex: 1,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                    fixedSize: const Size(60.0, 53.0)),
+                                onPressed: () async {
+                                  return showDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title:
+                                            const Text('Delete Permanently?'),
+                                        content: const Text(
+                                            'Are you sure you want to delete this file permanently?'),
+                                        contentPadding:
+                                            const EdgeInsets.fromLTRB(
+                                                24.0, 20.0, 24.0, 17.0),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              setState(() {
+                                                statuses.deleteSync();
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Column(
+                                  children: const [
+                                    Icon(Icons.delete_forever_rounded),
+                                    Text(
+                                      'DELETE',
+                                      style: TextStyle(fontSize: 10),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Expanded(
+                              flex: 1,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.blue,
+                                  fixedSize: const Size(60.0, 53.0),
+                                ),
+                                onPressed: () async {
+                                  await GlobalFunctions()
+                                      .saveStatus(statuses.path, context);
+                                },
+                                child: Column(
+                                  children: const [
+                                    Icon(Icons.save_alt),
+                                    Text(
+                                      'SAVE',
+                                      style: TextStyle(fontSize: 10),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                    ],
+                  )
+                : Container(),
           ),
         ],
       ),
@@ -489,6 +605,12 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
             Image video = Image.memory(snapshotData.videoThumbnail!,
                 height: 100, width: 100, fit: BoxFit.cover);
             return Card(
+              color: selectedCards.isNotEmpty
+                  ? selectedCards
+                          .any((element) => element.path == statuses.path)
+                      ? Theme.of(context).focusColor
+                      : Theme.of(context).appBarTheme.backgroundColor
+                  : Theme.of(context).appBarTheme.backgroundColor,
               child: Column(
                 children: [
                   Expanded(
@@ -499,8 +621,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                       },
                       onTap: () {
                         if (selectedCards.isEmpty) {
-                          _onVideoTap(allStatuses, index,
-                              widget.whatsAppOptions.isStatusPage);
+                          _onVideoTap(allStatuses, index, false);
                         } else {
                           onCardLongPress(statuses, statuses.path);
                         }
@@ -512,26 +633,26 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                             height: 134,
                             child: video,
                           ),
-                          selectedCards.isNotEmpty
-                              ? Positioned(
-                                  left: 7,
-                                  top: 7,
-                                  child: selectedCards.any((element) =>
-                                          element.path == statuses.path)
-                                      ? Icon(
-                                          Icons.check_circle,
-                                          color: Theme.of(context)
-                                              .appBarTheme
-                                              .backgroundColor,
-                                        )
-                                      : Icon(
-                                          Icons.circle_outlined,
-                                          color: Theme.of(context)
-                                              .appBarTheme
-                                              .backgroundColor,
-                                        ),
-                                )
-                              : Container(),
+                          // selectedCards.isNotEmpty
+                          //     ? Positioned(
+                          //         left: 7,
+                          //         top: 7,
+                          //         child: selectedCards.any((element) =>
+                          //                 element.path == statuses.path)
+                          //             ? Icon(
+                          //                 Icons.check_circle,
+                          //                 color: Theme.of(context)
+                          //                     .appBarTheme
+                          //                     .backgroundColor,
+                          //               )
+                          //             : Icon(
+                          //                 Icons.circle_outlined,
+                          //                 color: Theme.of(context)
+                          //                     .appBarTheme
+                          //                     .backgroundColor,
+                          //               ),
+                          //       )
+                          //     : Container(),
                           const Positioned(
                             top: 30,
                             left: 60,
@@ -546,126 +667,133 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                     ),
                   ),
                   Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                                foregroundColor: Colors.red,
-                                fixedSize: const Size(60.0, 53.0)),
-                            onPressed: () async {
-                              await GlobalFunctions().shareFile(statuses.path);
-                            },
-                            child: Column(
-                              children: const [
-                                Icon(Icons.share),
-                                Text(
-                                  'SHARE',
-                                  style: TextStyle(fontSize: 10),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                                foregroundColor: Colors.green,
-                                fixedSize: const Size(60.0, 53.0)),
-                            onPressed: () async {
-                              await GlobalFunctions().shareFile(statuses.path);
-                            },
-                            child: Column(
-                              children: const [
-                                Icon(Icons.cached),
-                                Text(
-                                  'REPOST',
-                                  style: TextStyle(fontSize: 10),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        widget.whatsAppOptions.isStatusPage
-                            ? Expanded(
+                    child: selectedCards.isEmpty
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
                                 flex: 1,
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                       foregroundColor: Colors.red,
                                       fixedSize: const Size(60.0, 53.0)),
                                   onPressed: () async {
-                                    return showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title:
-                                              const Text('Delete Permanently?'),
-                                          content: const Text(
-                                              'Are you sure you want to delete this file permanently?'),
-                                          contentPadding:
-                                              const EdgeInsets.fromLTRB(
-                                                  24.0, 20.0, 24.0, 17.0),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Cancel'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                setState(() {
-                                                  statuses.deleteSync();
-                                                });
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Delete'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Column(
-                                    children: const [
-                                      Icon(Icons.delete_forever_rounded),
-                                      Text(
-                                        'DELETE',
-                                        style: TextStyle(fontSize: 10),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Expanded(
-                                flex: 1,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.blue,
-                                    fixedSize: const Size(60.0, 53.0),
-                                  ),
-                                  onPressed: () async {
                                     await GlobalFunctions()
-                                        .saveStatus(statuses.path, context);
+                                        .shareFile(statuses.path);
                                   },
                                   child: Column(
                                     children: const [
-                                      Icon(Icons.save_alt),
+                                      Icon(Icons.share),
                                       Text(
-                                        'SAVE',
+                                        'SHARE',
                                         style: TextStyle(fontSize: 10),
                                       )
                                     ],
                                   ),
                                 ),
                               ),
-                      ],
-                    ),
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: Colors.green,
+                                      fixedSize: const Size(60.0, 53.0)),
+                                  onPressed: () async {
+                                    await GlobalFunctions()
+                                        .shareFile(statuses.path);
+                                  },
+                                  child: Column(
+                                    children: const [
+                                      Icon(Icons.cached),
+                                      Text(
+                                        'REPOST',
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              widget.whatsAppOptions.isStatusPage
+                                  ? Expanded(
+                                      flex: 1,
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: Colors.red,
+                                            fixedSize: const Size(60.0, 53.0)),
+                                        onPressed: () async {
+                                          return showDialog(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Delete Permanently?'),
+                                                content: const Text(
+                                                    'Are you sure you want to delete this file permanently?'),
+                                                contentPadding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        24.0, 20.0, 24.0, 17.0),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      setState(() {
+                                                        statuses.deleteSync();
+                                                        allStatuses;
+                                                      });
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Column(
+                                          children: const [
+                                            Icon(Icons.delete_forever_rounded),
+                                            Text(
+                                              'DELETE',
+                                              style: TextStyle(fontSize: 10),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : Expanded(
+                                      flex: 1,
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.blue,
+                                          fixedSize: const Size(60.0, 53.0),
+                                        ),
+                                        onPressed: () async {
+                                          await GlobalFunctions().saveStatus(
+                                              statuses.path, context);
+                                        },
+                                        child: Column(
+                                          children: const [
+                                            Icon(Icons.save_alt),
+                                            Text(
+                                              'SAVE',
+                                              style: TextStyle(fontSize: 10),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                            ],
+                          )
+                        : Container(),
                   ),
                 ],
               ),
