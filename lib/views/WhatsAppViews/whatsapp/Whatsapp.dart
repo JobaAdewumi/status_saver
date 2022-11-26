@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:all_status_saver/common_libs.dart';
-import 'package:all_status_saver/helpers/storage_manager.dart';
 import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:all_status_saver/views/WhatsAppViews/home/viewer.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -99,6 +97,30 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         gVideos = whatsappLogic.gSSVideos;
         gImagesVideo = whatsappLogic.gSSImagesVideo;
       });
+      if (gImagesVideo.isEmpty) {
+        setState(() {
+          globalStatusPath = '/storage/emulated/0/DCIM/All Status Saver';
+          globalStatusPath11 = '';
+        });
+        await GlobalFunctions()
+            .getFileTypes(globalStatusPath, globalStatusPath11)
+            .then((value) {
+          Map<String, List<FileType>> allFiles = value;
+          if (allFiles.isNotEmpty) {
+            setState(
+              () {
+                gImages = allFiles['images'] ?? [];
+                gVideos = allFiles['videos'] ?? [];
+                gImagesVideo = allFiles['all'] ?? [];
+              },
+            );
+          } else {
+            setState(() {
+              showErrorPage = true;
+            });
+          }
+        });
+      }
       if (gImagesVideo.isNotEmpty) {
         setState(() {
           showErrorPage = false;
@@ -106,22 +128,26 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       }
       if (appLogic.androidVersion! >= 30 &&
           whatsappLogic.gSSImagesVideo.isEmpty) {
-        await whatsappLogic.init(true, false, false).then((value) {
-          setState(() {
-            triedToGetStatusAgain11 = true;
-          });
-          if (whatsappLogic.gSSImagesVideo.isNotEmpty) {
-            setState(() {
-              gImages = whatsappLogic.gSSImages;
-              gVideos = whatsappLogic.gSSVideos;
-              gImagesVideo = whatsappLogic.gSSImagesVideo;
-            });
-          } else {
-            setState(() {
-              showErrorPage = true;
-            });
-          }
-        });
+        await GlobalFunctions()
+            .getFileTypes(globalStatusPath, globalStatusPath11)
+            .then(
+          (value) {
+            Map<String, List<FileType>> allFiles = value;
+            if (allFiles.isNotEmpty) {
+              setState(
+                () {
+                  gImages = allFiles['images'] ?? [];
+                  gVideos = allFiles['videos'] ?? [];
+                  gImagesVideo = allFiles['all'] ?? [];
+                },
+              );
+            } else {
+              setState(() {
+                showErrorPage = true;
+              });
+            }
+          },
+        );
       }
     }
 
@@ -134,6 +160,31 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         gVideos = whatsappLogic.gWVideos;
         gImagesVideo = whatsappLogic.gWImagesVideo;
       });
+      if (gImagesVideo.isEmpty) {
+        setState(() {
+          globalStatusPath = '/storage/emulated/0/WhatsApp/Media/.Statuses';
+          globalStatusPath11 =
+              '/storage/emulated/0/Android/media/com.whatsapp/WhatsApp/Media/.Statuses';
+        });
+        await GlobalFunctions()
+            .getFileTypes(globalStatusPath, globalStatusPath11)
+            .then((value) {
+          Map<String, List<FileType>> allFiles = value;
+          if (allFiles.isNotEmpty) {
+            setState(
+              () {
+                gImages = allFiles['images'] ?? [];
+                gVideos = allFiles['videos'] ?? [];
+                gImagesVideo = allFiles['all'] ?? [];
+              },
+            );
+          } else {
+            setState(() {
+              showErrorPage = true;
+            });
+          }
+        });
+      }
       if (gImagesVideo.isNotEmpty) {
         setState(() {
           showErrorPage = false;
@@ -141,22 +192,43 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       }
       if (appLogic.androidVersion! >= 30 &&
           whatsappLogic.gWImagesVideo.isEmpty) {
-        await whatsappLogic.init(true, false, false).then((value) {
-          setState(() {
-            triedToGetStatusAgain11 = true;
-          });
-          if (whatsappLogic.gWImagesVideo.isNotEmpty) {
-            setState(() {
-              gImages = whatsappLogic.gWImages;
-              gVideos = whatsappLogic.gWVideos;
-              gImagesVideo = whatsappLogic.gWImagesVideo;
-            });
-          } else {
-            setState(() {
-              showErrorPage = true;
-            });
-          }
-        });
+        await GlobalFunctions()
+            .getFileTypes(globalStatusPath, globalStatusPath11)
+            .then(
+          (value) {
+            Map<String, List<FileType>> allFiles = value;
+            if (allFiles.isNotEmpty) {
+              setState(
+                () {
+                  gImages = allFiles['images'] ?? [];
+                  gVideos = allFiles['videos'] ?? [];
+                  gImagesVideo = allFiles['all'] ?? [];
+                },
+              );
+            } else {
+              setState(() {
+                showErrorPage = true;
+              });
+            }
+          },
+        );
+
+        // await whatsappLogic.init(true, false, false).then((value) {
+        //   setState(() {
+        //     triedToGetStatusAgain11 = true;
+        //   });
+        //   if (whatsappLogic.gWImagesVideo.isNotEmpty) {
+        //     setState(() {
+        //       gImages = whatsappLogic.gWImages;
+        //       gVideos = whatsappLogic.gWVideos;
+        //       gImagesVideo = whatsappLogic.gWImagesVideo;
+        //     });
+        //   } else {
+        //     setState(() {
+        //       showErrorPage = true;
+        //     });
+        //   }
+        // });
       }
     }
 
@@ -169,6 +241,33 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         gVideos = whatsappLogic.gWBVideos;
         gImagesVideo = whatsappLogic.gWBImagesVideo;
       });
+      if (gImagesVideo.isEmpty) {
+        setState(() {
+          globalStatusPath =
+              '/storage/emulated/0/WhatsApp Business/Media/.Statuses';
+          globalStatusPath11 =
+              '/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
+        });
+        await GlobalFunctions()
+            .getFileTypes(globalStatusPath, globalStatusPath11)
+            .then((value) {
+          Map<String, List<FileType>> allFiles = value;
+          print(allFiles);
+          if (allFiles.isNotEmpty) {
+            setState(
+              () {
+                gImages = allFiles['images'] ?? [];
+                gVideos = allFiles['videos'] ?? [];
+                gImagesVideo = allFiles['all'] ?? [];
+              },
+            );
+          } else {
+            setState(() {
+              showErrorPage = true;
+            });
+          }
+        });
+      }
       if (gImagesVideo.isNotEmpty) {
         setState(() {
           showErrorPage = false;
@@ -176,22 +275,26 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       }
       if (appLogic.androidVersion! >= 30 &&
           whatsappLogic.gWBImagesVideo.isEmpty) {
-        await whatsappLogic.init(true, false, false).then((value) {
-          setState(() {
-            triedToGetStatusAgain11 = true;
-          });
-          if (whatsappLogic.gWBImagesVideo.isNotEmpty) {
-            setState(() {
-              gImages = whatsappLogic.gWBImages;
-              gVideos = whatsappLogic.gWBVideos;
-              gImagesVideo = whatsappLogic.gWBImagesVideo;
-            });
-          } else {
-            setState(() {
-              showErrorPage = true;
-            });
-          }
-        });
+        await GlobalFunctions()
+            .getFileTypes(globalStatusPath, globalStatusPath11)
+            .then(
+          (value) {
+            Map<String, List<FileType>> allFiles = value;
+            if (allFiles.isNotEmpty) {
+              setState(
+                () {
+                  gImages = allFiles['images'] ?? [];
+                  gVideos = allFiles['videos'] ?? [];
+                  gImagesVideo = allFiles['all'] ?? [];
+                },
+              );
+            } else {
+              setState(() {
+                showErrorPage = true;
+              });
+            }
+          },
+        );
       }
     }
   }
@@ -292,7 +395,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   setState(() {
                     selectedCards.clear();
                     print('set state called');
-                    gImagesVideo = gInnerImagesVideo;
+                    // gImagesVideo = gInnerImagesVideo;
                   });
                   // Toast
                 }
@@ -316,26 +419,26 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     _tabController.dispose();
   }
 
-  Future getAndroidVersion() async {
-    StorageManager.readData('androidVersion').then(
-      (value) async {
-        if (value == null) {
-          print(value);
-          DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-          StorageManager.saveData(
-              'androidVersion', androidInfo.version.sdkInt!);
-          setState(() {
-            androidVersion = androidInfo.version.sdkInt!;
-          });
-        } else {
-          setState(() {
-            androidVersion = value;
-          });
-        }
-      },
-    );
-  }
+  // Future getAndroidVersion() async {
+  //   StorageManager.readData('androidVersion').then(
+  //     (value) async {
+  //       if (value == null) {
+  //         print(value);
+  //         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  //         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+  //         StorageManager.saveData(
+  //             'androidVersion', androidInfo.version.sdkInt!);
+  //         setState(() {
+  //           androidVersion = androidInfo.version.sdkInt!;
+  //         });
+  //       } else {
+  //         setState(() {
+  //           androidVersion = value;
+  //         });
+  //       }
+  //     },
+  //   );
+  // }
 
   Future onDragGridDown() async {
     print(globalStatusPath);
@@ -806,7 +909,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   }
 
   Widget AllStatuses(List<FileType> gImagesVideo) {
-    Widget imagesVideos;
+    Widget imagesVideos = Container();
     var checkTypes = gImagesVideo.where(
       (e) {
         if (e.file.path.contains('.jpg') ||
@@ -849,7 +952,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
           },
         ),
       );
-    } else {
+    }
+    if (gImagesVideo.isEmpty && checkTypes.isEmpty) {
       imagesVideos = GlobalFunctions().noStatusError(
           widget.whatsAppOptions.isWhatsApp,
           widget.whatsAppOptions.isStatusPage);
@@ -858,7 +962,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   }
 
   Widget StatusVideos(List<FileType> gVideos) {
-    Widget videos;
+    Widget videos = Container();
     var checkTypes = gVideos.where(
       (e) {
         if (e.file.path.contains('.mp4')) {
@@ -888,7 +992,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
           },
         ),
       );
-    } else {
+    }
+    if (gVideos.isEmpty && checkTypes.isEmpty) {
       videos = GlobalFunctions().noStatusError(
           widget.whatsAppOptions.isWhatsApp,
           widget.whatsAppOptions.isStatusPage);
@@ -897,7 +1002,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   }
 
   Widget StatusImages(List<FileType> gImages) {
-    Widget images;
+    Widget images = Container();
     var checkTypes = gImagesVideo.where(
       (e) {
         if (e.file.path.contains('.jpg') ||
@@ -929,7 +1034,8 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
           },
         ),
       );
-    } else {
+    }
+    if (gImages.isEmpty && checkTypes.isEmpty) {
       print('hey');
       images = GlobalFunctions().noStatusError(
           widget.whatsAppOptions.isWhatsApp,
