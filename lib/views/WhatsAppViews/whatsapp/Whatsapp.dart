@@ -356,13 +356,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   if (isPresent) {
                     toRemoveFromImages.add(selectedCardsPaths
                         .firstWhere((e) => e == element.file.path));
-                    setState(() {
-                      print('removed ${element.file.path}');
-                      gVideos.removeWhere((e) =>
-                          e.file.path ==
-                          toRemoveFromImages
-                              .firstWhere((e) => e == element.file.path));
-                    });
                   }
                 }
 
@@ -373,15 +366,14 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   if (isPresent) {
                     toRemoveFromVideos.add(selectedCardsPaths
                         .firstWhere((e) => e == element.file.path));
-                    setState(() {
-                      print('removed ${element.file.path}');
-                      gVideos.removeWhere((e) =>
-                          e.file.path ==
-                          toRemoveFromVideos
-                              .firstWhere((e) => e == element.file.path));
-                    });
                   }
                 }
+                setState(() {
+                  gImages.removeWhere(
+                      (e) => toRemoveFromImages.contains(e.file.path));
+                  gVideos.removeWhere(
+                      (e) => toRemoveFromVideos.contains(e.file.path));
+                });
 
                 if (filesToDelete.isNotEmpty) {
                   for (var element in filesToDelete) {
@@ -394,12 +386,10 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   }
                   setState(() {
                     selectedCards.clear();
-                    print('set state called');
-                    // gImagesVideo = gInnerImagesVideo;
                   });
-                  // Toast
                 }
                 Navigator.of(context).pop();
+                onDragGridDown();
               },
               child: const Text('Delete'),
             ),
