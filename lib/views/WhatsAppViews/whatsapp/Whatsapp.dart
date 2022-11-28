@@ -481,13 +481,14 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
             .then((value) {
           var imagesVideo = gImagesVideo.elementAt(index);
           gImagesVideo.removeAt(index);
-          gImagesVideo.add((FileType(
-            file: imagesVideo.file,
-            dateTime: imagesVideo.dateTime,
-            videoThumbnail: value,
-          )));
+          gImagesVideo.insert(
+              index,
+              (FileType(
+                file: imagesVideo.file,
+                dateTime: imagesVideo.dateTime,
+                videoThumbnail: value,
+              )));
           thumbnailFile = gImagesVideo.last;
-          gImagesVideo.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
         });
       }
       if (!allFilesVideo) {
@@ -496,13 +497,14 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
             .then((value) {
           var video = gVideos.elementAt(index);
           gVideos.removeAt(index);
-          gVideos.add((FileType(
-            file: video.file,
-            dateTime: video.dateTime,
-            videoThumbnail: value,
-          )));
+          gVideos.insert(
+              index,
+              (FileType(
+                file: video.file,
+                dateTime: video.dateTime,
+                videoThumbnail: value,
+              )));
           thumbnailFile = gVideos.last;
-          gVideos.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
         });
       }
     } else {
