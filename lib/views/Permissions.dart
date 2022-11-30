@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
-
-import 'package:saf/saf.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-
-import 'package:permission_handler/permission_handler.dart';
-
 import 'package:all_status_saver/routes/routes.dart' as route;
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:saf/saf.dart';
 
 // Saf safBusiness = Saf('/storage/emulated/0/Android/media/');
 
@@ -17,7 +14,7 @@ List<String>? directoriesPaths;
 List<String>? savedStatusesPath;
 bool? aboveAndroid10;
 
-late bool dialogForStoragePermissionGranted;
+bool dialogForStoragePermissionGranted = false;
 bool dialogForAndroid11Granted = false;
 
 class Android11PermissionDialog extends StatelessWidget {
