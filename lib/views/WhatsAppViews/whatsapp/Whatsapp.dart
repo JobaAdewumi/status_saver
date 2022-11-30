@@ -440,6 +440,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         await GlobalFunctions()
             .generateVideoThumbnail(files[index].file)
             .then((value) {
+          print('working');
           var imagesVideo = gImagesVideo.elementAt(index);
           gImagesVideo.removeAt(index);
           gImagesVideo.insert(
@@ -449,7 +450,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                 dateTime: imagesVideo.dateTime,
                 videoThumbnail: value,
               )));
-          thumbnailFile = gImagesVideo.last;
+          thumbnailFile = gImagesVideo.elementAt(index);
         });
       }
       if (!allFilesVideo) {
@@ -465,7 +466,7 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                 dateTime: video.dateTime,
                 videoThumbnail: value,
               )));
-          thumbnailFile = gVideos.last;
+          thumbnailFile = gVideos.elementAt(index);
         });
       }
     } else {
