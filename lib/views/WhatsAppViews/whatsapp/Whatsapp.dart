@@ -78,14 +78,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     }
 
     initialStateLoader();
-
-    // globalStatusPath = newPath;
-    // globalStatusPath11 = newPath11;
-
-    // setState(() {
-    //   gImagesVideo = GlobalFunctions().gMapAllFiles;
-    //   gVideos = GlobalFunctions().gMapVideoFiles;
-    // });
   }
 
   Future initialStateLoader() async {
@@ -408,27 +400,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
     super.dispose();
     _tabController.dispose();
   }
-
-  // Future getAndroidVersion() async {
-  //   StorageManager.readData('androidVersion').then(
-  //     (value) async {
-  //       if (value == null) {
-  //         print(value);
-  //         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  //         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-  //         StorageManager.saveData(
-  //             'androidVersion', androidInfo.version.sdkInt!);
-  //         setState(() {
-  //           androidVersion = androidInfo.version.sdkInt!;
-  //         });
-  //       } else {
-  //         setState(() {
-  //           androidVersion = value;
-  //         });
-  //       }
-  //     },
-  //   );
-  // }
 
   Future onDragGridDown() async {
     print(globalStatusPath);
