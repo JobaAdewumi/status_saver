@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class HelpAndInfo extends StatelessWidget {
   HelpAndInfo({Key? key}) : super(key: key);
 
-  String applicationVersion = '2.2.3';
+  String applicationVersion = '2.3.0';
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,11 @@ class HelpAndInfo extends StatelessWidget {
             // crossAxisAlignment: CrossAxisAlignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: FlutterLogo(
-                  size: 95,
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Image.asset(
+                  'assets/splash/logo.png',
+                  height: 100,
                 ),
               ),
               const Padding(
@@ -56,7 +57,7 @@ class HelpAndInfo extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.only(top: 15, left: 20),
                 child: Text(
-                  '+ UI and UX improvements',
+                  '+ Hold to select added in recent statuses page',
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -64,7 +65,23 @@ class HelpAndInfo extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.only(top: 15, left: 20),
                 child: Text(
-                  '+ Now using Material 3 design',
+                  '+ Added splash screen',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 15),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 15, left: 20),
+                child: Text(
+                  '+ Created new icon for app',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 15),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(top: 15, left: 20),
+                child: Text(
+                  '+ UI and UX improvements',
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -109,8 +126,6 @@ class HelpAndInfo extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: ListTile(
-                  leading: const Icon(Icons.emoji_events_rounded),
-                  trailing: const Icon(Icons.self_improvement_outlined),
                   onTap: () {
                     HapticFeedback.lightImpact();
                     showLicensePage(
