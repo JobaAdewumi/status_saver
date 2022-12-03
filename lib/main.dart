@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget with GetItMixin {
           title: 'All Status Saver',
           theme: theme.getTheme(),
           onGenerateRoute: route.controller,
-          initialRoute: route.introScreen,
+          initialRoute: route.homePage,
         );
       },
     );
