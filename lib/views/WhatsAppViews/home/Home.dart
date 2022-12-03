@@ -199,14 +199,15 @@ class HomePageState extends State<HomePage> {
                           child: Padding(
                             padding: const EdgeInsets.all(20),
                             child: Column(
-                              children: const [
+                              children: [
                                 Padding(
-                                  padding: EdgeInsets.only(bottom: 5.0),
-                                  child: FlutterLogo(
-                                    size: 60.0,
+                                  padding: const EdgeInsets.only(bottom: 5.0),
+                                  child: Image.asset(
+                                    'assets/splash/logo.png',
+                                    height: 60,
                                   ),
                                 ),
-                                Text('WB STATUS'),
+                                const Text('WB STATUS'),
                               ],
                             ),
                           ),
@@ -266,7 +267,10 @@ class HomePageState extends State<HomePage> {
               DrawerHeader(
                 decoration:
                     BoxDecoration(color: Theme.of(context).colorScheme.primary),
-                child: const FlutterLogo(),
+                child: Image.asset(
+                  'assets/splash/logo.png',
+                  height: 100,
+                ),
               ),
               ListTile(
                 leading: const Icon(Icons.whatsapp_rounded),
