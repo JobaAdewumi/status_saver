@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class HelpAndInfo extends StatelessWidget {
   HelpAndInfo({Key? key}) : super(key: key);
 
-  String applicationVersion = '2.2.3 build2';
+  String applicationVersion = '2.2.3';
 
   @override
   Widget build(BuildContext context) {
