@@ -242,17 +242,6 @@ class HomePageState extends State<HomePage> {
                                       .color),
                             ),
                           ),
-                          // ElevatedButton.icon(
-                          //   icon: const Icon(Icons.bug_report),
-                          //   onPressed: () async {
-                          //     if (await requestPermission(Permission.storage)) {
-                          //       Navigator.pushNamed(context, route.introScreen);
-                          //     } else {
-                          //       return;
-                          //     }
-                          //   },
-                          //   label: const Text('Intro Screen debug'),
-                          // ),
                         ],
                       ),
               ],

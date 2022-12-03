@@ -53,7 +53,6 @@ class WhatsappLogic {
       bool isWhatsApp = false,
       bool onStart = true]) async {
     directoriesPaths = await Saf.getPersistedPermissionDirectories();
-    // print(directoriesPaths);
     if (directoriesPaths == null && directoriesPaths!.isNotEmpty) {
       if (directoriesPaths![0] == 'Android/media') {
         directoryPath = directoriesPaths![0];
@@ -61,9 +60,6 @@ class WhatsappLogic {
     }
     await checkPermissionStatus(
         [Permission.storage, Permission.manageExternalStorage]);
-
-    print(androidStoragePermission);
-    print(android11Permission);
 
     if (androidStoragePermission || !onStart) {
       final List<FileSystemEntity> entities =
@@ -110,7 +106,6 @@ class WhatsappLogic {
 
       String wNewPath11 =
           '/storage/emulated/0/$wPath11/com.whatsapp/WhatsApp/Media/.Statuses';
-      print(wNewPath11);
 
       whatsappPath = wNewPath;
       whatsappPath11 = wNewPath11;
@@ -130,7 +125,6 @@ class WhatsappLogic {
 
       String wbNewPath11 =
           '/storage/emulated/0/$wbPath11/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses';
-      print(wbNewPath11);
 
       whatsappBPath = wbNewPath;
       whatsappBPath11 = wbNewPath11;
@@ -155,7 +149,6 @@ class WhatsappLogic {
       if (onStart) {
         ///whatsapp
         GlobalFunctions().getFileTypes(wNewPath, wNewPath11).then((value) {
-          print(value);
           Map<String, List<FileType>> allWFiles = value;
           gWImages = allWFiles['images'] ?? [];
           gWVideos = allWFiles['videos'] ?? [];
@@ -164,7 +157,6 @@ class WhatsappLogic {
 
         ///whatsapp business
         GlobalFunctions().getFileTypes(wbNewPath, wbNewPath11).then((value) {
-          print(value);
           Map<String, List<FileType>> allWBFiles = value;
           gWBImages = allWBFiles['images'] ?? [];
           gWBVideos = allWBFiles['videos'] ?? [];
@@ -173,10 +165,7 @@ class WhatsappLogic {
 
         if (appLogic.androidVersion! <= 29) {
           ///saved status
-          print('inside saved status safe block');
           GlobalFunctions().getFileTypes(ssNewPath, '').then((value) {
-            print('saved status');
-            print(value);
             Map<String, List<FileType>> allSSFiles = value;
             gSSImages = allSSFiles['images'] ?? [];
             gSSVideos = allSSFiles['videos'] ?? [];
@@ -188,7 +177,6 @@ class WhatsappLogic {
       if (isWhatsApp && !onStart) {
         ///whatsapp
         GlobalFunctions().getFileTypes(wNewPath, wNewPath11).then((value) {
-          print(value);
           Map<String, List<FileType>> allWFiles = value;
           gWImages = allWFiles['images'] ?? [];
           gWVideos = allWFiles['videos'] ?? [];
@@ -199,7 +187,6 @@ class WhatsappLogic {
       if (!isWhatsApp && !onStart) {
         ///whatsapp business
         GlobalFunctions().getFileTypes(wbNewPath, wbNewPath11).then((value) {
-          print(value);
           Map<String, List<FileType>> allWBFiles = value;
           gWBImages = allWBFiles['images'] ?? [];
           gWBVideos = allWBFiles['videos'] ?? [];
@@ -208,8 +195,6 @@ class WhatsappLogic {
       }
 
       if (isStatusPage && !onStart && appLogic.androidVersion! <= 29) {
-        print('from rekindled function');
-
         ///saved status
         GlobalFunctions().getFileTypes(ssNewPath, '').then((value) {
           Map<String, List<FileType>> allSSFiles = value;

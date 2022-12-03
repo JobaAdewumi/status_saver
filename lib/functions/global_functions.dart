@@ -176,33 +176,6 @@ class GlobalFunctions {
         ),
       );
     }
-
-    // return ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(
-    //     content: Text(
-    //       'Status was saved successfully',
-    //       style: TextStyle(color: Colors.white),
-    //     ),
-    //     behavior: SnackBarBehavior.floating,
-    //     elevation: 1,
-    //     dismissDirection: DismissDirection.horizontal,
-    //     duration: Duration(milliseconds: 400),
-    //   ),
-    // );
-
-    // return ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(
-    //     content: Text(
-    //       'Error Saving Status',
-    //       style: TextStyle(color: Colors.white),
-    //     ),
-    //     behavior: SnackBarBehavior.floating,
-    //     backgroundColor: Colors.redAccent,
-    //     elevation: 1,
-    //     dismissDirection: DismissDirection.horizontal,
-    //     duration: Duration(milliseconds: 400),
-    //   ),
-    // );
   }
 
   Future<bool?> realSaveStatus(String oldPath) async {
@@ -236,13 +209,11 @@ class GlobalFunctions {
   copyDirectory(Directory source, Directory destination) {
     source.listSync(recursive: false).forEach((var entity) {
       if (entity is Directory) {
-        print(entity);
         var newDirectory = Directory(
             path.join(destination.absolute.path, path.basename(entity.path)));
         newDirectory.create();
         copyDirectory(entity.absolute, newDirectory);
       } else if (entity is File) {
-        print(entity);
         entity
             .copySync(path.join(destination.path, path.basename(entity.path)));
       }
@@ -350,51 +321,6 @@ class GlobalFunctions {
       'all': mapAllFiles
     };
   }
-
-  // Future<Map<String, List<FileType>>> addThumbnailToFile(
-  //     String path, String secondaryPath) async {
-  //   // var tempDir = await getTemporaryDirectory();
-  //   // print(tempDir);
-
-  //   List<FileType> mapVideoFiles = [];
-  //   List<FileType> mapImageFiles = [];
-
-  //   List<FileType> newMapVideoFiles = [];
-  //   List<FileType> newMapAllFiles = [];
-
-  //   await getFileTypes(path, secondaryPath).then((value) {
-  //     Map<String, List<FileType>> allFiles = value;
-  //     mapImageFiles = allFiles['images'] ?? [];
-  //     mapVideoFiles = allFiles['videos'] ?? [];
-  //   });
-
-  //   newMapAllFiles = mapImageFiles;
-  //   if (mapVideoFiles.isNotEmpty) {
-  //     for (FileType fv in mapVideoFiles) {
-  //       await generateVideoThumbnail(fv.file).then((value) async {
-  //         gMapVideoFiles.add(FileType(
-  //           file: fv.file,
-  //           dateTime: fv.dateTime,
-  //           videoThumbnail: value,
-  //         ));
-
-  //         newMapAllFiles.add(FileType(
-  //           file: fv.file,
-  //           dateTime: fv.dateTime,
-  //           videoThumbnail: value,
-  //         ));
-  //       });
-  //       newMapVideoFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
-  //       newMapAllFiles.sort(((a, b) => b.dateTime!.compareTo(a.dateTime!)));
-  //     }
-  //   }
-
-  //   return {
-  //     'images': mapImageFiles,
-  //     'videos': newMapVideoFiles,
-  //     'all': newMapAllFiles
-  //   };
-  // }
 
   Future generateVideoThumbnail(File file) async {
     final unit8list = await VideoThumbnail.thumbnailData(

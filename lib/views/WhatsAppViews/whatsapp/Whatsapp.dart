@@ -204,23 +204,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
             }
           },
         );
-
-        // await whatsappLogic.init(true, false, false).then((value) {
-        //   setState(() {
-        //     triedToGetStatusAgain11 = true;
-        //   });
-        //   if (whatsappLogic.gWImagesVideo.isNotEmpty) {
-        //     setState(() {
-        //       gImages = whatsappLogic.gWImages;
-        //       gVideos = whatsappLogic.gWVideos;
-        //       gImagesVideo = whatsappLogic.gWImagesVideo;
-        //     });
-        //   } else {
-        //     setState(() {
-        //       showErrorPage = true;
-        //     });
-        //   }
-        // });
       }
     }
 
@@ -244,7 +227,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
             .getFileTypes(globalStatusPath, globalStatusPath11)
             .then((value) {
           Map<String, List<FileType>> allFiles = value;
-          print(allFiles);
           if (allFiles.isNotEmpty) {
             setState(
               () {
@@ -369,7 +351,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
 
                 if (filesToDelete.isNotEmpty) {
                   for (var element in filesToDelete) {
-                    print('deleted');
                     setState(() {
                       if (element.existsSync()) {
                         element.deleteSync();
@@ -402,7 +383,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
   }
 
   Future onDragGridDown() async {
-    print(globalStatusPath);
     await GlobalFunctions()
         .getFileTypes(globalStatusPath, globalStatusPath11)
         .then(
@@ -440,7 +420,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         await GlobalFunctions()
             .generateVideoThumbnail(files[index].file)
             .then((value) {
-          print('working');
           var imagesVideo = gImagesVideo.elementAt(index);
           gImagesVideo.removeAt(index);
           gImagesVideo.insert(
@@ -511,26 +490,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                   height: 134,
                   child: image,
                 ),
-                // selectedCards.isNotEmpty
-                //     ? Positioned(
-                //         left: 7,
-                //         top: 7,
-                //         child: selectedCards
-                //                 .any((element) => element.path == statuses.path)
-                //             ? Icon(
-                //                 Icons.check_circle,
-                //                 color: Theme.of(context)
-                //                     .appBarTheme
-                //                     .backgroundColor,
-                //               )
-                //             : Icon(
-                //                 Icons.circle_outlined,
-                //                 color: Theme.of(context)
-                //                     .appBarTheme
-                //                     .backgroundColor,
-                //               ),
-                //       )
-                //     : Container(),
               ],
             ),
           ),
@@ -668,7 +627,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var snapshotData = snapshot.data as FileType;
-            print(snapshotData);
             Image video = Image.memory(snapshotData.videoThumbnail!,
                 height: 100, width: 100, fit: BoxFit.cover);
             return Card(
@@ -700,26 +658,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
                             height: 134,
                             child: video,
                           ),
-                          // selectedCards.isNotEmpty
-                          //     ? Positioned(
-                          //         left: 7,
-                          //         top: 7,
-                          //         child: selectedCards.any((element) =>
-                          //                 element.path == statuses.path)
-                          //             ? Icon(
-                          //                 Icons.check_circle,
-                          //                 color: Theme.of(context)
-                          //                     .appBarTheme
-                          //                     .backgroundColor,
-                          //               )
-                          //             : Icon(
-                          //                 Icons.circle_outlined,
-                          //                 color: Theme.of(context)
-                          //                     .appBarTheme
-                          //                     .backgroundColor,
-                          //               ),
-                          //       )
-                          //     : Container(),
                           const Positioned(
                             top: 30,
                             left: 60,
@@ -1000,7 +938,6 @@ class _WhatsAppState extends State<WhatsApp> with TickerProviderStateMixin {
       );
     }
     if (gImages.isEmpty && checkTypes.isEmpty) {
-      print('hey');
       images = GlobalFunctions().noStatusError(
           widget.whatsAppOptions.isWhatsApp,
           widget.whatsAppOptions.isStatusPage);

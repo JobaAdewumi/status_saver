@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saf/saf.dart';
 
-// Saf safBusiness = Saf('/storage/emulated/0/Android/media/');
-
 Saf saf = Saf('/storage/emulated/0/Android/media/');
 Saf savedStatuses = Saf('/storage/emulated/0/Pictures/All Status Saver/');
 
@@ -113,13 +111,11 @@ Future showDialogForStoragePermission(context) {
 Future<bool> requestPermission11(context) async {
   bool normalStorage = await requestPermission([Permission.storage], context);
   directoriesPaths = await Saf.getPersistedPermissionDirectories();
-  // if (directoriesPaths.isEmpty) {}
   if (directoriesPaths == null && directoriesPaths!.isNotEmpty) {
     if (directoriesPaths![0] == 'Android/media' && normalStorage) {
       return true;
     }
   }
-  // print(safBusiness.);
 
   late bool? isGranted;
 
@@ -145,7 +141,6 @@ Future<bool> requestPermission11(context) async {
     } else {
       aboveAndroid10 = false;
     }
-    print(androidInfo.version.sdkInt);
     return true;
   } else {
     return false;
@@ -153,15 +148,12 @@ Future<bool> requestPermission11(context) async {
 }
 
 Future<bool> requestPermissionForSavedStatus() async {
-  // print(safBusiness.);
-
   late bool? isGranted;
 
   isGranted = await savedStatuses.getDirectoryPermission(isDynamic: false);
 
   if (isGranted != null && isGranted) {
     savedStatusesPath = await savedStatuses.getFilesPath();
-    // var trial = await getExternalStorageDirectories();
 
     return true;
   } else {
@@ -175,7 +167,6 @@ Future<bool> requestPermission(List<Permission> permissions, context) async {
       return true;
     } else {
       await showDialogForStoragePermission(context);
-      print(dialogForStoragePermissionGranted);
       if (dialogForStoragePermissionGranted) {
         var result = await permission.request();
         if (result == PermissionStatus.granted) {
