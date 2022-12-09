@@ -44,8 +44,13 @@ class ThemeNotifier with ChangeNotifier {
     primaryColorDark: Colors.black,
     brightness: Brightness.dark,
     backgroundColor: Colors.black,
+    focusColor: const Color.fromARGB(255, 172, 200, 202),
     colorScheme: const ColorScheme.dark(
-        primary: darkSwatch, surface: darkSwatch, onSurface: Colors.black),
+      primary: darkSwatch,
+      surface: darkSwatch,
+      onSurface: Colors.black,
+      tertiary: Color.fromARGB(255, 172, 200, 202),
+    ),
   );
 
   final lightTheme = ThemeData(
@@ -59,10 +64,12 @@ class ThemeNotifier with ChangeNotifier {
         backgroundColor: Color.fromARGB(255, 153, 205, 209),
       ),
       scaffoldBackgroundColor: const Color.fromARGB(255, 203, 212, 212),
+      focusColor: const Color.fromARGB(255, 37, 67, 79),
       // accentColor: Colors.black,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
         seedColor: const Color.fromARGB(255, 153, 205, 209),
+        tertiary: const Color.fromARGB(255, 37, 67, 79),
       ));
 
   late ThemeData _themeData = lightTheme;
