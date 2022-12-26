@@ -48,10 +48,7 @@ class WhatsappLogic {
   List<FileType> gSSVideos = [];
   List<FileType> gSSImagesVideo = [];
 
-  Future init(
-      [bool isStatusPage = false,
-      bool isWhatsApp = false,
-      bool onStart = true]) async {
+  Future init() async {
     directoriesPaths = await Saf.getPersistedPermissionDirectories();
     if (directoriesPaths == null && directoriesPaths!.isNotEmpty) {
       if (directoriesPaths![0] == 'Android/media') {
@@ -61,7 +58,7 @@ class WhatsappLogic {
     await checkPermissionStatus(
         [Permission.storage, Permission.manageExternalStorage]);
 
-    if (androidStoragePermission || !onStart) {
+    if (androidStoragePermission) {
       final List<FileSystemEntity> entities =
           await Directory(baseAndroidDirectory).list().toList();
 
@@ -146,55 +143,23 @@ class WhatsappLogic {
         showNoStatusError = true;
       }
 
-      if (onStart) {
-        ///whatsapp
-        GlobalFunctions().getFileTypes(wNewPath, wNewPath11).then((value) {
-          Map<String, List<FileType>> allWFiles = value;
-          gWImages = allWFiles['images'] ?? [];
-          gWVideos = allWFiles['videos'] ?? [];
-          gWImagesVideo = allWFiles['all'] ?? [];
-        });
+      ///whatsapp
+      GlobalFunctions().getFileTypes(wNewPath, wNewPath11).then((value) {
+        Map<String, List<FileType>> allWFiles = value;
+        gWImages = allWFiles['images'] ?? [];
+        gWVideos = allWFiles['videos'] ?? [];
+        gWImagesVideo = allWFiles['all'] ?? [];
+      });
 
-        ///whatsapp business
-        GlobalFunctions().getFileTypes(wbNewPath, wbNewPath11).then((value) {
-          Map<String, List<FileType>> allWBFiles = value;
-          gWBImages = allWBFiles['images'] ?? [];
-          gWBVideos = allWBFiles['videos'] ?? [];
-          gWBImagesVideo = allWBFiles['all'] ?? [];
-        });
+      ///whatsapp business
+      GlobalFunctions().getFileTypes(wbNewPath, wbNewPath11).then((value) {
+        Map<String, List<FileType>> allWBFiles = value;
+        gWBImages = allWBFiles['images'] ?? [];
+        gWBVideos = allWBFiles['videos'] ?? [];
+        gWBImagesVideo = allWBFiles['all'] ?? [];
+      });
 
-        if (appLogic.androidVersion! <= 29) {
-          ///saved status
-          GlobalFunctions().getFileTypes(ssNewPath, '').then((value) {
-            Map<String, List<FileType>> allSSFiles = value;
-            gSSImages = allSSFiles['images'] ?? [];
-            gSSVideos = allSSFiles['videos'] ?? [];
-            gSSImagesVideo = allSSFiles['all'] ?? [];
-          });
-        }
-      }
-
-      if (isWhatsApp && !onStart) {
-        ///whatsapp
-        GlobalFunctions().getFileTypes(wNewPath, wNewPath11).then((value) {
-          Map<String, List<FileType>> allWFiles = value;
-          gWImages = allWFiles['images'] ?? [];
-          gWVideos = allWFiles['videos'] ?? [];
-          gWImagesVideo = allWFiles['all'] ?? [];
-        });
-      }
-
-      if (!isWhatsApp && !onStart) {
-        ///whatsapp business
-        GlobalFunctions().getFileTypes(wbNewPath, wbNewPath11).then((value) {
-          Map<String, List<FileType>> allWBFiles = value;
-          gWBImages = allWBFiles['images'] ?? [];
-          gWBVideos = allWBFiles['videos'] ?? [];
-          gWBImagesVideo = allWBFiles['all'] ?? [];
-        });
-      }
-
-      if (isStatusPage && !onStart && appLogic.androidVersion! <= 29) {
+      if (appLogic.androidVersion! <= 29) {
         ///saved status
         GlobalFunctions().getFileTypes(ssNewPath, '').then((value) {
           Map<String, List<FileType>> allSSFiles = value;
@@ -207,6 +172,8 @@ class WhatsappLogic {
       if (gSSImagesVideo.isEmpty &&
           gWBImagesVideo.isEmpty &&
           gWImagesVideo.isEmpty) {
+        FlutterLogs.logWarn('Statuses', 'Warning',
+            'No status error triggered in init function');
         showNoStatusError = true;
         showNoWAStatusError = true;
         showNoWBStatusError = true;
