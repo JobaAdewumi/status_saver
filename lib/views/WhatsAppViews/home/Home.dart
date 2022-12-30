@@ -1,4 +1,5 @@
 import 'package:all_status_saver/helpers/storage_manager.dart';
+import 'package:all_status_saver/logic/log_logic.dart';
 import 'package:all_status_saver/routes/routes.dart' as route;
 import 'package:all_status_saver/views/WhatsAppViews/whatsapp/whatsapp.dart';
 import 'package:all_status_saver/views/permissions.dart';
@@ -307,6 +308,21 @@ class HomePageState extends State<HomePage> {
                 title: const Text('Settings'),
                 onTap: () {
                   Navigator.pushNamed(context, route.settingsP);
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.bug_report_rounded),
+                title: const Text('Send Debug Log'),
+                onTap: () async {
+                  LogLogic().getAllLogs();
+                },
+              ),
+              ListTile(
+                title: const Text(
+                    'Pressing the button will send a debug log to me to help development. \n If there is an issue or there was a crash you can include the details in the debug emails.'),
+                onTap: () async {
+                  LogLogic().getAllLogs();
                 },
               ),
             ],
